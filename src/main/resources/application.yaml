@@ -1,0 +1,31 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+    lazy-initialization: false
+    banner-mode: console
+
+server:
+  port: 8080
+  shutdown: graceful
+  servlet:
+    context-path: /api/v1
+  tomcat:
+    accesslog:
+      enabled: false
+
+logging:
+  level:
+    org:
+      hibernate:
+        sql: DEBUG
+        type:
+          descriptor:
+            sql:
+              org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+      springframework: INFO
+
+debug: false
+
+
+
+
