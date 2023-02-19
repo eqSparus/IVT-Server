@@ -12,6 +12,7 @@ import org.springframework.data.couchbase.core.mapping.id.GeneratedValue;
 import org.springframework.data.couchbase.core.mapping.id.GenerationStrategy;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -20,14 +21,14 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Document
-public class Test {
+public class TestTwo {
 
     @Id
     @GeneratedValue(strategy = GenerationStrategy.UNIQUE)
     UUID id;
 
     @Field
-    String name;
+    List<Test> tests;
 
     @CreatedDate
     Date createAt;

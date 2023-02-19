@@ -26,6 +26,12 @@ logging:
 
 debug: false
 
+database:
+  username: Sparus
+  password: rootroot
+  bucket-name: IVTBucket
+  connection-string: couchbase://127.0.0.1
+
 
 
 
