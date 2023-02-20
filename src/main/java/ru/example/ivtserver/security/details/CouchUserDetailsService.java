@@ -12,12 +12,12 @@ import ru.example.ivtserver.repositories.UserRepository;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class CouchUserDetailsService implements UserDetailsService {
 
     UserRepository userRepository;
 
     @Autowired
-    public UserDetailsServiceImpl(UserRepository userRepository) {
+    public CouchUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -26,6 +26,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(IllegalArgumentException::new);
 
-        return UserDetailsImpl.of(user);
+        return CouchUserDetails.of(user);
     }
 }

@@ -12,16 +12,15 @@ import java.util.Collection;
 import java.util.Collections;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class UserDetailsImpl implements UserDetails {
-
+public class CouchUserDetails implements UserDetails {
     User user;
 
-    public UserDetailsImpl(@NonNull User user) {
+    public CouchUserDetails(@NonNull User user) {
         this.user = user;
     }
 
-    public static UserDetailsImpl of(@NonNull User user) {
-        return new UserDetailsImpl(user);
+    public static CouchUserDetails of(@NonNull User user) {
+        return new CouchUserDetails(user);
     }
 
 

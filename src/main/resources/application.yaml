@@ -3,6 +3,8 @@ spring:
     allow-bean-definition-overriding: true
     lazy-initialization: false
     banner-mode: console
+  config:
+    import: security.yaml,database.yaml
 
 server:
   port: 8080
@@ -25,13 +27,3 @@ logging:
       springframework: INFO
 
 debug: false
-
-database:
-  username: Sparus
-  password: rootroot
-  bucket-name: IVTBucket
-  connection-string: couchbase://127.0.0.1
-
-
-
-
