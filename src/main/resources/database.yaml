@@ -1,0 +1,5 @@
+database:
+  username: Administrator
+  password: rootroot
+  bucket-name: IVT-Bucket
+  connection-string: couchbase://127.0.0.1

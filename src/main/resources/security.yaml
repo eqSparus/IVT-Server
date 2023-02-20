@@ -1,0 +1,10 @@
+security:
+  token:
+    jwt:
+      access: There_must_be_a_huge_secret_word_here_but_I_can't_think_of_it.
+      valid-time-second: 3600
+      valid-time-reset-password-second: 3600
+      valid-time-refresh-second: 2678400
+      header-authorization: Authorization
+      header-refresh-token: RefreshToken
+      bearer: Bearer_
