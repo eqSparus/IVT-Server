@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
 @Builder
-public class UserResponseDto {
+public class AuthenticationDto {
 
     @JsonProperty("Authorization")
     String authorization;

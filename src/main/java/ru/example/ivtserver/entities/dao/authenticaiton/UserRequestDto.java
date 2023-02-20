@@ -8,14 +8,14 @@ import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
-public class UserRequestDao {
+public class UserRequestDto {
 
     String email;
 
     String password;
 
     @JsonCreator
-    public UserRequestDao(
+    public UserRequestDto(
             @JsonProperty(value = "email") String email,
             @JsonProperty(value = "password") String password
     ) {
