@@ -45,7 +45,8 @@ public class AuthenticationController {
     ) {
         log.info("Входящий пользователь {}", userDto);
         var dto = userService.login(userDto);
-        log.info("Токены авторизации пользователя {} {}", userDto, userDto.getEmail());
+        log.info("Токены доступа {}", dto.getAccessToken());
+        log.info("Токены обновления {}", dto.getRefreshToken());
         return dto;
     }
 
