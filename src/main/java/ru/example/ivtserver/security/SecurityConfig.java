@@ -3,6 +3,7 @@ package ru.example.ivtserver.security;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,10 +17,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.GenericFilterBean;
 
 import java.util.List;
 
@@ -29,20 +33,28 @@ import java.util.List;
 public class SecurityConfig {
 
     UserDetailsService userDetailsService;
+    AuthenticationEntryPoint delegatedEntryPoint;
+    GenericFilterBean jwtTokenAuthenticationFilter;
 
     @Autowired
-    public SecurityConfig(UserDetailsService userDetailsService) {
+    public SecurityConfig(UserDetailsService userDetailsService,
+                          @Qualifier("appAuthenticationEntryPoint") AuthenticationEntryPoint delegatedEntryPoint,
+                          @Qualifier("jwtTokenAuthenticationFilter") GenericFilterBean jwtTokenAuthenticationFilter) {
         this.userDetailsService = userDetailsService;
+        this.delegatedEntryPoint = delegatedEntryPoint;
+        this.jwtTokenAuthenticationFilter = jwtTokenAuthenticationFilter;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+                .exceptionHandling().authenticationEntryPoint(delegatedEntryPoint)
+                .and()
+                .addFilterBefore(jwtTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers(HttpMethod.POST, "/login","/create").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/get","/get-email").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement()

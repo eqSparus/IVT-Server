@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.dao.authenticaiton.AuthenticationDto;
 import ru.example.ivtserver.entities.dao.authenticaiton.UserRequestDto;
 import ru.example.ivtserver.repositories.UserRepository;
-import ru.example.ivtserver.security.token.TokenCollector;
+import ru.example.ivtserver.security.token.TokenProvider;
 import ru.example.ivtserver.services.authenticaiton.UserService;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -21,16 +22,19 @@ import ru.example.ivtserver.services.authenticaiton.UserService;
 public class CouchUserService implements UserService {
 
     UserRepository userRepository;
-    TokenCollector tokenCollector;
+    TokenProvider tokenAccessProvider;
+    TokenProvider tokenRefreshProvider;
     AuthenticationManager authenticationManager;
 
 
     @Autowired
     public CouchUserService(UserRepository userRepository,
-                            TokenCollector tokenCollector,
+                            @Qualifier("jwtAccessTokenProvider") TokenProvider tokenAccessProvider,
+                            @Qualifier("jwtRefreshTokenProvider") TokenProvider tokenRefreshProvider,
                             AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
-        this.tokenCollector = tokenCollector;
+        this.tokenAccessProvider = tokenAccessProvider;
+        this.tokenRefreshProvider = tokenRefreshProvider;
         this.authenticationManager = authenticationManager;
     }
 
@@ -46,11 +50,15 @@ public class CouchUserService implements UserService {
                     .orElseThrow(IllegalArgumentException::new);
 
 
-            var token = tokenCollector.generateToken(user.getEmail());
+            var token = tokenAccessProvider.generateToken(user.getEmail());
+            var refreshToken = tokenRefreshProvider.generateToken(user.getEmail());
+
+            user.getRefreshTokens().add(refreshToken);
+            userRepository.save(user);
 
             return AuthenticationDto.builder()
-                    .authorization(token)
-                    .refreshToken(token)
+                    .accessToken(token)
+                    .refreshToken(refreshToken)
                     .build();
 
         } catch (BadCredentialsException e) {
