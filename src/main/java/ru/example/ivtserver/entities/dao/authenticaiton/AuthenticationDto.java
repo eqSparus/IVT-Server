@@ -7,21 +7,21 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
 @Builder
 public class AuthenticationDto {
 
-    @JsonProperty("Authorization")
-    String authorization;
+    @JsonProperty
+    String accessToken;
 
-    @JsonProperty("RefreshToken")
+    @JsonProperty
     String refreshToken;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @Builder.Default
-    ZonedDateTime timestamp = ZonedDateTime.now();
+    LocalDateTime timestamp = LocalDateTime.now();
 
 }

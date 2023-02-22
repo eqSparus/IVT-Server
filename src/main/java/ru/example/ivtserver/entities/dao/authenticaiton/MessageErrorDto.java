@@ -1,6 +1,6 @@
 package ru.example.ivtserver.entities.dao.authenticaiton;
 
-import com.couchbase.client.core.deps.com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
 @Builder
-public class MessageDto {
+public class MessageErrorDto {
 
     int status;
 
@@ -19,7 +19,7 @@ public class MessageDto {
 
     String path;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     @Builder.Default
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     LocalDateTime timestamp = LocalDateTime.now();
 }
