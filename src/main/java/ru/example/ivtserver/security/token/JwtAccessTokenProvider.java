@@ -3,6 +3,7 @@ package ru.example.ivtserver.security.token;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
@@ -18,11 +19,13 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
 @Log4j2
-public class JwtTokenCollector implements TokenCollector {
+public class JwtTokenProvider implements AccessTokenProvider {
 
     @Value("${security.token.jwt.valid-time-second}")
     Long tokenValidTime;
@@ -35,7 +38,7 @@ public class JwtTokenCollector implements TokenCollector {
 
     final SecretKey key;
 
-    public JwtTokenCollector(Environment env) {
+    public JwtTokenProvider(Environment env) {
         this.key = Keys.hmacShaKeyFor(env.getRequiredProperty("security.token.jwt.access")
                 .getBytes(StandardCharsets.UTF_8));
     }
@@ -54,7 +57,7 @@ public class JwtTokenCollector implements TokenCollector {
         var timeStop = now.plusSeconds(time)
                 .atZone(ZoneId.systemDefault()).toInstant();
 
-        return prefixBearer + Jwts.builder()
+        return Jwts.builder()
                 .setSubject(email)
                 .setExpiration(Date.from(timeStop))
                 .signWith(key)
@@ -63,15 +66,13 @@ public class JwtTokenCollector implements TokenCollector {
 
     @NonNull
     @Override
-    public String getToken(@NonNull HttpServletRequest request) {
+    public Optional<String> getToken(@NonNull HttpServletRequest request) {
         var header = request.getHeader(tokenHeader);
-        return getToken(header);
-    }
 
-    @NonNull
-    @Override
-    public String getToken(@NonNull String token) {
-        return token.replace(prefixBearer, "");
+        if (Objects.nonNull(header) && header.startsWith(prefixBearer)) {
+            return Optional.of(header.substring(prefixBearer.length()));
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -82,12 +83,14 @@ public class JwtTokenCollector implements TokenCollector {
 
         try {
             return !parser
-                    .parseClaimsJwt(token)
+                    .parseClaimsJws(token)
                     .getBody()
                     .getExpiration()
                     .before(new Date());
         } catch (ExpiredJwtException e) {
             log.error("Время жизни токена истекло", e);
+        } catch (MalformedJwtException e) {
+            log.error("Неправильный формат токена", e);
         }
 
         return false;
@@ -99,7 +102,7 @@ public class JwtTokenCollector implements TokenCollector {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
     }
