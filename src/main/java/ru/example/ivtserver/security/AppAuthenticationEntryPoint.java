@@ -1,25 +1,46 @@
 package ru.example.ivtserver.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
+import ru.example.ivtserver.entities.dao.authenticaiton.MessageErrorDto;
 
 import java.io.IOException;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Component
 @Log4j2
-public class DelegatedAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class AppAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+    ObjectMapper objectMapper;
+
+    @Autowired
+    public AppAuthenticationEntryPoint(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
-        response.sendError(401, authException.toString());
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(401);
+
+        var bodyResponse = MessageErrorDto.builder()
+                .status(401)
+                .message("Для доступа требуется аутентификация")
+                .path(request.getContextPath() + request.getServletPath())
+                .build();
+
+        objectMapper.writeValue(response.getOutputStream(), bodyResponse);
     }
 }
