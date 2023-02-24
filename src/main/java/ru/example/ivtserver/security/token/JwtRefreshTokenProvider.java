@@ -12,26 +12,18 @@ import java.util.Optional;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
-public class JwtRefreshTokenProvider extends JwtTokenProvider{
-
-    @Value("${security.token.jwt.valid-time-refresh-second}")
-    Long tokenValidTime;
+public class JwtRefreshTokenProvider extends JwtReusableTokenProvider {
 
     @Value("${security.token.jwt.header-refresh-token}")
     String tokenHeader;
 
     public JwtRefreshTokenProvider(Environment env) {
-        super(env.getRequiredProperty("security.token.jwt.refresh"));
-    }
-
-    @NonNull
-    @Override
-    public String generateToken(@NonNull String email) {
-        return generateToken(email, tokenValidTime);
+        super(env.getRequiredProperty("security.token.jwt.refresh"),
+                env.getRequiredProperty("security.token.jwt.valid-time-refresh-second", Long.class));
     }
 
     @Override
-    public Optional<String> getToken(HttpServletRequest request) {
+    public Optional<String> getToken(@NonNull HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(tokenHeader));
     }
 

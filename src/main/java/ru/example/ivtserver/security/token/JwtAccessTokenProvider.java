@@ -13,10 +13,7 @@ import java.util.Optional;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
-public class JwtAccessTokenProvider extends JwtTokenProvider{
-
-    @Value("${security.token.jwt.valid-time-second}")
-    Long tokenValidTime;
+public class JwtAccessTokenProvider extends JwtReusableTokenProvider {
 
     @Value("${security.token.jwt.bearer}")
     String prefixBearer;
@@ -25,16 +22,10 @@ public class JwtAccessTokenProvider extends JwtTokenProvider{
     String tokenHeader;
 
     public JwtAccessTokenProvider(Environment env) {
-        super(env.getRequiredProperty("security.token.jwt.access"));
+        super(env.getRequiredProperty("security.token.jwt.access"),
+                env.getRequiredProperty("security.token.jwt.valid-time-access-second", Long.class));
     }
 
-    @NonNull
-    @Override
-    public String generateToken(@NonNull String email) {
-        return generateToken(email, tokenValidTime);
-    }
-
-    @NonNull
     @Override
     public Optional<String> getToken(@NonNull HttpServletRequest request) {
         var header = request.getHeader(tokenHeader);
@@ -43,5 +34,4 @@ public class JwtAccessTokenProvider extends JwtTokenProvider{
         }
         return Optional.empty();
     }
-
 }
