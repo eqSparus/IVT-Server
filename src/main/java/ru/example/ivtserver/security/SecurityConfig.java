@@ -23,7 +23,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
 import java.util.List;
 
@@ -34,12 +36,12 @@ public class SecurityConfig {
 
     UserDetailsService userDetailsService;
     AuthenticationEntryPoint delegatedEntryPoint;
-    GenericFilterBean jwtTokenAuthenticationFilter;
+    OncePerRequestFilter jwtTokenAuthenticationFilter;
 
     @Autowired
     public SecurityConfig(UserDetailsService userDetailsService,
                           @Qualifier("appAuthenticationEntryPoint") AuthenticationEntryPoint delegatedEntryPoint,
-                          @Qualifier("jwtTokenAuthenticationFilter") GenericFilterBean jwtTokenAuthenticationFilter) {
+                          @Qualifier("jwtTokenAuthenticationFilter") OncePerRequestFilter jwtTokenAuthenticationFilter) {
         this.userDetailsService = userDetailsService;
         this.delegatedEntryPoint = delegatedEntryPoint;
         this.jwtTokenAuthenticationFilter = jwtTokenAuthenticationFilter;
@@ -54,7 +56,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login", "/refresh").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement()
@@ -65,6 +67,11 @@ public class SecurityConfig {
         http.csrf().disable().httpBasic().disable();
 
         return http.build();
+    }
+
+    @Bean
+    public HandlerExceptionResolver handlerExceptionResolver() {
+        return new ExceptionHandlerExceptionResolver();
     }
 
     @Bean
@@ -97,5 +104,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

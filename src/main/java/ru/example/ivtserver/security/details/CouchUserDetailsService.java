@@ -24,7 +24,7 @@ public class CouchUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(@NonNull String email) throws UsernameNotFoundException {
         var user = userRepository.findByEmail(email)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new UsernameNotFoundException("Такого пользователя не существует"));
 
         return CouchUserDetails.of(user);
     }

@@ -1,60 +1,98 @@
 package ru.example.ivtserver.security.filters;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.GenericFilterBean;
-import ru.example.ivtserver.security.token.TokenProvider;
+import org.springframework.web.filter.OncePerRequestFilter;
+import ru.example.ivtserver.entities.dao.auth.MessageErrorDto;
+import ru.example.ivtserver.security.token.JwtReusableTokenProvider;
 
 import java.io.IOException;
+import java.util.List;
+
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Component
 @Log4j2
-public class JwtTokenAuthenticationFilter extends GenericFilterBean {
+@Component
+public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
-    TokenProvider tokenProvider;
+    static List<String> endPoints = List.of("/login", "/refresh");
+
+    JwtReusableTokenProvider tokenProvider;
     UserDetailsService userDetailsService;
+    ObjectMapper mapper;
 
     @Autowired
-    public JwtTokenAuthenticationFilter(@Qualifier("jwtAccessTokenProvider") TokenProvider tokenProvider,
-                                        UserDetailsService userDetailsService) {
+    public JwtTokenAuthenticationFilter(@Qualifier("jwtAccessTokenProvider") JwtReusableTokenProvider tokenProvider,
+                                        UserDetailsService userDetailsService,
+                                        ObjectMapper mapper) {
         this.tokenProvider = tokenProvider;
         this.userDetailsService = userDetailsService;
+        this.mapper = mapper;
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
-                         FilterChain chain) throws IOException, ServletException {
-
-        var request = (HttpServletRequest) servletRequest;
-
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain chain) throws IOException, ServletException {
         var token = tokenProvider.getToken(request);
 
-        token.ifPresent(t -> {
-            log.info("Токен пользователя {}", t);
+        if (token.isPresent()) {
 
-            if (tokenProvider.isValidToken(t)) {
-                var user = userDetailsService
-                        .loadUserByUsername(tokenProvider.getEmailFromToken(t));
+            log.info("Токен пользователя {}", token);
 
-                log.info("Пользователь {}", user);
+            var claim = tokenProvider.getBody(token.get());
+
+            if (claim.isPresent()) {
+                var user = userDetailsService.loadUserByUsername(claim.get().getSubject());
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Пользователь {}", user.getUsername());
+                }
+
                 SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
                         user.getUsername(), user.getPassword(), user.getAuthorities()));
+                chain.doFilter(request, response);
+            } else {
+                sendError(request, response);
             }
-        });
-        chain.doFilter(servletRequest, servletResponse);
+        } else {
+            sendError(request, response);
+        }
+    }
 
+    private void sendError(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(401);
+
+        var messageBody = MessageErrorDto.builder()
+                .message("Неверный формат токена")
+                .status(401)
+                .path(request.getContextPath() + request.getServletPath())
+                .build();
+
+        mapper.writeValue(response.getOutputStream(), messageBody);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        for (var endPoint : endPoints) {
+            if (endPoint.equals(request.getServletPath())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
