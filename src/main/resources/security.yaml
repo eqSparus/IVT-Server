@@ -3,9 +3,10 @@ security:
     jwt:
       access: There_should_be_a_super_secret_word_here_for_the_access_token,_but_I_can't_think_of_one.
       refresh: There_should_be_a_super_secret_word_here_for_the_refresh_token,_but_I_can't_think_of_it.
-      valid-time-second: 3600
-      valid-time-refresh-second: 2678400
-      valid-time-reset-password-second: 3600
+      disposable: There_should_be_a_super_secret_word_here_for_the_one_time_token_token,_but_I_can't_think_it.
+      valid-time-access-second: 1800
+      valid-time-refresh-second: 1800
+      valid-time-disposable-second: 3600
       header-access-token: Authorization
       header-refresh-token: RefreshToken
       bearer: Bearer_
