@@ -1,92 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="false">
 
-
-    <appender name="console_error"
+    <appender name="console-out-error"
               class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
-                %red(%d{HH:mm:ss.SSS}[thread] %-5level) %yellow(%logger{46} - ) %magenta(%msg%n)
+                %blue(%d{HH:mm:ss.SSS}) %red([thread] %-5level %logger{64} - %msg%n)
             </pattern>
         </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>DENY</onMatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+        </filter>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>INFO</level>
             <onMatch>DENY</onMatch>
-            <onMismatch>ACCEPT</onMismatch>
         </filter>
     </appender>
 
-    <appender name="console_info" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>
-                %green([%thread] %-5level) %blue(%logger{64}) %cyan(%msg%n)
-            </pattern>
-        </encoder>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>ERROR</level>
-            <onMatch>DENY</onMatch>
-            <onMismatch>ACCEPT</onMismatch>
-        </filter>
-    </appender>
-
-    <appender name="console_debug"
+    <appender name="console-out-debug"
               class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
-                %yellow(%d{HH:mm:ss.SSS}) %green([thread] %-5level) %blue(%logger{64}) - %cyan(%msg%n)
+                %blue([%thread] %-5level) %green(%logger{64}) %cyan(%msg%n)
             </pattern>
         </encoder>
-    </appender>
-
-    <appender name="file_error"
-              class="ch.qos.logback.core.FileAppender">
-        <file>src/main/resources/log/logback_error.log</file>
-        <encoder>
-            <pattern>
-                %d{HH:mm:ss.SSS}[thread] %-5level %logger{46} - %msg%n
-            </pattern>
-        </encoder>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>DENY</onMatch>
         </filter>
     </appender>
 
-    <appender name="file_debug"
-              class="ch.qos.logback.core.FileAppender">
-        <file>src/main/resources/log/logback.log</file>
+    <appender name="console-out-info"
+              class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
-                %d{HH:mm:ss.SSS} [thread] %-5level %logger{64} - %msg%n
+                %blue(%d{HH:mm:ss.SSS}) %yellow([thread] %-5level) %green(%logger{64}) - %cyan(%msg%n)
             </pattern>
         </encoder>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>DEBUG</level>
+            <onMatch>DENY</onMatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
         </filter>
     </appender>
 
 
     <logger name="ru.example.ivtserver" level="debug" additivity="false">
-        <appender-ref ref="console_info"/>
+        <appender-ref ref="console-out-error"/>
+        <appender-ref ref="console-out-debug"/>
+        <appender-ref ref="console-out-info"/>
     </logger>
 
-<!--    <logger name="org.springframework.data" level="trace" additivity="false">-->
-<!--        <appender-ref ref="console_info"/>-->
-<!--        <appender-ref ref="console_debug"/>-->
-<!--        <appender-ref ref="console_error"/>-->
-<!--    </logger>-->
-
-
-    <!--    <logger name="org.springframework.security" level="debug" additivity="false">-->
-    <!--        <appender-ref ref="console_debug"/>-->
-    <!--    </logger>-->
-
-    <!--    <logger name="org.springframework.security.web.FilterChainProxy" level="debug" additivity="false">-->
-    <!--        <appender-ref ref="console_debug"/>-->
-    <!--    </logger>-->
-
-    <root level="WARN">
-        <appender-ref ref="console_error"/>
-        <appender-ref ref="console_debug"/>
-        <appender-ref ref="file_error"/>
+    <root level="ERROR">
+        <appender-ref ref="console-out-info"/>
     </root>
 </configuration>
