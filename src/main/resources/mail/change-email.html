@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Изменение электронной почты</title>
+</head>
+<body>
+
+<div>
+    <p>Уважаемый пользователь!</p>
+
+    <p>Вы воспользовались процедурой смены адреса электронной почты
+        <a href="http://localhost:8080/">ИВТ</a>
+    </p>
+
+    <p>Для активации новой почты перейдите по указанной ссылке:</p>
+
+    <a th:href="@{http://localhost:8080/activatemail/{token} (token=${token})}"
+       th:text="'http://localhost:8080/activatemail/' + ${token}"></a>
+
+    <p>Ссылка действует в течение часа с момента отправки данного письма</p>
+
+    <p>
+        С уважением,<br>
+        Администрация сайта
+    </p>
+</div>
+
+</body>
+</html>

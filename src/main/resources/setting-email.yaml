@@ -1,0 +1,14 @@
+spring:
+  mail:
+    username:
+    password:
+    port: 587
+    host: smtp.mail.ru
+    test-connection: false
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
