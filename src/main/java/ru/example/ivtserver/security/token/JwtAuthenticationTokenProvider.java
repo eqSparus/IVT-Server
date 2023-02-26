@@ -8,9 +8,9 @@ import org.springframework.lang.NonNull;
 import java.util.Optional;
 
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-public abstract class JwtReusableTokenProvider extends JwtTokenProvider {
+public abstract class JwtAuthenticationTokenProvider extends JwtTokenProvider {
 
-    protected JwtReusableTokenProvider(String secretValue, Long lifeTime) {
+    protected JwtAuthenticationTokenProvider(String secretValue, Long lifeTime) {
         super(secretValue, lifeTime);
     }
 

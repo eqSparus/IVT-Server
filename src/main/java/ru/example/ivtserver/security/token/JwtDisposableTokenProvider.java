@@ -2,14 +2,16 @@ package ru.example.ivtserver.security.token;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import org.springframework.lang.NonNull;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
 
-@FieldDefaults(level = AccessLevel.PROTECTED,makeFinal = true)
-public abstract class JwtDisposableTokenProvider extends JwtTokenProvider {
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Service
+public class JwtDisposableTokenProvider extends JwtTokenProvider {
 
-    protected JwtDisposableTokenProvider(String secretValue, Long lifeTime) {
-        super(secretValue, lifeTime);
+    public JwtDisposableTokenProvider(Environment env) {
+        super(env.getRequiredProperty("security.token.jwt.disposable"),
+                env.getRequiredProperty("security.token.jwt.valid-time-disposable-second", Long.class));
     }
 
-    public abstract boolean isTokenNotUsed(@NonNull String token);
 }

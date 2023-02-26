@@ -66,12 +66,17 @@ public class JwtTokenProvider implements TokenProvider {
     }
 
     @Override
-    public boolean isValidToken(@NonNull String token) throws JwtException {
-        return !parser
-                .parseClaimsJws(token)
-                .getBody()
-                .getExpiration()
-                .before(new Date());
+    public boolean isValidToken(@NonNull String token) {
+        try {
+            return !parser
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getExpiration()
+                    .before(new Date());
+        } catch (JwtException e) {
+            log.error("Неверный токен {}", token);
+        }
+        return false;
     }
 
     @Override

@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
-public class JwtAccessTokenProvider extends JwtReusableTokenProvider {
+public class JwtAccessTokenProvider extends JwtAuthenticationTokenProvider {
 
     @Value("${security.token.jwt.bearer}")
     String prefixBearer;

@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
-public class JwtRefreshTokenProvider extends JwtReusableTokenProvider {
+public class JwtRefreshTokenProvider extends JwtAuthenticationTokenProvider {
 
     @Value("${security.token.jwt.header-refresh-token}")
     String tokenHeader;
