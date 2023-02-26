@@ -4,7 +4,7 @@ spring:
     lazy-initialization: false
     banner-mode: console
   config:
-    import: security.yaml,database.yaml
+    import: security.yaml,database.yaml,setting-email.yaml
 
 server:
   port: 8080
