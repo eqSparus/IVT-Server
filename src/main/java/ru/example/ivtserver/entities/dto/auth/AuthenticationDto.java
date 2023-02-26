@@ -1,4 +1,4 @@
-package ru.example.ivtserver.entities.dao.auth;
+package ru.example.ivtserver.entities.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
