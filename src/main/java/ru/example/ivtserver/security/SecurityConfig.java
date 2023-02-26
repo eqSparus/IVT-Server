@@ -24,8 +24,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
 import java.util.List;
 
@@ -56,7 +54,8 @@ public class SecurityConfig {
                 .addFilterBefore(jwtTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers(HttpMethod.POST, "/login", "/refresh").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login", "/refresh", "/reset/pass",
+                                "/reset/pass/*", "/change/email/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement()
@@ -67,11 +66,6 @@ public class SecurityConfig {
         http.csrf().disable().httpBasic().disable();
 
         return http.build();
-    }
-
-    @Bean
-    public HandlerExceptionResolver handlerExceptionResolver() {
-        return new ExceptionHandlerExceptionResolver();
     }
 
     @Bean
