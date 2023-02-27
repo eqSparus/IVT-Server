@@ -5,6 +5,7 @@ build/
 !**/src/test/**/build/
 /src/main/resources/log
 /src/main/resources/database.txt
+/src/main/resources/database.json
 
 
 ### STS ###
