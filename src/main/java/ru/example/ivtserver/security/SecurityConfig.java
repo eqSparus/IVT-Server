@@ -56,6 +56,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers(HttpMethod.POST, "/login", "/refresh", "/reset/pass",
                                 "/reset/pass/*", "/change/email/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/data").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement()
