@@ -2,25 +2,24 @@ package ru.example.ivtserver.security.token;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
-import org.springframework.lang.NonNull;
 
 import java.util.Optional;
 
 public interface TokenProvider {
 
-    @NonNull
-    String generateToken(@NonNull String subject);
 
-    @NonNull
-    String generateToken(@NonNull String subject, @NonNull Long time);
+    String generateToken(String subject);
 
-    @NonNull
-    String generateToken(@NonNull Claims claims);
 
-    @NonNull
-    String generateToken(@NonNull Claims claims, @NonNull Long time);
+    String generateToken(String subject, Long time);
 
-    boolean isValidToken(@NonNull String token) throws JwtException;
 
-    Optional<Claims> getBody(@NonNull String token) throws JwtException;
+    String generateToken(Claims claims);
+
+
+    String generateToken(Claims claims, Long time);
+
+    boolean isValidToken(String token) throws JwtException;
+
+    Optional<Claims> getBody(String token) throws JwtException;
 }

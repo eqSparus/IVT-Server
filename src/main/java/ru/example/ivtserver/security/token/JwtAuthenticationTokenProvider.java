@@ -3,7 +3,6 @@ package ru.example.ivtserver.security.token;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import org.springframework.lang.NonNull;
 
 import java.util.Optional;
 
@@ -14,5 +13,5 @@ public abstract class JwtAuthenticationTokenProvider extends JwtTokenProvider {
         super(secretValue, lifeTime);
     }
 
-    public abstract Optional<String> getToken(@NonNull HttpServletRequest request);
+    public abstract Optional<String> getToken(HttpServletRequest request);
 }

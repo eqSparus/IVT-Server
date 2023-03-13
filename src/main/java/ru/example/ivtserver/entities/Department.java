@@ -49,7 +49,7 @@ public class Department implements Serializable {
 
     @JsonIgnore
     @Version
-    long version;
+    private long version;
 
     @JsonIgnore
     @CreatedBy

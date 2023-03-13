@@ -43,7 +43,7 @@ public class AboutDepartment implements Serializable {
 
     @JsonIgnore
     @Version
-    long version;
+    private long version;
 
     @JsonIgnore
     @CreatedBy

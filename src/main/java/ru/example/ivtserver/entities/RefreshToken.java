@@ -1,13 +1,12 @@
 package ru.example.ivtserver.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.couchbase.core.mapping.Document;
 import org.springframework.data.couchbase.core.mapping.Field;
@@ -20,32 +19,26 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Builder
 @Data
-@Document
-@Collection("site-content")
-public class SiteLink implements Serializable {
+@AllArgsConstructor
+@Builder
+@Document(expiryExpression = "${security.token.jwt.valid-time-refresh-second}")
+@Collection("user-records")
+public class RefreshToken implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationStrategy.UNIQUE)
     UUID id;
 
-    @Field(name = "href")
-    String href;
+    @Field(name = "token")
+    String token;
 
-    @Field(name = "icon")
-    String icon;
+    @Field(name = "userId")
+    UUID userId;
 
-    @JsonIgnore
     @Version
-    private long version;
+    long version;
 
-    @JsonIgnore
     @CreatedBy
     ZonedDateTime createAt;
-
-    @JsonIgnore
-    @LastModifiedBy
-    ZonedDateTime updateAt;
-
 }

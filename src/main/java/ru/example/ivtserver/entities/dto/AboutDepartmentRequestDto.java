@@ -2,6 +2,7 @@ package ru.example.ivtserver.entities.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
@@ -10,8 +11,10 @@ import lombok.experimental.FieldDefaults;
 @Value
 public class AboutDepartmentRequestDto {
 
+    @NotBlank(message = "Заголовок не должен состоять из пробелов")
     String title;
 
+    @NotBlank(message = "Описания не должен состоять из пробелов")
     String description;
 
     @JsonCreator

@@ -16,6 +16,7 @@ import org.springframework.data.couchbase.core.mapping.id.GeneratedValue;
 import org.springframework.data.couchbase.core.mapping.id.GenerationStrategy;
 import org.springframework.data.couchbase.repository.Collection;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -25,7 +26,7 @@ import java.util.UUID;
 @Builder
 @Document
 @Collection("site-content")
-public class Direction {
+public class Direction implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationStrategy.UNIQUE)
@@ -41,11 +42,11 @@ public class Direction {
     String form;
 
     @Field(name = "duration")
-    String duration;
+    int duration;
 
     @JsonIgnore
     @Version
-    long version;
+    private long version;
 
     @JsonIgnore
     @CreatedBy

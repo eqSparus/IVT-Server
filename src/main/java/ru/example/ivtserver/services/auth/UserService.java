@@ -1,29 +1,20 @@
 package ru.example.ivtserver.services.auth;
 
-import org.springframework.lang.NonNull;
-import ru.example.ivtserver.entities.dto.auth.*;
-import ru.example.ivtserver.exceptions.auth.*;
+import ru.example.ivtserver.entities.dto.auth.AuthenticationDto;
+import ru.example.ivtserver.entities.dto.auth.RefreshTokenRequestDto;
+import ru.example.ivtserver.entities.dto.auth.UserRequestDto;
+import ru.example.ivtserver.exceptions.auth.IncorrectCredentialsException;
+import ru.example.ivtserver.exceptions.auth.InvalidRefreshTokenException;
+import ru.example.ivtserver.exceptions.auth.NoUserWithRefreshTokenException;
+import ru.example.ivtserver.exceptions.auth.NotExistsRefreshTokenException;
 
 public interface UserService {
 
-    @NonNull
-    AuthenticationDto login(@NonNull UserRequestDto userDao) throws IncorrectCredentialsException;
+    AuthenticationDto login(UserRequestDto userDao) throws IncorrectCredentialsException;
 
-    @NonNull
-    AuthenticationDto refreshToken(@NonNull RefreshTokenDto refreshDto)
+    AuthenticationDto refreshToken(RefreshTokenRequestDto refreshDto)
             throws InvalidRefreshTokenException, NotExistsRefreshTokenException, NoUserWithRefreshTokenException;
 
-    void logout(@NonNull RefreshTokenDto dto) throws InvalidRefreshTokenException;
-
-    void sendRecoverPassEmail(@NonNull String email) throws NoUserException;
-
-    void recoverPassword(@NonNull String token, @NonNull String newPassword)
-            throws InvalidDisposableToken, NoUserException;
-
-    void sendChangeEmail(@NonNull ChangeEmailDto dto, @NonNull String email) throws NoUserException;
-
-    void changeEmail(@NonNull String token) throws InvalidDisposableToken, NoUserException;
-
-    void changePassword(@NonNull ChangePasswordDto dto, @NonNull String email) throws NoUserException;
+    void logout(RefreshTokenRequestDto dto) throws InvalidRefreshTokenException;
 
 }

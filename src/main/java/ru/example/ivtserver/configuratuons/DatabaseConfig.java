@@ -58,12 +58,13 @@ public class DatabaseConfig extends AbstractCouchbaseConfiguration {
         return true;
     }
 
+
     @Bean
-    public AuditorAware<ZonedDateTime> auditorAware(){
+    public AuditorAware<ZonedDateTime> auditorAware() {
         return new ZoneDateTimeAuditorAware();
     }
 
-    private static class ZoneDateTimeAuditorAware implements AuditorAware<ZonedDateTime>{
+    private static class ZoneDateTimeAuditorAware implements AuditorAware<ZonedDateTime> {
 
         @Override
         public Optional<ZonedDateTime> getCurrentAuditor() {

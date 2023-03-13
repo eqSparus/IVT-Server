@@ -1,18 +1,20 @@
 package ru.example.ivtserver.email;
 
-import org.springframework.lang.NonNull;
+import org.springframework.core.io.Resource;
 import org.thymeleaf.context.Context;
 
+import java.util.Map;
 import java.util.function.UnaryOperator;
 
 public interface EmailProvider {
 
-    void sendEmail(@NonNull String toAddress, @NonNull String title, @NonNull String mail);
+    void sendEmail(String toAddress, String title, String message);
 
-    @NonNull
-    String getMailHtml(@NonNull String title, @NonNull UnaryOperator<Context> variable);
+    void sendEmail(String toAddress, String title, String message, Map<String, Resource> resources);
 
-    @NonNull
-    String getMailHtml(@NonNull String title);
+
+    String getMailHtml(String name, UnaryOperator<Context> variable);
+
+    String getMailHtml(String name);
 
 }

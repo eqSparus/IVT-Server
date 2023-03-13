@@ -2,8 +2,8 @@ package ru.example.ivtserver.services.couch;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.AboutDepartment;
 import ru.example.ivtserver.entities.dto.AboutDepartmentRequestDto;
@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Log4j2
 @Service
 public class CouchAboutDepartmentService implements AboutDepartmentService {
 
@@ -24,18 +25,21 @@ public class CouchAboutDepartmentService implements AboutDepartmentService {
         this.aboutDepartmentRepository = aboutDepartmentRepository;
     }
 
-    @NonNull
-    @Override
-    public AboutDepartment updateAbout(@NonNull AboutDepartmentRequestDto dto, @NonNull UUID id) {
 
+    @Override
+    public AboutDepartment updateAbout(AboutDepartmentRequestDto dto, UUID id) {
         var aboutInfo = aboutDepartmentRepository.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
 
+        log.debug("Идентификатор элемента информации {}", id);
+        log.debug("Старая информации о кафедре {}", aboutInfo);
+
         aboutInfo.setTitle(dto.getTitle());
         aboutInfo.setDescription(dto.getDescription());
-        aboutDepartmentRepository.save(aboutInfo);
 
-        return aboutInfo;
+        log.debug("Новая информации о кафедре {}", aboutInfo);
+
+        return aboutDepartmentRepository.save(aboutInfo);
     }
 
     @Override

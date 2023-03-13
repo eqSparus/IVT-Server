@@ -18,8 +18,6 @@ import org.springframework.data.couchbase.repository.Collection;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -43,10 +41,6 @@ public class User implements Serializable {
 
     @Field(name = "role")
     UserRole role;
-
-    @Field(name = "refreshTokens")
-    @Builder.Default
-    List<String> refreshTokens = new ArrayList<>();
 
     @Version
     long version;

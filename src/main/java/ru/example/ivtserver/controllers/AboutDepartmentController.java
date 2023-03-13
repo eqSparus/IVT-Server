@@ -1,6 +1,7 @@
 package ru.example.ivtserver.controllers;
 
 
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import ru.example.ivtserver.services.AboutDepartmentService;
 
 import java.util.UUID;
 
+@CrossOrigin(origins = "http://localhost:8081")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
 @RequestMapping(path = "/about")
@@ -28,7 +30,7 @@ public class AboutDepartmentController {
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE, params = {"id"})
     public AboutDepartment update(
-            @RequestBody AboutDepartmentRequestDto dto,
+            @RequestBody @Valid AboutDepartmentRequestDto dto,
             @RequestParam(name = "id") UUID id
     ) {
         return aboutDepartmentService.updateAbout(dto, id);

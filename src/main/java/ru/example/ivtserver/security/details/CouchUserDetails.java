@@ -2,7 +2,6 @@ package ru.example.ivtserver.security.details;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,11 +14,11 @@ import java.util.Collections;
 public class CouchUserDetails implements UserDetails {
     User user;
 
-    public CouchUserDetails(@NonNull User user) {
+    public CouchUserDetails(User user) {
         this.user = user;
     }
 
-    public static CouchUserDetails of(@NonNull User user) {
+    public static CouchUserDetails of(User user) {
         return new CouchUserDetails(user);
     }
 

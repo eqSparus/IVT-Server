@@ -35,7 +35,7 @@ public class SiteContentDto {
 
         Department mainInfo;
 
-        List<SiteLink> siteLinks;
+        List<SiteLink> links;
 
     }
 

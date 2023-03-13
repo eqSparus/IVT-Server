@@ -2,8 +2,8 @@ package ru.example.ivtserver.services.couch;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.SiteLink;
 import ru.example.ivtserver.entities.dto.SiteLinkRequestDto;
@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Log4j2
 @Service
 public class CouchSiteLinkService implements SiteLinkService {
 
@@ -24,42 +25,48 @@ public class CouchSiteLinkService implements SiteLinkService {
         this.siteLinkRepository = siteLinkRepository;
     }
 
-    @NonNull
+
     @Override
-    public SiteLink createLink(@NonNull SiteLinkRequestDto dto) {
+    public SiteLink createLink(SiteLinkRequestDto dto) {
 
         var siteLink = SiteLink.builder()
                 .href(dto.getHref())
                 .icon(dto.getIcon())
                 .build();
-        siteLinkRepository.save(siteLink);
 
-        return siteLink;
+        log.info("Новая ссылка {}", siteLink);
+
+        return siteLinkRepository.save(siteLink);
     }
 
-    @NonNull
+
     @Override
-    public SiteLink updateLink(@NonNull SiteLinkRequestDto dto, @NonNull UUID id) {
+    public SiteLink updateLink(SiteLinkRequestDto dto, UUID id) {
 
         var link = siteLinkRepository.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
 
+        log.debug("Идентификатор направления {}", id);
+        log.debug("Новая информация о ссылке {}", link);
+
         link.setHref(dto.getHref());
         link.setIcon(dto.getIcon());
-        siteLinkRepository.save(link);
 
-        return link;
+        log.debug("Старая информация о ссылке {}", link);
+
+        return siteLinkRepository.save(link);
     }
 
-    @NonNull
+
     @Override
     public List<SiteLink> getAllLink() {
         return siteLinkRepository.findAll();
     }
 
-    @NonNull
+
     @Override
-    public void deleteLink(@NonNull UUID id) {
+    public void deleteLink(UUID id) {
+        log.info("Удаление ссылки {}", id);
         siteLinkRepository.deleteById(id);
     }
 }

@@ -1,6 +1,8 @@
 package ru.example.ivtserver.entities.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
@@ -9,14 +11,20 @@ import lombok.experimental.FieldDefaults;
 @Value
 public class DepartmentRequestDto {
 
+    @NotBlank(message = "Заголовок не должен состоять из пробелов")
     String title;
 
+    @NotBlank(message = "Слоган не должен состоять из пробелов")
     String slogan;
 
+    @NotBlank(message = "Телефон не должен состоять из пробелов")
     String phone;
 
+    @NotBlank(message = "Почта не должна состоять из пробелов")
+    @Email(message = "Должен быть адресом электронной почты")
     String email;
 
+    @NotBlank(message = "Адрес не должен состоять из пробелов")
     String address;
 
 

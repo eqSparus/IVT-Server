@@ -1,7 +1,7 @@
 spring:
   mail:
-    username:
-    password:
+    username: ivt72@inbox.ru
+    password: e8pYXFGsLqhV6ih5rdm5
     port: 587
     host: smtp.mail.ru
     test-connection: false
@@ -12,3 +12,6 @@ spring:
           auth: true
           starttls:
             enable: true
+
+mail:
+  username: Администрация сайта ИВТ

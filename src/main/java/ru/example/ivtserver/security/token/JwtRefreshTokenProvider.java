@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -23,7 +22,7 @@ public class JwtRefreshTokenProvider extends JwtAuthenticationTokenProvider {
     }
 
     @Override
-    public Optional<String> getToken(@NonNull HttpServletRequest request) {
+    public Optional<String> getToken(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(tokenHeader));
     }
 

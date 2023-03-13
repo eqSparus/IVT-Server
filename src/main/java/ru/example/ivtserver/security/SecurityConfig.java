@@ -20,12 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Configuration
@@ -54,32 +49,18 @@ public class SecurityConfig {
                 .addFilterBefore(jwtTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers(HttpMethod.POST, "/login", "/refresh", "/reset/pass",
-                                "/reset/pass/*", "/change/email/*").permitAll()
+                        .requestMatchers("/login", "/refresh",
+                                "/recover/pass", "/change/email", "/images/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/data").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .cors().configurationSource(corsConfigurationSource());
+                .and().cors();
 
         http.csrf().disable().httpBasic().disable();
 
         return http.build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        var cordConfig = new CorsConfiguration();
-        var source = new UrlBasedCorsConfigurationSource();
-
-        cordConfig.setAllowedOrigins(List.of("https://"));
-        cordConfig.setAllowedMethods(List.of(HttpMethod.GET.name(), HttpMethod.POST.name(),
-                HttpMethod.DELETE.name(), HttpMethod.PUT.name(), HttpMethod.HEAD.name()));
-
-        source.registerCorsConfiguration("/**", cordConfig);
-        return source;
     }
 
     @Bean

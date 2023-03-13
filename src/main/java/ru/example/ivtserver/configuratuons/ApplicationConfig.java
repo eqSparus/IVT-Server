@@ -23,14 +23,14 @@ public class ApplicationConfig {
 
     @Bean
     @Primary
-    public ObjectMapper objectMapper(){
+    public ObjectMapper objectMapper() {
         var timeModule = new JavaTimeModule();
         return new ObjectMapper()
                 .registerModule(timeModule);
     }
 
     @Bean
-    public ITemplateEngine templateEngine(){
+    public ITemplateEngine templateEngine() {
         var templateEngine = new SpringTemplateEngine();
         templateEngine.addTemplateResolver(templateResolver());
         return templateEngine;
@@ -44,6 +44,7 @@ public class ApplicationConfig {
         resolver.setTemplateMode(TemplateMode.HTML);
         resolver.setCharacterEncoding(StandardCharsets.UTF_8.toString());
         resolver.setCacheable(false);
+        resolver.setOrder(0);
         return resolver;
     }
 

@@ -2,8 +2,8 @@ package ru.example.ivtserver.services.couch;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.Direction;
 import ru.example.ivtserver.entities.dto.DirectionRequestDto;
@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Log4j2
 @Service
 public class CouchDirectionService implements DirectionService {
 
@@ -24,9 +25,9 @@ public class CouchDirectionService implements DirectionService {
         this.directionRepository = directionRepository;
     }
 
-    @NonNull
+
     @Override
-    public Direction create(@NonNull DirectionRequestDto dto) {
+    public Direction create(DirectionRequestDto dto) {
 
         var direction = Direction.builder()
                 .title(dto.getTitle())
@@ -34,9 +35,11 @@ public class CouchDirectionService implements DirectionService {
                 .form(dto.getForm())
                 .duration(dto.getDuration())
                 .build();
-        directionRepository.save(direction);
 
-        return direction;
+        log.info("Новое направление {}", direction);
+
+
+        return directionRepository.save(direction);
     }
 
     @Override
@@ -44,25 +47,29 @@ public class CouchDirectionService implements DirectionService {
         return directionRepository.findAll();
     }
 
-    @NonNull
+
     @Override
-    public Direction update(@NonNull DirectionRequestDto dto, @NonNull UUID id) {
+    public Direction update(DirectionRequestDto dto, UUID id) {
 
         var direction = directionRepository.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
+
+        log.debug("Идентификатор направления {}", id);
+        log.debug("Старая информация о направлении {}", direction);
 
         direction.setTitle(dto.getTitle());
         direction.setDegree(dto.getDegree());
         direction.setForm(dto.getForm());
         direction.setDuration(dto.getDuration());
 
-        directionRepository.save(direction);
+        log.debug("Новая информация о направлении {}", direction);
 
-        return direction;
+        return directionRepository.save(direction);
     }
 
     @Override
-    public void delete(@NonNull UUID id) {
+    public void delete(UUID id) {
+        log.info("Удаление направления {}", id);
         directionRepository.deleteById(id);
     }
 }

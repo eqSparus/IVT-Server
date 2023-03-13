@@ -8,7 +8,6 @@ import io.jsonwebtoken.security.Keys;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.lang.NonNull;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -32,27 +31,27 @@ public class JwtTokenProvider implements TokenProvider {
         this.lifeTime = lifeTime;
     }
 
-    @NonNull
+
     @Override
-    public String generateToken(@NonNull String subject) {
+    public String generateToken(String subject) {
         return generateToken(Jwts.claims().setSubject(subject), lifeTime);
     }
 
-    @NonNull
+
     @Override
-    public String generateToken(@NonNull String subject, @NonNull Long time) {
+    public String generateToken(String subject, Long time) {
         return generateToken(Jwts.claims().setSubject(subject), time);
     }
 
-    @NonNull
+
     @Override
-    public String generateToken(@NonNull Claims claims) {
+    public String generateToken(Claims claims) {
         return generateToken(claims, lifeTime);
     }
 
-    @NonNull
+
     @Override
-    public String generateToken(@NonNull Claims claims, @NonNull Long time) {
+    public String generateToken(Claims claims, Long time) {
 
         var now = LocalDateTime.now();
         var timeStop = now.plusSeconds(time)
@@ -66,7 +65,7 @@ public class JwtTokenProvider implements TokenProvider {
     }
 
     @Override
-    public boolean isValidToken(@NonNull String token) {
+    public boolean isValidToken(String token) {
         try {
             return !parser
                     .parseClaimsJws(token)
@@ -80,7 +79,7 @@ public class JwtTokenProvider implements TokenProvider {
     }
 
     @Override
-    public Optional<Claims> getBody(@NonNull String token) {
+    public Optional<Claims> getBody(String token) {
         try {
             return Optional.of(parser.parseClaimsJws(token).getBody());
         } catch (JwtException e) {

@@ -1,7 +1,6 @@
 package ru.example.ivtserver.services;
 
 
-import org.springframework.lang.NonNull;
 import ru.example.ivtserver.entities.SiteLink;
 import ru.example.ivtserver.entities.dto.SiteLinkRequestDto;
 
@@ -10,15 +9,15 @@ import java.util.UUID;
 
 public interface SiteLinkService {
 
-    @NonNull
-    SiteLink createLink(@NonNull SiteLinkRequestDto dto);
 
-    @NonNull
-    SiteLink updateLink(@NonNull SiteLinkRequestDto dto, @NonNull UUID id);
+    SiteLink createLink(SiteLinkRequestDto dto);
 
-    @NonNull
+
+    SiteLink updateLink(SiteLinkRequestDto dto, UUID id);
+
+
     List<SiteLink> getAllLink();
 
-    void deleteLink(@NonNull UUID id);
+    void deleteLink(UUID id);
 
 }
