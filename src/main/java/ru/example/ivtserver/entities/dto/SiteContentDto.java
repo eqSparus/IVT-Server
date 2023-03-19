@@ -6,10 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
-import ru.example.ivtserver.entities.AboutDepartment;
-import ru.example.ivtserver.entities.Department;
-import ru.example.ivtserver.entities.Direction;
-import ru.example.ivtserver.entities.SiteLink;
+import ru.example.ivtserver.entities.*;
 
 import java.util.List;
 
@@ -27,6 +24,11 @@ public class SiteContentDto {
     @JsonProperty(value = "directions")
     List<Direction> direction;
 
+    @JsonProperty(value = "entrants")
+    List<Entrant> entrants;
+
+    @JsonProperty(value = "teachers")
+    List<Teacher> teachers;
 
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
     @AllArgsConstructor

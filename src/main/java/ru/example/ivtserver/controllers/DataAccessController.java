@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.example.ivtserver.entities.dto.SiteContentDto;
-import ru.example.ivtserver.services.AboutDepartmentService;
-import ru.example.ivtserver.services.DepartmentService;
-import ru.example.ivtserver.services.DirectionService;
-import ru.example.ivtserver.services.SiteLinkService;
+import ru.example.ivtserver.services.*;
 
 @CrossOrigin(origins = "http://localhost:8081")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -25,16 +22,22 @@ public class DataAccessController {
     DepartmentService departmentService;
     DirectionService directionService;
     SiteLinkService siteLinkService;
+    EntrantService entrantService;
+    TeacherService teacherService;
 
     @Autowired
     public DataAccessController(AboutDepartmentService aboutDepartmentService,
                                 DepartmentService departmentService,
                                 DirectionService directionService,
-                                SiteLinkService siteLinkService) {
+                                SiteLinkService siteLinkService,
+                                EntrantService entrantService,
+                                TeacherService teacherService) {
         this.aboutDepartmentService = aboutDepartmentService;
         this.departmentService = departmentService;
         this.directionService = directionService;
         this.siteLinkService = siteLinkService;
+        this.entrantService = entrantService;
+        this.teacherService = teacherService;
     }
 
 
@@ -45,11 +48,15 @@ public class DataAccessController {
         var siteLinks = siteLinkService.getAllLink();
         var aboutDepartment = aboutDepartmentService.getAll();
         var directions = directionService.getAll();
+        var entrants = entrantService.getAll();
+        var teachers = teacherService.getAllTeachers();
 
         return SiteContentDto.builder()
                 .department(new SiteContentDto.MainDepartment(department, siteLinks))
                 .aboutDepartment(aboutDepartment)
                 .direction(directions)
+                .entrants(entrants)
+                .teachers(teachers)
                 .build();
     }
 }

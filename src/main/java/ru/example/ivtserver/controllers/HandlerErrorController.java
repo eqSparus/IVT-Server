@@ -25,4 +25,15 @@ public class HandlerErrorController {
                 .build();
     }
 
+    @ExceptionHandler({Exception.class})
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    public MessageErrorDto handlerValidDataException(HttpServletRequest request, Exception e) {
+        e.printStackTrace();
+        return MessageErrorDto.builder()
+                .message("Неверные данные")
+                .path(request.getRequestURI())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .build();
+    }
+
 }

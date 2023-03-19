@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.validator.constraints.URL;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
@@ -14,7 +15,8 @@ public class SiteLinkRequestDto {
     @NotBlank(message = "Ссылка не должна состоять из пробелов")
     String href;
 
-    @NotBlank(message = "Название иконки не должно состоять из пробелов")
+    @NotBlank(message = "Путь к иконки не должно состоять из пробелов")
+    @URL(message = "Должен являться URL")
     String icon;
 
     @JsonCreator

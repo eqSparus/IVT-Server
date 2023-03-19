@@ -56,5 +56,11 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
                     user.getUsername(), user.getPassword(), user.getAuthorities()));
         }
         chain.doFilter(request, response);
+        // TODO убрать
+//        try {
+//            chain.doFilter(request, response);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 }
