@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -31,7 +32,7 @@ public class HandlerErrorAuthenticationController {
                 .build();
     }
 
-    @ExceptionHandler({RefreshTokenException.class})
+    @ExceptionHandler({RefreshTokenException.class, MissingRequestCookieException.class})
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
     public MessageErrorDto handlerRefreshToken(HttpServletRequest request) {
         return MessageErrorDto.builder()

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.Entrant;
 import ru.example.ivtserver.entities.dto.EntrantRequestDto;
+import ru.example.ivtserver.exceptions.NoIdException;
 import ru.example.ivtserver.repositories.EntrantRepository;
 import ru.example.ivtserver.services.EntrantService;
 
@@ -49,9 +50,9 @@ public class CouchEntrantService implements EntrantService {
     }
 
     @Override
-    public Entrant update(EntrantRequestDto dto, UUID id) {
-        var entrantDb = entrantRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
+    public Entrant update(EntrantRequestDto dto) throws NoIdException{
+        var entrantDb = entrantRepository.findById(dto.getId())
+                .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
 
         log.info("{}", dto);
         var items = dto.getItems().stream()

@@ -33,10 +33,10 @@ public class AppAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          AuthenticationException authException) throws IOException, ServletException {
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(400);
+        response.setStatus(401);
 
         var bodyResponse = MessageErrorDto.builder()
-                .status(400)
+                .status(401)
                 .message("Для доступа требуется аутентификация")
                 .path(request.getRequestURI())
                 .build();

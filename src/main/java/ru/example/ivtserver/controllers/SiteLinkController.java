@@ -36,12 +36,12 @@ public class SiteLinkController {
         return siteLinkService.createLink(dto);
     }
 
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, params = {"id"})
+    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public SiteLink getAllLink(
-            @RequestBody @Valid SiteLinkRequestDto dto,
-            @RequestParam(name = "id") UUID id
+            @RequestBody @Valid SiteLinkRequestDto dto
     ) {
-        return siteLinkService.updateLink(dto, id);
+        return siteLinkService.updateLink(dto);
     }
 
     @DeleteMapping(params = {"id"})

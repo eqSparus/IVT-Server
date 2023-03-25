@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.Direction;
 import ru.example.ivtserver.entities.dto.DirectionRequestDto;
+import ru.example.ivtserver.exceptions.NoIdException;
 import ru.example.ivtserver.repositories.DirectionRepository;
 import ru.example.ivtserver.services.DirectionService;
 
@@ -49,12 +50,12 @@ public class CouchDirectionService implements DirectionService {
 
 
     @Override
-    public Direction update(DirectionRequestDto dto, UUID id) {
+    public Direction update(DirectionRequestDto dto) throws NoIdException{
 
-        var direction = directionRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
+        var direction = directionRepository.findById(dto.getId())
+                .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
 
-        log.debug("Идентификатор направления {}", id);
+        log.debug("Идентификатор направления {}", dto.getId());
         log.debug("Старая информация о направлении {}", direction);
 
         direction.setTitle(dto.getTitle());

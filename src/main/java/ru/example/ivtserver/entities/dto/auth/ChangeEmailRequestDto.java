@@ -12,8 +12,8 @@ import lombok.experimental.FieldDefaults;
 @Value
 public class ChangeEmailRequestDto {
 
-    @NotBlank(message = "Почта не должна состоять из пробелов")
-    @Email(message = "Должен быть адресом электронной почты")
+    @NotBlank
+    @Email
     String email;
 
     @JsonCreator

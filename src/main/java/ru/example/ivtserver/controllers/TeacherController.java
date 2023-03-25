@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.example.ivtserver.entities.Teacher;
-import ru.example.ivtserver.entities.dto.TeacherDto;
+import ru.example.ivtserver.entities.dto.TeacherRequestDto;
 import ru.example.ivtserver.services.TeacherService;
 
 import java.io.IOException;
@@ -31,19 +31,18 @@ public class TeacherController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Teacher createTeacher(
-            @RequestPart(name = "data") TeacherDto dto,
+            @RequestPart(name = "data") TeacherRequestDto dto,
             @RequestPart(name = "img") MultipartFile img
     ) throws IOException {
         return teacherService.addTeacher(dto, img);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE, params = {"id"})
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public Teacher updateTeacher(
-            @RequestBody TeacherDto dto,
-            @RequestParam(name = "id") UUID id
+            @RequestBody TeacherRequestDto dto
     ) {
-        return teacherService.updateTeacher(dto, id);
+        return teacherService.updateTeacher(dto);
     }
 
     @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,

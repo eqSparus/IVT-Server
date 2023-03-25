@@ -9,27 +9,34 @@ import lombok.AccessLevel;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 
+import java.util.UUID;
+
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
 public class DirectionRequestDto {
-    @NotBlank(message = "Заголовок не должен состоять из пробелов")
+
+    UUID id;
+
+    @NotBlank
     String title;
 
-    @NotBlank(message = "Квалификация образования не должна состоять из пробелов")
+    @NotBlank
     String degree;
 
-    @NotBlank(message = "Форма обучения не должна состоять из пробелов")
+    @NotBlank
     String form;
 
-    @Min(value = 1, message = "Продолжительность обучения должна быть больше и равно 1")
-    @Max(value = 10, message = "Продолжительность обучения должна быть меньше или равно 10")
+    @Min(value = 1)
+    @Max(value = 10)
     Integer duration;
 
     @JsonCreator
-    public DirectionRequestDto(@JsonProperty(value = "title", required = true) String title,
+    public DirectionRequestDto(@JsonProperty(value = "id") UUID id,
+                               @JsonProperty(value = "title", required = true) String title,
                                @JsonProperty(value = "degree", required = true) String degree,
                                @JsonProperty(value = "form", required = true) String form,
                                @JsonProperty(value = "duration", required = true) Integer duration) {
+        this.id = id;
         this.title = title;
         this.degree = degree;
         this.form = form;

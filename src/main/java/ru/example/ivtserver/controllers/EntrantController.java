@@ -37,12 +37,11 @@ public class EntrantController {
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE,
-            consumes = MediaType.APPLICATION_JSON_VALUE, params = {"id"})
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public Entrant update(
-            @RequestBody @Valid EntrantRequestDto dto,
-            @RequestParam(name = "id") UUID id
+            @RequestBody @Valid EntrantRequestDto dto
     ) {
-        return entrantService.update(dto, id);
+        return entrantService.update(dto);
     }
 
     @DeleteMapping(params = {"id"})

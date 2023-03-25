@@ -37,12 +37,11 @@ public class DirectionController {
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE,
-            consumes = MediaType.APPLICATION_JSON_VALUE, params = {"id"})
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public Direction update(
-            @RequestBody @Valid DirectionRequestDto dto,
-            @RequestParam(name = "id") UUID id
+            @RequestBody @Valid DirectionRequestDto dto
     ) {
-        return directionService.update(dto, id);
+        return directionService.update(dto);
     }
 
     @DeleteMapping(params = {"id"})

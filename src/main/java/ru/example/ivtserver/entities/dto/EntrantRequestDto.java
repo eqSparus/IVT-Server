@@ -14,16 +14,20 @@ import java.util.UUID;
 @Value
 public class EntrantRequestDto {
 
-    @NotBlank(message = "Поле не должно быть пустым и состоять из пробелов")
+    UUID id;
+
+    @NotBlank
     String title;
 
     List<ItemDto> items;
 
     @JsonCreator
     public EntrantRequestDto(
+            @JsonProperty(value = "id") UUID id,
             @JsonProperty(value = "title", required = true) String title,
-            @JsonProperty(value = "items", required = false) List<ItemDto> items
+            @JsonProperty(value = "items") List<ItemDto> items
     ) {
+        this.id = id;
         this.title = title;
         this.items = items;
     }

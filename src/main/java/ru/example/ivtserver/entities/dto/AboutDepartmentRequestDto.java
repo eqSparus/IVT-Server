@@ -7,19 +7,25 @@ import lombok.AccessLevel;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 
-@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+import java.util.UUID;
+
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
 public class AboutDepartmentRequestDto {
 
-    @NotBlank(message = "Заголовок не должен состоять из пробелов")
+    UUID id;
+
+    @NotBlank
     String title;
 
-    @NotBlank(message = "Описания не должен состоять из пробелов")
+    @NotBlank
     String description;
 
     @JsonCreator
-    public AboutDepartmentRequestDto(@JsonProperty(value = "title", required = true) String title,
+    public AboutDepartmentRequestDto(@JsonProperty(value = "id") UUID id,
+                                     @JsonProperty(value = "title", required = true) String title,
                                      @JsonProperty(value = "description", required = true) String description) {
+        this.id = id;
         this.title = title;
         this.description = description;
     }

@@ -13,12 +13,12 @@ import lombok.experimental.FieldDefaults;
 @Value
 public class UserRequestDto {
 
-    @NotBlank(message = "Почта не должена состоять из пробелов")
-    @Email(message = "Должен быть адресом электронной почты")
+    @NotBlank
+    @Email
     String email;
 
-    @NotBlank(message = "Пароль не должен состоять из пробелов")
-    @Size(min = 12, max = 64, message = "Размер пароля должен быть в пределе от 12 до 64 символов")
+    @NotBlank
+    @Size(min = 12, max = 64)
     String password;
 
     @JsonCreator

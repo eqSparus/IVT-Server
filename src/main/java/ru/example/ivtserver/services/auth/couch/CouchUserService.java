@@ -10,8 +10,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.RefreshToken;
-import ru.example.ivtserver.entities.dto.auth.AuthenticationDto;
-import ru.example.ivtserver.entities.dto.auth.RefreshTokenRequestDto;
+import ru.example.ivtserver.entities.dto.auth.AuthenticationToken;
 import ru.example.ivtserver.entities.dto.auth.UserRequestDto;
 import ru.example.ivtserver.exceptions.auth.IncorrectCredentialsException;
 import ru.example.ivtserver.exceptions.auth.InvalidRefreshTokenException;
@@ -48,7 +47,7 @@ public class CouchUserService implements UserService {
     }
 
     @Override
-    public AuthenticationDto login(UserRequestDto userDao)
+    public AuthenticationToken login(UserRequestDto userDao)
             throws IncorrectCredentialsException {
 
         log.info("Входящий пользователь {}", userDao);
@@ -72,7 +71,7 @@ public class CouchUserService implements UserService {
 
             refreshTokenRepository.save(refreshTokenDb);
 
-            return AuthenticationDto.builder()
+            return AuthenticationToken.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .build();
@@ -83,17 +82,17 @@ public class CouchUserService implements UserService {
     }
 
     @Override
-    public AuthenticationDto refreshToken(RefreshTokenRequestDto refreshDto)
+    public AuthenticationToken refreshToken(String refreshToken)
             throws InvalidRefreshTokenException, NotExistsRefreshTokenException, NoUserWithRefreshTokenException {
 
-        log.debug("Токен обновления {}", refreshDto.getToken());
-        if (tokenRefreshProvider.isValidToken(refreshDto.getToken())) {
+        log.debug("Токен обновления {}", refreshToken);
+        if (tokenRefreshProvider.isValidToken(refreshToken)) {
 
 
-            var refreshToken = refreshTokenRepository.findByToken(refreshDto.getToken())
+            var refreshTokenDb = refreshTokenRepository.findByToken(refreshToken)
                     .orElseThrow(() -> new NotExistsRefreshTokenException("Токена обновления не существует!"));
 
-            var user = userRepository.findById(refreshToken.getUserId())
+            var user = userRepository.findById(refreshTokenDb.getUserId())
                     .orElseThrow(() -> new NoUserWithRefreshTokenException("Пользователя с таким токеном не существует"));
 
             var newAccessToken = tokenAccessProvider.generateToken(user.getEmail());
@@ -105,15 +104,15 @@ public class CouchUserService implements UserService {
             // TODO Удалить при ненадобности
 //            refreshTokenRepository.deleteByToken(refreshDto.getToken());
 
-            refreshToken.setToken(newRefreshToken);
+            refreshTokenDb.setToken(newRefreshToken);
 
 //            var refreshTokenDb = RefreshToken.builder()
 //                    .userId(user.getId())
 //                    .token(newRefreshToken)
 //                    .build();
-            refreshTokenRepository.save(refreshToken);
+            refreshTokenRepository.save(refreshTokenDb);
 
-            return AuthenticationDto.builder()
+            return AuthenticationToken.builder()
                     .accessToken(newAccessToken)
                     .refreshToken(newRefreshToken)
                     .build();
@@ -122,20 +121,20 @@ public class CouchUserService implements UserService {
     }
 
     @Override
-    public void logout(RefreshTokenRequestDto dto) throws InvalidRefreshTokenException {
-        if (tokenRefreshProvider.isValidToken(dto.getToken())) {
-            log.info("Удаление токена обновления {}", dto.getToken());
+    public void logout(String refreshToken) throws InvalidRefreshTokenException {
+        if (tokenRefreshProvider.isValidToken(refreshToken)) {
+            log.info("Удаление токена обновления {}", refreshToken);
 
 //            try {
 //                TimeUnit.MILLISECONDS.sleep(200);
 //            } catch (InterruptedException e) {
 //                throw new RuntimeException(e);
 //            }
-            var token = refreshTokenRepository.findByToken(dto.getToken());
+            var token = refreshTokenRepository.findByToken(refreshToken);
 
             log.info("{}", token);
 
-            refreshTokenRepository.deleteByToken(dto.getToken());
+            refreshTokenRepository.deleteByToken(refreshToken);
         } else {
             throw new InvalidRefreshTokenException("Неверный токен обновления");
         }

@@ -8,7 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.example.ivtserver.entities.Teacher;
-import ru.example.ivtserver.entities.dto.TeacherDto;
+import ru.example.ivtserver.entities.dto.TeacherRequestDto;
+import ru.example.ivtserver.exceptions.NoIdException;
 import ru.example.ivtserver.repositories.TeacherRepository;
 import ru.example.ivtserver.services.TeacherService;
 
@@ -35,7 +36,7 @@ public class CouchTeacherService implements TeacherService {
     }
 
     @Override
-    public Teacher addTeacher(TeacherDto dto, MultipartFile img) throws IOException {
+    public Teacher addTeacher(TeacherRequestDto dto, MultipartFile img) throws IOException {
         var urlImg = saveFile(img);
 
         var teacher = Teacher.builder()
@@ -51,9 +52,9 @@ public class CouchTeacherService implements TeacherService {
     }
 
     @Override
-    public Teacher updateTeacher(TeacherDto dto, UUID id) {
-        var teacher = teacherRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
+    public Teacher updateTeacher(TeacherRequestDto dto) throws NoIdException {
+        var teacher = teacherRepository.findById(dto.getId())
+                .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
 
         teacher.setFirstName(dto.getFirstName());
         teacher.setLastName(dto.getLastName());
@@ -65,9 +66,9 @@ public class CouchTeacherService implements TeacherService {
     }
 
     @Override
-    public String updateImg(MultipartFile img, UUID id) throws IOException {
+    public String updateImg(MultipartFile img, UUID id) throws IOException, NoIdException {
         var teacher = teacherRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
 
         var nameForDelete = teacher.getPathImg();
         var pathDelete = nameForDelete.substring(nameForDelete.lastIndexOf("/") + 1);

@@ -12,8 +12,8 @@ import lombok.experimental.FieldDefaults;
 @Value
 public class RecoverPasswordRequestDto {
 
-    @NotBlank(message = "Пароль не должен состоять из пробелов")
-    @Size(min = 12, max = 64, message = "Размер пароля должен быть в пределе от 12 до 64 символов")
+    @NotBlank
+    @Size(min = 12, max = 64)
     String password;
 
     @JsonCreator

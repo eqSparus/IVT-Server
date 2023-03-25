@@ -14,23 +14,23 @@ import java.util.UUID;
 @Value
 public class DepartmentRequestDto {
 
-    @NotBlank(message = "Заголовок не должен состоять из пробелов")
+    @NotBlank
     String title;
 
-    @NotBlank(message = "Слоган не должен состоять из пробелов")
+    @NotBlank
     String slogan;
 
-    @NotBlank(message = "Телефон не должен состоять из пробелов")
+    @NotBlank
     String phone;
 
-    @NotBlank(message = "Почта не должна состоять из пробелов")
-    @Email(message = "Должен быть адресом электронной почты")
+    @NotBlank
+    @Email
     String email;
 
-    @NotBlank(message = "Адрес не должен состоять из пробелов")
+    @NotBlank
     String address;
 
-    @NotNull(message = "Идентификатор пользователя должен присутствовать")
+    @NotNull
     UUID leaderId;
 
     public DepartmentRequestDto(@JsonProperty(value = "title", required = true) String title,

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.SiteLink;
 import ru.example.ivtserver.entities.dto.SiteLinkRequestDto;
+import ru.example.ivtserver.exceptions.NoIdException;
 import ru.example.ivtserver.repositories.SiteLinkRepository;
 import ru.example.ivtserver.services.SiteLinkService;
 
@@ -41,12 +42,12 @@ public class CouchSiteLinkService implements SiteLinkService {
 
 
     @Override
-    public SiteLink updateLink(SiteLinkRequestDto dto, UUID id) {
+    public SiteLink updateLink(SiteLinkRequestDto dto) throws NoIdException{
 
-        var link = siteLinkRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
+        var link = siteLinkRepository.findById(dto.getId())
+                .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
 
-        log.debug("Идентификатор направления {}", id);
+        log.debug("Идентификатор направления {}", dto.getId());
         log.debug("Новая информация о ссылке {}", link);
 
         link.setHref(dto.getHref());

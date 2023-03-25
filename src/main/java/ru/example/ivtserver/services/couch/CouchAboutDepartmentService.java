@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.AboutDepartment;
 import ru.example.ivtserver.entities.dto.AboutDepartmentRequestDto;
+import ru.example.ivtserver.exceptions.NoIdException;
 import ru.example.ivtserver.repositories.AboutDepartmentRepository;
 import ru.example.ivtserver.services.AboutDepartmentService;
 
 import java.util.List;
-import java.util.UUID;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Log4j2
@@ -27,11 +27,11 @@ public class CouchAboutDepartmentService implements AboutDepartmentService {
 
 
     @Override
-    public AboutDepartment updateAbout(AboutDepartmentRequestDto dto, UUID id) {
-        var aboutInfo = aboutDepartmentRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
+    public AboutDepartment updateAbout(AboutDepartmentRequestDto dto) throws NoIdException {
+        var aboutInfo = aboutDepartmentRepository.findById(dto.getId())
+                .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
 
-        log.debug("Идентификатор элемента информации {}", id);
+        log.debug("Идентификатор элемента информации {}", dto.getId());
         log.debug("Старая информации о кафедре {}", aboutInfo);
 
         aboutInfo.setTitle(dto.getTitle());

@@ -8,20 +8,27 @@ import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.URL;
 
+import java.util.UUID;
+
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
 public class SiteLinkRequestDto {
 
-    @NotBlank(message = "Ссылка не должна состоять из пробелов")
+    UUID id;
+
+    @URL
+    @NotBlank
     String href;
 
-    @NotBlank(message = "Путь к иконки не должно состоять из пробелов")
-    @URL(message = "Должен являться URL")
+    @URL
+    @NotBlank
     String icon;
 
     @JsonCreator
-    public SiteLinkRequestDto(@JsonProperty(value = "href", required = true) String href,
+    public SiteLinkRequestDto(@JsonProperty(value = "id") UUID id,
+                              @JsonProperty(value = "href", required = true) String href,
                               @JsonProperty(value = "icon", required = true) String icon) {
+        this.id = id;
         this.href = href;
         this.icon = icon;
     }

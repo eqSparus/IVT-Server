@@ -1,28 +1,36 @@
 package ru.example.ivtserver.controllers.auth;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import ru.example.ivtserver.entities.dto.auth.AuthenticationDto;
-import ru.example.ivtserver.entities.dto.auth.RefreshTokenRequestDto;
+import org.springframework.web.bind.annotation.*;
 import ru.example.ivtserver.entities.dto.auth.UserRequestDto;
 import ru.example.ivtserver.services.auth.UserService;
 
-@CrossOrigin(origins = "http://localhost:8081")
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+import java.util.Map;
+
+@CrossOrigin(origins = "http://localhost:8081", allowCredentials = "true")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @RestController
 @Log4j2
 public class AuthenticationController {
 
-    UserService userService;
+    @Value("${security.token.jwt.valid-time-refresh-second}")
+    Long cookieLifeTime;
+
+    static final String SAME_SET_COOKIE = "STRICT";
+    static final String NAME_REFRESH_COOKIE = "refresh";
+
+    final UserService userService;
 
     @Autowired
     public AuthenticationController(UserService userService) {
@@ -31,25 +39,56 @@ public class AuthenticationController {
 
     @PostMapping(path = "/login", produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public AuthenticationDto login(
-            @RequestBody @Valid UserRequestDto userDto
+    public Map<String, String> login(
+            @RequestBody @Valid UserRequestDto userDto,
+            HttpServletResponse response
     ) {
-        return userService.login(userDto);
+        var authentication = userService.login(userDto);
+        var refreshCookie = ResponseCookie.from(NAME_REFRESH_COOKIE, authentication.getRefreshToken())
+                .httpOnly(true)
+                .sameSite(SAME_SET_COOKIE)
+                .secure(false)
+                .maxAge(cookieLifeTime)
+                .build();
+        response.setHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        return Map.of(
+                "accessToken", authentication.getAccessToken()
+        );
     }
 
-    @PostMapping(path = "/refresh", consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public AuthenticationDto refreshToken(
-            @RequestBody @Valid RefreshTokenRequestDto dto
+    @PostMapping(path = "/refresh", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, String> refreshToken(
+            @CookieValue(name = "refresh") Cookie cookie,
+            HttpServletResponse response
     ) {
-        return userService.refreshToken(dto);
+        var authentication = userService.refreshToken(cookie.getValue());
+
+        var refreshCookie = ResponseCookie.from(NAME_REFRESH_COOKIE, authentication.getRefreshToken())
+                .httpOnly(true)
+                .sameSite(SAME_SET_COOKIE)
+                .secure(false)
+                .maxAge(cookieLifeTime)
+                .build();
+        response.setHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+
+        return Map.of(
+                "accessToken", authentication.getAccessToken()
+        );
     }
 
-    @PostMapping(path = "/exit", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/exit")
     public ResponseEntity<String> logout(
-            @RequestBody @Valid RefreshTokenRequestDto dto
+            @CookieValue(name = "refresh") Cookie cookie,
+            HttpServletResponse response
     ) {
-        userService.logout(dto);
+        userService.logout(cookie.getValue());
+        var refreshCookie = ResponseCookie.from(NAME_REFRESH_COOKIE, "")
+                .httpOnly(true)
+                .sameSite(SAME_SET_COOKIE)
+                .secure(false)
+                .maxAge(0)
+                .build();
+        response.setHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
         return ResponseEntity.ok("Выход");
     }
 }

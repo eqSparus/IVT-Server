@@ -28,12 +28,11 @@ public class AboutDepartmentController {
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE,
-            consumes = MediaType.APPLICATION_JSON_VALUE, params = {"id"})
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public AboutDepartment update(
-            @RequestBody @Valid AboutDepartmentRequestDto dto,
-            @RequestParam(name = "id") UUID id
+            @RequestBody @Valid AboutDepartmentRequestDto dto
     ) {
-        return aboutDepartmentService.updateAbout(dto, id);
+        return aboutDepartmentService.updateAbout(dto);
     }
 
 }

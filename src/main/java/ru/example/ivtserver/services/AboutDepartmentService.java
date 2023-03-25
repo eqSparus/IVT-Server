@@ -2,13 +2,13 @@ package ru.example.ivtserver.services;
 
 import ru.example.ivtserver.entities.AboutDepartment;
 import ru.example.ivtserver.entities.dto.AboutDepartmentRequestDto;
+import ru.example.ivtserver.exceptions.NoIdException;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface AboutDepartmentService {
 
-    AboutDepartment updateAbout(AboutDepartmentRequestDto dto, UUID id);
+    AboutDepartment updateAbout(AboutDepartmentRequestDto dto) throws NoIdException;
 
     List<AboutDepartment> getAll();
 
