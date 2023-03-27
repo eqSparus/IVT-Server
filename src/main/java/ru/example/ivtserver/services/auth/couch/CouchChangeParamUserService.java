@@ -159,4 +159,18 @@ public class CouchChangeParamUserService implements ChangeParamUserService {
         userRepository.save(user);
     }
 
+    @Override
+    public boolean isValidTokenPassword(String token) {
+        if (disposableTokenProvider.isValidToken(token)) {
+            var claims = disposableTokenProvider.getBody(token)
+                    .orElseThrow(() -> new InvalidDisposableToken("Неверное тело токена"));
+
+            var user = userRepository.findByEmail(claims.getSubject())
+                    .orElseThrow(() -> new NoUserException("Пользователя с такой почтой не существует"));
+
+            return claims.get("pass").equals(user.getPassword());
+        }
+        return false;
+    }
+
 }

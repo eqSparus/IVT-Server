@@ -45,6 +45,13 @@ public class ChangeParamUserController {
         return ResponseEntity.ok("Пароль изменен");
     }
 
+    @PostMapping(path = "/recover/pass/valid", params = {"token"})
+    public ResponseEntity<Boolean> isValidToken(
+            @RequestParam(name = "token") String token
+    ) {
+        return ResponseEntity.ok(changeParamUserService.isValidTokenPassword(token));
+    }
+
     @PostMapping(path = "/change/email", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> sendChangeEmail(
             @RequestBody @Valid ChangeEmailRequestDto dto,

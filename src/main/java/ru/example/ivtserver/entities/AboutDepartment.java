@@ -38,8 +38,8 @@ public class AboutDepartment implements Serializable {
     @Field(name = "description")
     String description;
 
-    @Field(name = "order")
-    int order;
+    @Field(name = "icon")
+    String icon;
 
     @JsonIgnore
     @Version

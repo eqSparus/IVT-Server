@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers("/login", "/refresh",
-                                "/recover/pass", "/change/email", "/images/**").permitAll()
+                                "/recover/pass", "/recover/pass/valid", "/change/email", "/images/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/data").permitAll()
                         .anyRequest().authenticated()
                 )

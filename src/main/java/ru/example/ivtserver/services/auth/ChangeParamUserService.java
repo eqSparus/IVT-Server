@@ -17,4 +17,6 @@ public interface ChangeParamUserService {
 
     void changePassword(ChangePasswordRequestDto dto, String email) throws NoUserException;
 
+    boolean isValidTokenPassword(String token);
+
 }
