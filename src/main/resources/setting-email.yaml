@@ -1,7 +1,7 @@
 spring:
   mail:
-    username: ivt72@inbox.ru
-    password: V97RC2HdCvWxWVKP4qYB
+    username: 
+    password:
     port: 587
     host: smtp.mail.ru
     test-connection: false
