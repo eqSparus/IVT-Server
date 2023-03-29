@@ -19,4 +19,6 @@ public interface DirectionService {
 
     void delete(UUID id);
 
+    List<Direction> swapPosition(UUID firstId, UUID lastId) throws NoIdException;
+
 }

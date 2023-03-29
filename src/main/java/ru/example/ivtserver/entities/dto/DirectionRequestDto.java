@@ -28,14 +28,14 @@ public class DirectionRequestDto {
 
     @Min(value = 1)
     @Max(value = 10)
-    Integer duration;
+    int duration;
 
     @JsonCreator
     public DirectionRequestDto(@JsonProperty(value = "id") UUID id,
                                @JsonProperty(value = "title", required = true) String title,
                                @JsonProperty(value = "degree", required = true) String degree,
                                @JsonProperty(value = "form", required = true) String form,
-                               @JsonProperty(value = "duration", required = true) Integer duration) {
+                               @JsonProperty(value = "duration", required = true) int duration) {
         this.id = id;
         this.title = title;
         this.degree = degree;

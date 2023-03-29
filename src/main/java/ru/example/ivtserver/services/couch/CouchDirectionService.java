@@ -30,11 +30,15 @@ public class CouchDirectionService implements DirectionService {
     @Override
     public Direction create(DirectionRequestDto dto) {
 
+        var directionDb = directionRepository.findDirectionLastPosition()
+                .orElseGet(() -> Direction.builder().position(-1).build());
+
         var direction = Direction.builder()
                 .title(dto.getTitle())
                 .degree(dto.getDegree())
                 .form(dto.getForm())
                 .duration(dto.getDuration())
+                .position(directionDb.getPosition() + 1)
                 .build();
 
         log.info("Новое направление {}", direction);
@@ -50,7 +54,7 @@ public class CouchDirectionService implements DirectionService {
 
 
     @Override
-    public Direction update(DirectionRequestDto dto) throws NoIdException{
+    public Direction update(DirectionRequestDto dto) throws NoIdException {
 
         var direction = directionRepository.findById(dto.getId())
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
@@ -72,5 +76,25 @@ public class CouchDirectionService implements DirectionService {
     public void delete(UUID id) {
         log.info("Удаление направления {}", id);
         directionRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Direction> swapPosition(UUID firstId, UUID lastId) throws NoIdException {
+        var directionFirst = directionRepository.findById(firstId)
+                .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
+
+        var directionLast = directionRepository.findById(lastId)
+                .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
+
+        var firstPos = directionFirst.getPosition();
+        var lastPos = directionLast.getPosition();
+
+        directionFirst.setPosition(lastPos);
+        directionLast.setPosition(firstPos);
+
+        return List.of(
+                directionRepository.save(directionFirst),
+                directionRepository.save(directionLast)
+        );
     }
 }

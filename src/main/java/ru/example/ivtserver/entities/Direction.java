@@ -44,6 +44,9 @@ public class Direction implements Serializable {
     @Field(name = "duration")
     int duration;
 
+    @Field(name = "position")
+    int position;
+
     @JsonIgnore
     @Version
     private long version;

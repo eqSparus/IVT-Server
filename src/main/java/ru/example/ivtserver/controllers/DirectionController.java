@@ -12,6 +12,7 @@ import ru.example.ivtserver.entities.Direction;
 import ru.example.ivtserver.entities.dto.DirectionRequestDto;
 import ru.example.ivtserver.services.DirectionService;
 
+import java.util.List;
 import java.util.UUID;
 
 @CrossOrigin(origins = "http://localhost:8081")
@@ -50,5 +51,13 @@ public class DirectionController {
     ) {
         directionService.delete(id);
         return ResponseEntity.ok("Удаление направления");
+    }
+
+    @PatchMapping(params = {"firstId", "lastId"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Direction> swapPosition(
+            @RequestParam(name = "firstId") UUID firstId,
+            @RequestParam(name = "lastId") UUID lastId
+    ) {
+        return directionService.swapPosition(firstId, lastId);
     }
 }
