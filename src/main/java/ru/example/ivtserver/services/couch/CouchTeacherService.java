@@ -12,9 +12,9 @@ import ru.example.ivtserver.entities.dto.TeacherRequestDto;
 import ru.example.ivtserver.exceptions.NoIdException;
 import ru.example.ivtserver.repositories.TeacherRepository;
 import ru.example.ivtserver.services.TeacherService;
+import ru.example.ivtserver.utils.FileUtil;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
@@ -37,7 +37,11 @@ public class CouchTeacherService implements TeacherService {
 
     @Override
     public Teacher addTeacher(TeacherRequestDto dto, MultipartFile img) throws IOException {
-        var urlImg = saveFile(img);
+        var fileName = FileUtil.saveFile(img, BASE_PATH);
+        var url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/images/teachers/")
+                .path(fileName)
+                .toUriString();
 
         var teacher = Teacher.builder()
                 .firstName(dto.getFirstName())
@@ -45,9 +49,9 @@ public class CouchTeacherService implements TeacherService {
                 .middleName(dto.getMiddleName())
                 .post(dto.getPost())
                 .scientificDegree(dto.getScientificDegree())
-                .pathImg(urlImg)
+                .urlImg(url)
+                .pathImg(BASE_PATH.resolve(fileName))
                 .build();
-
         return teacherRepository.save(teacher);
     }
 
@@ -70,48 +74,29 @@ public class CouchTeacherService implements TeacherService {
         var teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
 
-        var nameForDelete = teacher.getPathImg();
-        var pathDelete = nameForDelete.substring(nameForDelete.lastIndexOf("/") + 1);
+        FileUtil.deleteFile(teacher.getPathImg());
+        var fileName = FileUtil.saveFile(img, BASE_PATH);
+        var newUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/images/teachers/")
+                .path(fileName)
+                .toUriString();
 
-        deleteFile(pathDelete);
-        var urlImg = saveFile(img);
-        teacher.setPathImg(urlImg);
+        teacher.setPathImg(BASE_PATH.resolve(fileName));
+        teacher.setUrlImg(newUrl);
         teacherRepository.save(teacher);
-        return urlImg;
+        return newUrl;
     }
 
     @Override
-    public void removeTeacher(UUID id) throws IOException {
+    public void removeTeacher(UUID id) throws IOException, NoIdException {
         var teacher = teacherRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
-        var nameForDelete = teacher.getPathImg();
-        var pathDelete = nameForDelete.substring(nameForDelete.lastIndexOf("/") + 1);
-
-        deleteFile(pathDelete);
+                .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
+        FileUtil.deleteFile(teacher.getPathImg());
         teacherRepository.delete(teacher);
     }
 
     @Override
     public List<Teacher> getAllTeachers() {
         return teacherRepository.findAll();
-    }
-
-    private String saveFile(MultipartFile img) throws IOException {
-        log.info(img.getOriginalFilename());
-        var extensionImg = img.getOriginalFilename()
-                .substring(img.getOriginalFilename().lastIndexOf("."));
-        var imgName = UUID.randomUUID() + extensionImg;
-        var pathImg = BASE_PATH.resolve(imgName);
-        Files.write(pathImg, img.getBytes());
-
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/images/teachers/")
-                .path(imgName)
-                .toUriString();
-    }
-
-    private void deleteFile(String nameFile) throws IOException {
-        var pathDelete = BASE_PATH.resolve(nameFile);
-        Files.delete(pathDelete);
     }
 }

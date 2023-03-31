@@ -16,7 +16,6 @@ import org.springframework.data.couchbase.core.mapping.id.GeneratedValue;
 import org.springframework.data.couchbase.core.mapping.id.GenerationStrategy;
 import org.springframework.data.couchbase.repository.Collection;
 
-import java.io.Serializable;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -26,33 +25,21 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Document
-@Collection("teachers-content")
-public class Teacher implements Serializable {
+@Collection("site-content")
+public class Partner {
 
     @Id
     @GeneratedValue(strategy = GenerationStrategy.UNIQUE)
     UUID id;
+
+    @Field(name = "href")
+    String href;
 
     @Field(name = "urlImg")
     String urlImg;
 
     @Field(name = "pathImg")
     Path pathImg;
-
-    @Field(name = "firstName")
-    String firstName;
-
-    @Field(name = "lastName")
-    String lastName;
-
-    @Field(name = "middleName")
-    String middleName;
-
-    @Field(name = "post")
-    String post;
-
-    @Field(name = "scientificDegree")
-    String scientificDegree;
 
     @JsonIgnore
     @Version

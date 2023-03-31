@@ -12,7 +12,6 @@ import ru.example.ivtserver.repositories.EntrantRepository;
 import ru.example.ivtserver.services.EntrantService;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -58,25 +57,9 @@ public class CouchEntrantService implements EntrantService {
         var items = dto.getItems().stream()
                 .map(d -> {
                     var points = d.getPoints().stream()
-                            .map(p -> {
-                                if (Objects.nonNull(p.getPointId())) {
-                                    return Entrant.ItemPoint.builder()
-                                            .pointId(p.getPointId())
-                                            .point(p.getPoint())
-                                            .build();
-                                }
-                                return Entrant.ItemPoint.builder()
-                                        .point(p.getPoint())
-                                        .build();
-                            }).toList();
-
-                    if (Objects.nonNull(d.getItemId())) {
-                        return Entrant.Item.builder()
-                                .itemId(d.getItemId())
-                                .name(d.getName())
-                                .points(points)
-                                .build();
-                    }
+                            .map(p -> Entrant.ItemPoint.builder()
+                                    .point(p.getPoint())
+                                    .build()).toList();
                     return Entrant.Item.builder()
                             .name(d.getName())
                             .points(points)

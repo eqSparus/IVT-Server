@@ -17,7 +17,7 @@ public interface TeacherService {
 
     String updateImg(MultipartFile img, UUID id) throws IOException, NoIdException;
 
-    void removeTeacher(UUID id) throws IOException;
+    void removeTeacher(UUID id) throws IOException, NoIdException;
 
     List<Teacher> getAllTeachers();
 }

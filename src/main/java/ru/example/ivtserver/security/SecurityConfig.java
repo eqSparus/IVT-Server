@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers("/login", "/refresh",
+                        .requestMatchers("/login", "/refresh", "/partner",
                                 "/recover/pass", "/recover/pass/valid", "/change/email", "/images/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/data").permitAll()
                         .anyRequest().authenticated()

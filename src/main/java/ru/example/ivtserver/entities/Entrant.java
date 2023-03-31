@@ -58,10 +58,6 @@ public class Entrant implements Serializable {
     @Builder
     public static class Item implements Serializable {
 
-        @Field(name = "itemId")
-        @Builder.Default
-        UUID itemId = UUID.randomUUID();
-
         @Field(name = "name")
         String name;
 
@@ -75,10 +71,6 @@ public class Entrant implements Serializable {
     @Data
     @Builder
     public static class ItemPoint implements Serializable {
-
-        @Field(name = "pointId")
-        @Builder.Default
-        UUID pointId = UUID.randomUUID();
 
         @Field(name = "point")
         String point;

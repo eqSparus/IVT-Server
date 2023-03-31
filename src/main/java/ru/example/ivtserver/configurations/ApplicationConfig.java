@@ -1,4 +1,4 @@
-package ru.example.ivtserver.configuratuons;
+package ru.example.ivtserver.configurations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

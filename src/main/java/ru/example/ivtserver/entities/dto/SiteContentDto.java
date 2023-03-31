@@ -30,6 +30,9 @@ public class SiteContentDto {
     @JsonProperty(value = "teachers")
     List<Teacher> teachers;
 
+    @JsonProperty(value = "partners")
+    List<Partner> partners;
+
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
     @AllArgsConstructor
     @Value

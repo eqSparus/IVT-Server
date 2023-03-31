@@ -37,18 +37,14 @@ public class EntrantRequestDto {
     @Value
     public static class ItemDto {
 
-        UUID itemId;
-
         @NotBlank(message = "Поле не должно быть пустым и состоять из пробелов")
         String name;
 
         List<ItemPointDto> points;
 
         @JsonCreator
-        public ItemDto(@JsonProperty(value = "id", required = false) UUID itemId,
-                       @JsonProperty(value = "name", required = true) String name,
+        public ItemDto(@JsonProperty(value = "name", required = true) String name,
                        @JsonProperty(value = "points", required = false) List<ItemPointDto> points) {
-            this.itemId = itemId;
             this.name = name;
             this.points = points;
         }
@@ -58,15 +54,12 @@ public class EntrantRequestDto {
     @Value
     public static class ItemPointDto {
 
-        UUID pointId;
 
         @NotBlank(message = "Поле не должно быть пустым и состоять из пробелов")
         String point;
 
         @JsonCreator
-        public ItemPointDto(@JsonProperty(value = "id", required = false) UUID pointId,
-                            @JsonProperty(value = "point", required = false) String point) {
-            this.pointId = pointId;
+        public ItemPointDto(@JsonProperty(value = "point", required = false) String point) {
             this.point = point;
         }
     }

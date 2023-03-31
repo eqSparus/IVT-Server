@@ -16,7 +16,7 @@ import ru.example.ivtserver.services.*;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
 @RequestMapping(path = "/data")
-public class DataAccessController {
+public class DataController {
 
     AboutDepartmentService aboutDepartmentService;
     DepartmentService departmentService;
@@ -24,20 +24,23 @@ public class DataAccessController {
     SiteLinkService siteLinkService;
     EntrantService entrantService;
     TeacherService teacherService;
+    PartnerService partnerService;
 
     @Autowired
-    public DataAccessController(AboutDepartmentService aboutDepartmentService,
-                                DepartmentService departmentService,
-                                DirectionService directionService,
-                                SiteLinkService siteLinkService,
-                                EntrantService entrantService,
-                                TeacherService teacherService) {
+    public DataController(AboutDepartmentService aboutDepartmentService,
+                          DepartmentService departmentService,
+                          DirectionService directionService,
+                          SiteLinkService siteLinkService,
+                          EntrantService entrantService,
+                          TeacherService teacherService,
+                          PartnerService partnerService) {
         this.aboutDepartmentService = aboutDepartmentService;
         this.departmentService = departmentService;
         this.directionService = directionService;
         this.siteLinkService = siteLinkService;
         this.entrantService = entrantService;
         this.teacherService = teacherService;
+        this.partnerService = partnerService;
     }
 
 
@@ -50,6 +53,7 @@ public class DataAccessController {
         var directions = directionService.getAll();
         var entrants = entrantService.getAll();
         var teachers = teacherService.getAllTeachers();
+        var partners = partnerService.getAllPartners();
 
         return SiteContentDto.builder()
                 .department(new SiteContentDto.MainDepartment(department, siteLinks))
@@ -57,6 +61,7 @@ public class DataAccessController {
                 .direction(directions)
                 .entrants(entrants)
                 .teachers(teachers)
+                .partners(partners)
                 .build();
     }
 }
