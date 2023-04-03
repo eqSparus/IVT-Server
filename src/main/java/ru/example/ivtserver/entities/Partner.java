@@ -38,6 +38,7 @@ public class Partner {
     @Field(name = "urlImg")
     String urlImg;
 
+    @JsonIgnore
     @Field(name = "pathImg")
     Path pathImg;
 

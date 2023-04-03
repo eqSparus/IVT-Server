@@ -20,4 +20,6 @@ public interface TeacherService {
     void removeTeacher(UUID id) throws IOException, NoIdException;
 
     List<Teacher> getAllTeachers();
+
+    int updatePosition(int position, UUID id) throws NoIdException;
 }

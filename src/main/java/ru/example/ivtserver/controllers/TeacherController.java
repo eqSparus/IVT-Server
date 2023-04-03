@@ -57,6 +57,16 @@ public class TeacherController {
         return Map.of("url", url);
     }
 
+    @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE, params = {"id", "position"})
+    public Map<String, Integer> updatePositionTeacher(
+            @RequestParam(name = "id") UUID id,
+            @RequestParam(name = "position") int position
+    ) {
+        var newPosition = teacherService.updatePosition(position, id);
+        return Map.of("position", newPosition);
+    }
+
     @DeleteMapping(params = {"id"})
     public ResponseEntity<String> deleteTeacher(
             @RequestParam(name = "id") UUID id

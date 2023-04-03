@@ -37,20 +37,27 @@ public class CouchTeacherService implements TeacherService {
 
     @Override
     public Teacher addTeacher(TeacherRequestDto dto, MultipartFile img) throws IOException {
-        var fileName = FileUtil.saveFile(img, BASE_PATH);
+        var fileName = UUID.randomUUID() + "." + FileUtil.getExtension(img.getOriginalFilename());
+        var path = BASE_PATH.resolve(fileName);
+        FileUtil.saveFile(img, path);
         var url = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/images/teachers/")
                 .path(fileName)
                 .toUriString();
 
+        var teacherDb = teacherRepository.findTeacherLastPosition()
+                .orElseGet(() -> Teacher.builder().position(0).build());
+
         var teacher = Teacher.builder()
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .middleName(dto.getMiddleName())
-                .post(dto.getPost())
-                .scientificDegree(dto.getScientificDegree())
+                .postDepartment(dto.getPostDepartment())
+                .postTeacher(dto.getPostTeacher())
+                .postAdditional(dto.getPostAdditional())
                 .urlImg(url)
-                .pathImg(BASE_PATH.resolve(fileName))
+                .pathImg(path)
+                .position(teacherDb.getPosition() + 1)
                 .build();
         return teacherRepository.save(teacher);
     }
@@ -63,8 +70,9 @@ public class CouchTeacherService implements TeacherService {
         teacher.setFirstName(dto.getFirstName());
         teacher.setLastName(dto.getLastName());
         teacher.setMiddleName(dto.getMiddleName());
-        teacher.setPost(dto.getPost());
-        teacher.setScientificDegree(dto.getScientificDegree());
+        teacher.setPostDepartment(dto.getPostDepartment());
+        teacher.setPostTeacher(dto.getPostTeacher());
+        teacher.setPostAdditional(dto.getPostAdditional());
 
         return teacherRepository.save(teacher);
     }
@@ -74,17 +82,8 @@ public class CouchTeacherService implements TeacherService {
         var teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
 
-        FileUtil.deleteFile(teacher.getPathImg());
-        var fileName = FileUtil.saveFile(img, BASE_PATH);
-        var newUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/images/teachers/")
-                .path(fileName)
-                .toUriString();
-
-        teacher.setPathImg(BASE_PATH.resolve(fileName));
-        teacher.setUrlImg(newUrl);
-        teacherRepository.save(teacher);
-        return newUrl;
+        FileUtil.replace(img, teacher.getPathImg());
+        return teacher.getUrlImg();
     }
 
     @Override
@@ -98,5 +97,13 @@ public class CouchTeacherService implements TeacherService {
     @Override
     public List<Teacher> getAllTeachers() {
         return teacherRepository.findAll();
+    }
+
+    @Override
+    public int updatePosition(int position, UUID id) throws NoIdException {
+        var teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
+        teacher.setPosition(position);
+        return teacherRepository.save(teacher).getPosition();
     }
 }

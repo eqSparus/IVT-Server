@@ -25,24 +25,29 @@ public class TeacherRequestDto {
     String middleName;
 
     @NotBlank
-    String post;
+    String postDepartment;
 
     @NotBlank
-    String scientificDegree;
+    String postTeacher;
+
+    @NotBlank
+    String postAdditional;
 
 
     @JsonCreator
-    public TeacherRequestDto( @JsonProperty(value = "id") UUID id,
+    public TeacherRequestDto(@JsonProperty(value = "id") UUID id,
                              @JsonProperty(value = "firstName", required = true) String firstName,
                              @JsonProperty(value = "lastName", required = true) String lastName,
                              @JsonProperty(value = "middleName", required = true) String middleName,
-                             @JsonProperty(value = "post", required = true) String post,
-                             @JsonProperty(value = "scientificDegree", required = true) String scientificDegree) {
+                             @JsonProperty(value = "postDepartment", required = true) String postDepartment,
+                             @JsonProperty(value = "postTeacher", required = true) String postTeacher,
+                             @JsonProperty(value = "postAdditional", required = true)  String postAdditional) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleName = middleName;
-        this.post = post;
-        this.scientificDegree = scientificDegree;
+        this.postDepartment = postDepartment;
+        this.postTeacher = postTeacher;
+        this.postAdditional = postAdditional;
     }
 }

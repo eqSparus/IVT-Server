@@ -34,7 +34,6 @@ public class CouchDepartmentService implements DepartmentService {
         department.setPhone(dto.getPhone());
         department.setEmail(dto.getEmail());
         department.setAddress(dto.getAddress());
-        department.setLeaderId(dto.getLeaderId());
 
         log.debug("Старая новая информации {}", department);
 

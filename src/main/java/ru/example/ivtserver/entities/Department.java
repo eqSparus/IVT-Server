@@ -47,9 +47,6 @@ public class Department implements Serializable {
     @Field(name = "address")
     String address;
 
-    @Field(name = "leaderId")
-    UUID leaderId;
-
     @JsonIgnore
     @Version
     private long version;

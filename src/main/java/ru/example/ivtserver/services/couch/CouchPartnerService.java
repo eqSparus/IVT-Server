@@ -37,7 +37,10 @@ public class CouchPartnerService implements PartnerService {
 
     @Override
     public Partner addPartner(PartnerRequestDto dto, MultipartFile img) throws IOException {
-        var fileName = FileUtil.saveFile(img, BASE_PATH);
+        var fileName = UUID.randomUUID() + "." + FileUtil.getExtension(img.getOriginalFilename());
+        var path = BASE_PATH.resolve(fileName);
+        FileUtil.saveFile(img, path);
+
         var url = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/images/partners/")
                 .path(fileName)
@@ -46,7 +49,7 @@ public class CouchPartnerService implements PartnerService {
         var partner = Partner.builder()
                 .href(dto.getHref())
                 .urlImg(url)
-                .pathImg(BASE_PATH.resolve(fileName))
+                .pathImg(path)
                 .build();
 
         log.info("{}", partner);
@@ -66,18 +69,8 @@ public class CouchPartnerService implements PartnerService {
     public String updateImg(MultipartFile img, UUID id) throws IOException, NoIdException {
         var partner = partnerRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
-
-        FileUtil.deleteFile(partner.getPathImg());
-        var fileName = FileUtil.saveFile(img, BASE_PATH);
-        var newUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/images/partners/")
-                .path(fileName)
-                .toUriString();
-
-        partner.setPathImg(BASE_PATH.resolve(fileName));
-        partner.setUrlImg(newUrl);
-        partnerRepository.save(partner);
-        return newUrl;
+        FileUtil.replace(img, partner.getPathImg());
+        return partner.getUrlImg();
     }
 
     @Override

@@ -36,6 +36,7 @@ public class Teacher implements Serializable {
     @Field(name = "urlImg")
     String urlImg;
 
+    @JsonIgnore
     @Field(name = "pathImg")
     Path pathImg;
 
@@ -48,11 +49,17 @@ public class Teacher implements Serializable {
     @Field(name = "middleName")
     String middleName;
 
-    @Field(name = "post")
-    String post;
+    @Field(name = "postDepartment")
+    String postDepartment;
 
-    @Field(name = "scientificDegree")
-    String scientificDegree;
+    @Field(name = "postTeacher")
+    String postTeacher;
+
+    @Field(name = "postAdditional")
+    String postAdditional;
+
+    @Field(name = "position")
+    int position;
 
     @JsonIgnore
     @Version
