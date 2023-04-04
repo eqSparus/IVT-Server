@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.couchbase.core.mapping.Document;
 import org.springframework.data.couchbase.core.mapping.Field;
@@ -41,4 +42,7 @@ public class RefreshToken implements Serializable {
 
     @CreatedBy
     ZonedDateTime createAt;
+
+    @LastModifiedBy
+    ZonedDateTime updateAt;
 }

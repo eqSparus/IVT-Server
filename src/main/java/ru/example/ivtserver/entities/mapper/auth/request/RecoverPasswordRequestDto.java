@@ -1,4 +1,4 @@
-package ru.example.ivtserver.entities.dto.auth;
+package ru.example.ivtserver.entities.mapper.auth.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,14 +10,14 @@ import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
-public class ChangePasswordRequestDto {
+public class RecoverPasswordRequestDto {
 
     @NotBlank
     @Size(min = 12, max = 64)
     String password;
 
     @JsonCreator
-    public ChangePasswordRequestDto(@JsonProperty(value = "password", required = true) String password) {
+    public RecoverPasswordRequestDto(@JsonProperty(value = "password", required = true) String password) {
         this.password = password;
     }
 }

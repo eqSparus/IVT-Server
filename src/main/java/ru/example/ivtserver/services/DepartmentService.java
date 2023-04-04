@@ -1,7 +1,7 @@
 package ru.example.ivtserver.services;
 
 import ru.example.ivtserver.entities.Department;
-import ru.example.ivtserver.entities.dto.DepartmentRequestDto;
+import ru.example.ivtserver.entities.mapper.request.DepartmentRequestDto;
 
 public interface DepartmentService {
 

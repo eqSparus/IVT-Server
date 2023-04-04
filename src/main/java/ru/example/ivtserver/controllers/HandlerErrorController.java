@@ -10,7 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.example.ivtserver.entities.dto.auth.MessageErrorDto;
+import ru.example.ivtserver.entities.mapper.auth.MessageErrorDto;
 import ru.example.ivtserver.exceptions.NoIdException;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)

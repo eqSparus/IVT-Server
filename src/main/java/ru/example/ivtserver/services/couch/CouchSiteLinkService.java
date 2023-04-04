@@ -6,7 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.SiteLink;
-import ru.example.ivtserver.entities.dto.SiteLinkRequestDto;
+import ru.example.ivtserver.entities.mapper.request.SiteLinkRequestDto;
 import ru.example.ivtserver.exceptions.NoIdException;
 import ru.example.ivtserver.repositories.SiteLinkRepository;
 import ru.example.ivtserver.services.SiteLinkService;

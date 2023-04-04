@@ -6,7 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.AboutDepartment;
-import ru.example.ivtserver.entities.dto.AboutDepartmentRequestDto;
+import ru.example.ivtserver.entities.mapper.request.AboutDepartmentRequestDto;
 import ru.example.ivtserver.exceptions.NoIdException;
 import ru.example.ivtserver.repositories.AboutDepartmentRepository;
 import ru.example.ivtserver.services.AboutDepartmentService;

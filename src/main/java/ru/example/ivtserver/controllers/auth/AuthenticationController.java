@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.example.ivtserver.entities.dto.auth.UserRequestDto;
+import ru.example.ivtserver.entities.mapper.auth.request.UserRequestDto;
 import ru.example.ivtserver.services.auth.UserService;
 
 import java.util.Map;

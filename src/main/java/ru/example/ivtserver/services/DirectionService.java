@@ -1,7 +1,7 @@
 package ru.example.ivtserver.services;
 
 import ru.example.ivtserver.entities.Direction;
-import ru.example.ivtserver.entities.dto.DirectionRequestDto;
+import ru.example.ivtserver.entities.mapper.request.DirectionRequestDto;
 import ru.example.ivtserver.exceptions.NoIdException;
 
 import java.util.List;

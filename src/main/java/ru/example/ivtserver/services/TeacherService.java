@@ -2,7 +2,7 @@ package ru.example.ivtserver.services;
 
 import org.springframework.web.multipart.MultipartFile;
 import ru.example.ivtserver.entities.Teacher;
-import ru.example.ivtserver.entities.dto.TeacherRequestDto;
+import ru.example.ivtserver.entities.mapper.request.TeacherRequestDto;
 import ru.example.ivtserver.exceptions.NoIdException;
 
 import java.io.IOException;

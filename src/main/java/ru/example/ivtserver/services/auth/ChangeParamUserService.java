@@ -1,7 +1,7 @@
 package ru.example.ivtserver.services.auth;
 
-import ru.example.ivtserver.entities.dto.auth.ChangeEmailRequestDto;
-import ru.example.ivtserver.entities.dto.auth.ChangePasswordRequestDto;
+import ru.example.ivtserver.entities.mapper.auth.request.ChangeEmailRequestDto;
+import ru.example.ivtserver.entities.mapper.auth.request.ChangePasswordRequestDto;
 import ru.example.ivtserver.exceptions.auth.InvalidDisposableToken;
 import ru.example.ivtserver.exceptions.auth.NoUserException;
 

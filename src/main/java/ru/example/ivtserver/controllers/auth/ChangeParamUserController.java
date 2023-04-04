@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.example.ivtserver.entities.dto.auth.ChangeEmailRequestDto;
-import ru.example.ivtserver.entities.dto.auth.ChangePasswordRequestDto;
-import ru.example.ivtserver.entities.dto.auth.RecoverPasswordRequestDto;
+import ru.example.ivtserver.entities.mapper.auth.request.ChangeEmailRequestDto;
+import ru.example.ivtserver.entities.mapper.auth.request.ChangePasswordRequestDto;
+import ru.example.ivtserver.entities.mapper.auth.request.RecoverPasswordRequestDto;
 import ru.example.ivtserver.services.auth.ChangeParamUserService;
 
 import java.security.Principal;

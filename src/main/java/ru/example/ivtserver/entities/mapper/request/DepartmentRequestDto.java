@@ -1,4 +1,4 @@
-package ru.example.ivtserver.entities.dto;
+package ru.example.ivtserver.entities.mapper.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;

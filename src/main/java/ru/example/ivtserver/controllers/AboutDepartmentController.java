@@ -8,10 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ru.example.ivtserver.entities.AboutDepartment;
-import ru.example.ivtserver.entities.dto.AboutDepartmentRequestDto;
+import ru.example.ivtserver.entities.mapper.request.AboutDepartmentRequestDto;
 import ru.example.ivtserver.services.AboutDepartmentService;
-
-import java.util.UUID;
 
 @CrossOrigin(origins = "http://localhost:8081")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)

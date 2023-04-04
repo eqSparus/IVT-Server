@@ -1,4 +1,4 @@
-package ru.example.ivtserver.entities.dto;
+package ru.example.ivtserver.entities.mapper.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

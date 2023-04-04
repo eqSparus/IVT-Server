@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.example.ivtserver.entities.Teacher;
-import ru.example.ivtserver.entities.dto.TeacherRequestDto;
+import ru.example.ivtserver.entities.mapper.request.TeacherRequestDto;
 import ru.example.ivtserver.services.TeacherService;
 
 import java.io.IOException;

@@ -1,7 +1,7 @@
 package ru.example.ivtserver.services;
 
 import ru.example.ivtserver.entities.AboutDepartment;
-import ru.example.ivtserver.entities.dto.AboutDepartmentRequestDto;
+import ru.example.ivtserver.entities.mapper.request.AboutDepartmentRequestDto;
 import ru.example.ivtserver.exceptions.NoIdException;
 
 import java.util.List;

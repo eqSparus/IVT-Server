@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.example.ivtserver.entities.Partner;
-import ru.example.ivtserver.entities.dto.PartnerRequestDto;
+import ru.example.ivtserver.entities.mapper.request.PartnerRequestDto;
 import ru.example.ivtserver.exceptions.NoIdException;
 import ru.example.ivtserver.repositories.PartnerRepository;
 import ru.example.ivtserver.services.PartnerService;

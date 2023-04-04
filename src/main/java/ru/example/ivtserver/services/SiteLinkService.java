@@ -2,7 +2,7 @@ package ru.example.ivtserver.services;
 
 
 import ru.example.ivtserver.entities.SiteLink;
-import ru.example.ivtserver.entities.dto.SiteLinkRequestDto;
+import ru.example.ivtserver.entities.mapper.request.SiteLinkRequestDto;
 import ru.example.ivtserver.exceptions.NoIdException;
 
 import java.util.List;

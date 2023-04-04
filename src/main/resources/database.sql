@@ -1,3 +1,16 @@
+CREATE BUCKET `IVT-Bucket`
+    with {
+        ramQuotaMB: 100,
+        flushEnabled: false,
+        replicaNumber: 1,
+        replicaIndexes: false,
+        maxTTL: 0,
+        compressionMode: "passive",
+        bucketType: "membase",
+        conflictResolutionType: "seqno",
+        evictionPolicy: "valueOnly"
+        };
+
 CREATE
 COLLECTION `IVT-Bucket`._default.`user-records`;
 CREATE

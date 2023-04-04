@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ru.example.ivtserver.entities.Department;
-import ru.example.ivtserver.entities.dto.DepartmentRequestDto;
+import ru.example.ivtserver.entities.mapper.request.DepartmentRequestDto;
 import ru.example.ivtserver.services.DepartmentService;
 
 @CrossOrigin(origins = "http://localhost:8081")

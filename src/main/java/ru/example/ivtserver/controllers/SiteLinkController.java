@@ -9,7 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.example.ivtserver.entities.SiteLink;
-import ru.example.ivtserver.entities.dto.SiteLinkRequestDto;
+import ru.example.ivtserver.entities.mapper.request.SiteLinkRequestDto;
 import ru.example.ivtserver.services.SiteLinkService;
 
 import java.util.UUID;

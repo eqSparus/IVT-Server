@@ -16,6 +16,7 @@ import org.springframework.data.couchbase.core.mapping.id.GeneratedValue;
 import org.springframework.data.couchbase.core.mapping.id.GenerationStrategy;
 import org.springframework.data.couchbase.repository.Collection;
 
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -26,7 +27,7 @@ import java.util.UUID;
 @Builder
 @Document
 @Collection("site-content")
-public class Partner {
+public class Partner implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationStrategy.UNIQUE)
