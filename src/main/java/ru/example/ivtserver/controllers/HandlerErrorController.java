@@ -2,6 +2,7 @@ package ru.example.ivtserver.controllers;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.core.convert.ConversionFailedException;
@@ -17,7 +18,8 @@ import ru.example.ivtserver.exceptions.NoIdException;
 @RestControllerAdvice(basePackages = "ru.example.ivtserver.controllers")
 public class HandlerErrorController {
 
-    @ExceptionHandler({MethodArgumentNotValidException.class, NoIdException.class, ConversionFailedException.class})
+    @ExceptionHandler({MethodArgumentNotValidException.class, NoIdException.class,
+            ConversionFailedException.class, ConstraintViolationException.class})
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public MessageErrorDto handlerValidDataException(HttpServletRequest request) {
         return MessageErrorDto.builder()

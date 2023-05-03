@@ -21,16 +21,12 @@ public class TeacherRequestDto {
     @NotBlank
     String lastName;
 
-    @NotBlank
     String middleName;
 
-    @NotBlank
     String postDepartment;
 
-    @NotBlank
     String postTeacher;
 
-    @NotBlank
     String postAdditional;
 
 

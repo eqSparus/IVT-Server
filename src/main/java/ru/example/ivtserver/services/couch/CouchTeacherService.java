@@ -4,6 +4,9 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -19,16 +22,15 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
 @Log4j2
 public class CouchTeacherService implements TeacherService {
 
-    // TODO Заменить
-    static Path BASE_PATH = Path
-            .of("build/resources/main/public/images/teachers");
+    @Value("${upload.path.teachers}")
+    Path basePath;
 
-    TeacherRepository teacherRepository;
+    final TeacherRepository teacherRepository;
 
     @Autowired
     public CouchTeacherService(TeacherRepository teacherRepository) {
@@ -37,11 +39,12 @@ public class CouchTeacherService implements TeacherService {
 
     @Override
     public Teacher addTeacher(TeacherRequestDto dto, MultipartFile img) throws IOException {
+        FileUtil.isExistDir(basePath);
         var fileName = UUID.randomUUID() + "." + FileUtil.getExtension(img.getOriginalFilename());
-        var path = BASE_PATH.resolve(fileName);
+        var path = basePath.resolve(fileName);
         FileUtil.saveFile(img, path);
         var url = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/images/teachers/")
+                .path("/teacher/image/")
                 .path(fileName)
                 .toUriString();
 
@@ -105,5 +108,10 @@ public class CouchTeacherService implements TeacherService {
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
         teacher.setPosition(position);
         return teacherRepository.save(teacher).getPosition();
+    }
+
+    @Override
+    public Resource getImageTeacher(String name) throws IOException {
+        return new FileSystemResource(basePath.resolve(name));
     }
 }

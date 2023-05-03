@@ -4,6 +4,9 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -19,16 +22,15 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
 @Log4j2
 public class CouchPartnerService implements PartnerService {
 
-    // TODO заменить
-    static Path BASE_PATH = Path
-            .of("build/resources/main/public/images/partners");
+    @Value("${upload.path.partners}")
+    Path basePath;
 
-    PartnerRepository partnerRepository;
+    final PartnerRepository partnerRepository;
 
     @Autowired
     public CouchPartnerService(PartnerRepository partnerRepository) {
@@ -37,12 +39,13 @@ public class CouchPartnerService implements PartnerService {
 
     @Override
     public Partner addPartner(PartnerRequestDto dto, MultipartFile img) throws IOException {
+        FileUtil.isExistDir(basePath);
         var fileName = UUID.randomUUID() + "." + FileUtil.getExtension(img.getOriginalFilename());
-        var path = BASE_PATH.resolve(fileName);
+        var path = basePath.resolve(fileName);
         FileUtil.saveFile(img, path);
 
         var url = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/images/partners/")
+                .path("/partner/image/")
                 .path(fileName)
                 .toUriString();
 
@@ -84,5 +87,11 @@ public class CouchPartnerService implements PartnerService {
     @Override
     public List<Partner> getAllPartners() {
         return partnerRepository.findAll();
+    }
+
+
+    @Override
+    public Resource getLogoPartner(String filename) throws IOException {
+        return new FileSystemResource(basePath.resolve(filename));
     }
 }

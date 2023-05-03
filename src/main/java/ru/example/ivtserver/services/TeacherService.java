@@ -1,5 +1,6 @@
 package ru.example.ivtserver.services;
 
+import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 import ru.example.ivtserver.entities.Teacher;
 import ru.example.ivtserver.entities.mapper.request.TeacherRequestDto;
@@ -22,4 +23,6 @@ public interface TeacherService {
     List<Teacher> getAllTeachers();
 
     int updatePosition(int position, UUID id) throws NoIdException;
+
+    Resource getImageTeacher(String name) throws IOException;
 }

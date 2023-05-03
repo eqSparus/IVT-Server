@@ -9,6 +9,11 @@ spring:
     banner-mode: console
   config:
     import: security.yaml,database.yaml,setting-email.yaml
+  web:
+    resources:
+      cache:
+        cachecontrol:
+          max-age: 180d
 
 server:
   port: 8080
@@ -26,3 +31,8 @@ logging:
         security: DEBUG
 
 debug: false
+
+upload:
+  path:
+    partners: images/partners
+    teachers: images/teachers

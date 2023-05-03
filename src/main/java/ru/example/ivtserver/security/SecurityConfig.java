@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers("/login", "/refresh", "/partner",
                                 "/recover/pass", "/recover/pass/valid", "/change/email", "/images/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/data").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/data", "/teacher/**", "/partner/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement()
@@ -59,7 +59,6 @@ public class SecurityConfig {
                 .and().cors();
 
         http.csrf().disable().httpBasic().disable();
-
         return http.build();
     }
 

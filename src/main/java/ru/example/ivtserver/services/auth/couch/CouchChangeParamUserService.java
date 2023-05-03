@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.email.EmailProvider;
@@ -49,6 +50,7 @@ public class CouchChangeParamUserService implements ChangeParamUserService {
     }
 
 
+    @Async
     @Override
     public void sendRecoverPassEmail(String email) throws NoUserException {
 
@@ -100,6 +102,7 @@ public class CouchChangeParamUserService implements ChangeParamUserService {
         }
     }
 
+    @Async
     @Override
     public void sendChangeEmail(ChangeEmailRequestDto dto, String email) throws NoUserException {
         var user = userRepository.findByEmail(email)

@@ -29,6 +29,12 @@ public class FileUtil {
                 path, StandardCopyOption.REPLACE_EXISTING);
     }
 
+    public static void isExistDir(Path dir) throws IOException {
+        if (Files.notExists(dir)) {
+            Files.createDirectory(dir);
+        }
+    }
+
     public static String getExtension(String path) {
         var index = path.lastIndexOf(".");
         if (index == -1) {

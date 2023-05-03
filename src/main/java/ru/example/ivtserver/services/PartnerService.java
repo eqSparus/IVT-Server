@@ -1,5 +1,6 @@
 package ru.example.ivtserver.services;
 
+import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 import ru.example.ivtserver.entities.Partner;
 import ru.example.ivtserver.entities.mapper.request.PartnerRequestDto;
@@ -21,4 +22,5 @@ public interface PartnerService {
 
     List<Partner> getAllPartners();
 
+    Resource getLogoPartner(String filename) throws IOException;
 }

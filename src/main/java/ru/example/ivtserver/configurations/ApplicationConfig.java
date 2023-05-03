@@ -4,10 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -18,8 +19,8 @@ import java.nio.charset.StandardCharsets;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Configuration
-@EnableCaching
-public class ApplicationConfig {
+@EnableAsync
+public class ApplicationConfig implements WebMvcConfigurer {
 
     @Bean
     @Primary
@@ -47,5 +48,4 @@ public class ApplicationConfig {
         resolver.setOrder(0);
         return resolver;
     }
-
 }
