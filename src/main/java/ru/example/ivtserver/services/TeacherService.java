@@ -20,9 +20,11 @@ public interface TeacherService {
 
     void removeTeacher(UUID id) throws IOException, NoIdException;
 
-    List<Teacher> getAllTeachers();
+    List<Teacher> getTeachers(int skip, int size);
+
+    List<Teacher> getTeachers(int skip);
 
     int updatePosition(int position, UUID id) throws NoIdException;
 
-    Resource getImageTeacher(String name) throws IOException;
+    Resource getImageTeacher(String filename);
 }

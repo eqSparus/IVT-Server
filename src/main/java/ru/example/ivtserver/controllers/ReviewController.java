@@ -3,7 +3,6 @@ package ru.example.ivtserver.controllers;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,74 +10,62 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.example.ivtserver.entities.Teacher;
-import ru.example.ivtserver.entities.mapper.request.TeacherRequestDto;
-import ru.example.ivtserver.services.TeacherService;
+import ru.example.ivtserver.entities.Review;
+import ru.example.ivtserver.entities.mapper.request.ReviewRequestDto;
+import ru.example.ivtserver.services.ReviewService;
 import ru.example.ivtserver.utils.image.ImgType;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @CrossOrigin(origins = "http://localhost:8081")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
-@RequestMapping(path = "/teacher")
+@RequestMapping(path = "/review")
 @Validated
-@Log4j2
-public class TeacherController {
+public class ReviewController {
 
-    TeacherService teacherService;
+    ReviewService reviewService;
 
     @Autowired
-    public TeacherController(TeacherService teacherService) {
-        this.teacherService = teacherService;
+    public ReviewController(ReviewService reviewService) {
+        this.reviewService = reviewService;
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(code = HttpStatus.CREATED)
-    public Teacher createTeacher(
-            @RequestPart(name = "data") @Valid TeacherRequestDto dto,
+    public Review createReview(
+            @RequestPart(name = "data") @Valid ReviewRequestDto dto,
             @RequestPart(name = "img") @Valid @ImgType MultipartFile img
     ) throws IOException {
-        return teacherService.addTeacher(dto, img);
+        return reviewService.addReview(dto, img);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Teacher updateTeacher(
-            @RequestBody @Valid TeacherRequestDto dto
+    public Review updateReview(
+            @RequestBody @Valid ReviewRequestDto dto
     ) {
-        return teacherService.updateTeacher(dto);
+        return reviewService.updateReview(dto);
     }
 
     @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE, params = {"id"})
-    public Map<String, String> updateImgTeacher(
+    public Map<String, String> updateImgReview(
             @RequestPart(name = "img") @Valid @ImgType MultipartFile file,
             @RequestParam(name = "id") UUID id
     ) throws IOException {
-        var url = teacherService.updateImg(file, id);
+        var url = reviewService.updateImg(file, id);
         return Map.of("url", url);
     }
 
-    @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE, params = {"id", "position"})
-    public Map<String, Integer> updatePositionTeacher(
-            @RequestParam(name = "id") UUID id,
-            @RequestParam(name = "position") int position
-    ) {
-        var newPosition = teacherService.updatePosition(position, id);
-        return Map.of("position", newPosition);
-    }
-
     @DeleteMapping(params = {"id"})
-    public ResponseEntity<String> deleteTeacher(
+    public ResponseEntity<String> deleteReview(
             @RequestParam(name = "id") UUID id
     ) throws IOException {
-        teacherService.removeTeacher(id);
+        reviewService.removeReview(id);
         return ResponseEntity.ok("Удаление преподавателя");
     }
 
@@ -86,17 +73,7 @@ public class TeacherController {
     public byte[] getTeacherImg(
             @PathVariable(name = "filename") String filename
     ) throws IOException {
-        return teacherService.getImageTeacher(filename).getInputStream().readAllBytes();
+        return reviewService.getImageReview(filename).getInputStream().readAllBytes();
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Teacher> getTeachers(
-            @RequestParam(name = "skip", defaultValue = "0") int skip,
-            @RequestParam(name = "size", defaultValue = "-1") int size
-    ) {
-        if (size == -1) {
-            return teacherService.getTeachers(skip);
-        }
-        return teacherService.getTeachers(skip, size);
-    }
 }

@@ -27,11 +27,11 @@ public class SiteContentDto {
     @JsonProperty(value = "entrants")
     List<Entrant> entrants;
 
-    @JsonProperty(value = "teachers")
-    List<Teacher> teachers;
-
     @JsonProperty(value = "partners")
     List<Partner> partners;
+
+    @JsonProperty(value = "reviews")
+    List<Review> reviews;
 
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
     @AllArgsConstructor

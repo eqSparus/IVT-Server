@@ -36,3 +36,4 @@ upload:
   path:
     partners: images/partners
     teachers: images/teachers
+    reviews: images/reviews

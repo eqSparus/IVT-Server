@@ -23,8 +23,9 @@ public class DataController {
     DirectionService directionService;
     SiteLinkService siteLinkService;
     EntrantService entrantService;
-    TeacherService teacherService;
     PartnerService partnerService;
+
+    ReviewService reviewService;
 
     @Autowired
     public DataController(AboutDepartmentService aboutDepartmentService,
@@ -32,15 +33,15 @@ public class DataController {
                           DirectionService directionService,
                           SiteLinkService siteLinkService,
                           EntrantService entrantService,
-                          TeacherService teacherService,
-                          PartnerService partnerService) {
+                          PartnerService partnerService,
+                          ReviewService reviewService) {
         this.aboutDepartmentService = aboutDepartmentService;
         this.departmentService = departmentService;
         this.directionService = directionService;
         this.siteLinkService = siteLinkService;
         this.entrantService = entrantService;
-        this.teacherService = teacherService;
         this.partnerService = partnerService;
+        this.reviewService = reviewService;
     }
 
 
@@ -52,16 +53,16 @@ public class DataController {
         var aboutDepartment = aboutDepartmentService.getAll();
         var directions = directionService.getAll();
         var entrants = entrantService.getAll();
-        var teachers = teacherService.getAllTeachers();
         var partners = partnerService.getAllPartners();
+        var reviews = reviewService.getAllReviews();
 
         return SiteContentDto.builder()
                 .department(new SiteContentDto.MainDepartment(department, siteLinks))
                 .aboutDepartment(aboutDepartment)
                 .direction(directions)
                 .entrants(entrants)
-                .teachers(teachers)
                 .partners(partners)
+                .reviews(reviews)
                 .build();
     }
 }

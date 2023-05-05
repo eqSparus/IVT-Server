@@ -98,8 +98,14 @@ public class CouchTeacherService implements TeacherService {
     }
 
     @Override
-    public List<Teacher> getAllTeachers() {
-        return teacherRepository.findAll();
+    public List<Teacher> getTeachers(int skip, int size) {
+        return teacherRepository.findAllByOrderByPosition(skip, size);
+    }
+
+    @Override
+    public List<Teacher> getTeachers(int skip) {
+        var size = teacherRepository.count();
+        return getTeachers(skip, (int) size);
     }
 
     @Override
@@ -111,7 +117,7 @@ public class CouchTeacherService implements TeacherService {
     }
 
     @Override
-    public Resource getImageTeacher(String name) throws IOException {
-        return new FileSystemResource(basePath.resolve(name));
+    public Resource getImageTeacher(String filename) {
+        return new FileSystemResource(basePath.resolve(filename));
     }
 }
