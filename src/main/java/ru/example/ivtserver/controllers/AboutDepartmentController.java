@@ -11,7 +11,7 @@ import ru.example.ivtserver.entities.AboutDepartment;
 import ru.example.ivtserver.entities.mapper.request.AboutDepartmentRequestDto;
 import ru.example.ivtserver.services.AboutDepartmentService;
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "http://localhost:8081", methods = RequestMethod.PUT)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
 @RequestMapping(path = "/about")

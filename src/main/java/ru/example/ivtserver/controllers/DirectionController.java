@@ -15,7 +15,9 @@ import ru.example.ivtserver.services.DirectionService;
 import java.util.List;
 import java.util.UUID;
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "http://localhost:8081", methods = {
+        RequestMethod.DELETE, RequestMethod.PATCH, RequestMethod.PUT, RequestMethod.POST
+})
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
 @RequestMapping(path = "/direction")

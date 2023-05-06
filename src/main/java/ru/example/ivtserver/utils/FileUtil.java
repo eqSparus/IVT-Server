@@ -42,5 +42,4 @@ public class FileUtil {
         }
         return path.substring(index + 1);
     }
-
 }

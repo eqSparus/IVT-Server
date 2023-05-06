@@ -51,8 +51,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers("/login", "/refresh", "/partner",
                                 "/recover/pass", "/recover/pass/valid", "/change/email", "/images/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/data", "/teacher/image/*", "/partner/image/*", "/review/image/*").permitAll()
-                        .requestMatchers("/review").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/data", "/teacher/image/*",
+                                "/partner/image/*", "/review/image/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/teacher").permitAll()
                         .anyRequest().authenticated()
                 )

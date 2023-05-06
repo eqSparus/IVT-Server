@@ -14,7 +14,7 @@ import ru.example.ivtserver.services.auth.ChangeParamUserService;
 
 import java.security.Principal;
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "http://localhost:8081", methods = RequestMethod.POST)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
 public class ChangeParamUserController {

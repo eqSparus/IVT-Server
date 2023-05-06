@@ -18,7 +18,8 @@ import ru.example.ivtserver.services.auth.UserService;
 
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:8081", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:8081", allowCredentials = "true",
+        methods = RequestMethod.POST)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RestController
 @Log4j2
