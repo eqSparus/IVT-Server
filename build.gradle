@@ -27,6 +27,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2'
+    implementation 'net.coobird:thumbnailator:0.4.19'
 
     // Веб зависимости
     implementation 'org.springframework.boot:spring-boot-starter-web'

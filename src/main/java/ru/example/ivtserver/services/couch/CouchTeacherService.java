@@ -42,7 +42,7 @@ public class CouchTeacherService implements TeacherService {
         FileUtil.isExistDir(basePath);
         var fileName = UUID.randomUUID() + "." + FileUtil.getExtension(img.getOriginalFilename());
         var path = basePath.resolve(fileName);
-        FileUtil.saveFile(img, path);
+        FileUtil.saveFile(() -> FileUtil.resizeImg(img, 500, 500), path);
         var url = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/teacher/image/")
                 .path(fileName)
@@ -85,7 +85,7 @@ public class CouchTeacherService implements TeacherService {
         var teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
 
-        FileUtil.replace(img, teacher.getPathImg());
+        FileUtil.replace(() -> FileUtil.resizeImg(img, 500, 500), teacher.getPathImg());
         return teacher.getUrlImg();
     }
 
