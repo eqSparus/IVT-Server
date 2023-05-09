@@ -14,6 +14,9 @@ import ru.example.ivtserver.services.EntrantService;
 
 import java.util.UUID;
 
+/**
+ * Контролер для создания, обновления и удаления информации абитуриенту
+ */
 @CrossOrigin(origins = "http://localhost:8081", methods = {
         RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PUT
 })
@@ -29,6 +32,12 @@ public class EntrantController {
         this.entrantService = entrantService;
     }
 
+    /**
+     * Конечная точка для создает нового объекта типа {@link Entrant} на основе
+     * данных из объекта {@link EntrantRequestDto} и возврата его в ответе.
+     * @param dto Объект типа {@link EntrantRequestDto}, содержащий данные для создания {@link Entrant}.
+     * @return Объект созданный типа {@link Entrant}
+     */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(code = HttpStatus.CREATED)
@@ -38,6 +47,12 @@ public class EntrantController {
         return entrantService.create(dto);
     }
 
+    /**
+     * Конечная точка для обновления объект типа {@link Entrant} на основе
+     * данных из объекта {@link EntrantRequestDto} и возврата его в ответе.
+     * @param dto Объект типа {@link EntrantRequestDto}, содержащий данные для обновления {@link Entrant}.
+     * @return Объект обновленный типа {@link Entrant}.
+     */
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public Entrant update(
@@ -46,6 +61,11 @@ public class EntrantController {
         return entrantService.update(dto);
     }
 
+    /**
+     * Конечная точка для удаляет информации абитуриента на основе его идентификатора {@code id}.
+     * @param id Идентификатор информации, который должен быть удален.
+     * @return Объект типа {@link ResponseEntity} с успешным статусом и сообщением об удалении.
+     */
     @DeleteMapping(params = {"id"})
     public ResponseEntity<String> delete(
             @RequestParam(name = "id") UUID id

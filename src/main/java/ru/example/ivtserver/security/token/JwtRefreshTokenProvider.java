@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Поставщик для токенов обновления для аутентификации по JWT.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
 public class JwtRefreshTokenProvider extends JwtAuthenticationTokenProvider {
@@ -21,6 +24,12 @@ public class JwtRefreshTokenProvider extends JwtAuthenticationTokenProvider {
                 env.getRequiredProperty("security.token.jwt.valid-time-refresh-second", Long.class));
     }
 
+    /**
+     * Извлекает токен JWT из заданного {@link HttpServletRequest} запроса.
+     * @param request {@link HttpServletRequest} запрос, из которого будет извлекаться токен
+     * @return {@link Optional}, содержащий токен JWT, если он присутствует в запросе,
+     * и {@link Optional#empty()}, если токен отсутствует или не актуальный
+     */
     @Override
     public Optional<String> getToken(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(tokenHeader));

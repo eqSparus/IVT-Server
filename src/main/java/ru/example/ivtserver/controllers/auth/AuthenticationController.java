@@ -18,6 +18,9 @@ import ru.example.ivtserver.services.auth.UserService;
 
 import java.util.Map;
 
+/**
+ * Контроллер для входа, выхода, и обновления пользователя.
+ */
 @CrossOrigin(origins = "http://localhost:8081", allowCredentials = "true",
         methods = RequestMethod.POST)
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -25,6 +28,9 @@ import java.util.Map;
 @Log4j2
 public class AuthenticationController {
 
+    /**
+     * Время жизни токена обновления
+     */
     @Value("${security.token.jwt.valid-time-refresh-second}")
     Long cookieLifeTime;
 
@@ -38,6 +44,12 @@ public class AuthenticationController {
         this.userService = userService;
     }
 
+    /**
+     * Конечная точка для авторизации пользователя в приложении и установка токена обновления в печенье refresh.
+     * @param userDto данные о пользователе, которые отправляются в запросе в формате JSON
+     * @param response объект ответа HttpServletResponse для установки cookies
+     * @return accessToken для доступа к ресурсам приложения, устанавливает refreshCookie в response
+     */
     @PostMapping(path = "/login", produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> login(
@@ -57,12 +69,19 @@ public class AuthenticationController {
         );
     }
 
+    /**
+     * Конечная точка для обновления accessToken и печеньки refreshToken
+     * при помощи значения refreshToken из печеньки
+     * @param refresh печенька в которой находится токен обновления
+     * @param response объект ответа HttpServletResponse для установки cookies
+     * @return accessToken для доступа к ресурсам приложения, устанавливает refreshCookie в response
+     */
     @PostMapping(path = "/refresh", produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> refreshToken(
-            @CookieValue(name = "refresh") Cookie cookie,
+            @CookieValue(name = "refresh") Cookie refresh,
             HttpServletResponse response
     ) {
-        var authentication = userService.refreshToken(cookie.getValue());
+        var authentication = userService.refreshToken(refresh.getValue());
 
         var refreshCookie = ResponseCookie.from(NAME_REFRESH_COOKIE, authentication.getRefreshToken())
                 .httpOnly(true)
@@ -77,12 +96,19 @@ public class AuthenticationController {
         );
     }
 
+    /**
+     * Конечная точка для выхода пользователя из аккаунта путем удаления печеньки refresh
+     * и удаления JWT токена обновления из базы данных
+     * @param refresh печенька в которой находится токен обновления
+     * @param response Объект ответа HttpServletResponse для удаления cookies
+     * @return ResponseEntity с сообщением о выходе
+     */
     @PostMapping(path = "/exit")
     public ResponseEntity<String> logout(
-            @CookieValue(name = "refresh") Cookie cookie,
+            @CookieValue(name = "refresh") Cookie refresh,
             HttpServletResponse response
     ) {
-        userService.logout(cookie.getValue());
+        userService.logout(refresh.getValue());
         var refreshCookie = ResponseCookie.from(NAME_REFRESH_COOKIE, "")
                 .httpOnly(true)
                 .sameSite(SAME_SET_COOKIE)

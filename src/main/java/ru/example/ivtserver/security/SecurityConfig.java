@@ -22,6 +22,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/**
+ * Конфигурация безопасности для приложения.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Configuration
 @EnableWebSecurity
@@ -40,6 +43,11 @@ public class SecurityConfig {
         this.jwtTokenAuthenticationFilter = jwtTokenAuthenticationFilter;
     }
 
+    /**
+     * Создает экземпляр {@link SecurityFilterChain} для настройки безопасности приложения.
+     * @param http {@link HttpSecurity} для настройки защиты ресурсов приложения.
+     * @return SecurityFilterChain для применения настроек безопасности.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -64,11 +72,19 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Создает экземпляр {@link AuthenticationManager} для аутентификации пользователей.
+     * @return AuthenticationManager для аутентификации пользователей.
+     */
     @Bean
     public AuthenticationManager authenticationManager() {
         return new ProviderManager(authenticationProvider());
     }
 
+    /**
+     * Создает экземпляр {@link AuthenticationProvider} для аутентификации пользователей.
+     * @return AuthenticationProvider для аутентификации пользователей.
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         var provider = new DaoAuthenticationProvider();
@@ -77,6 +93,10 @@ public class SecurityConfig {
         return provider;
     }
 
+    /**
+     * Создает экземпляр {@link PasswordEncoder} с использованием {@link BCryptPasswordEncoder}.
+     * @return PasswordEncoder для хэширования паролей.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

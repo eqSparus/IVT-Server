@@ -21,6 +21,9 @@ import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+/**
+ * Класс, который представляет документ "Партнеры" для БД Couchbase.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Data
 @AllArgsConstructor

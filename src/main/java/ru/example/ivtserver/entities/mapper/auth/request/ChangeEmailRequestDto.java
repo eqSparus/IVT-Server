@@ -8,6 +8,9 @@ import lombok.AccessLevel;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 
+/**
+ * Класс, который представляет DTO для запроса на изменения почты пользователя.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
 public class ChangeEmailRequestDto {

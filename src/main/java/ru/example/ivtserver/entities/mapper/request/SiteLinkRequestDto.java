@@ -10,6 +10,9 @@ import org.hibernate.validator.constraints.URL;
 
 import java.util.UUID;
 
+/**
+ * Класс, который представляет DTO запроса для "Ссылки на сайт" {@link ru.example.ivtserver.entities.SiteLink}.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
 public class SiteLinkRequestDto {

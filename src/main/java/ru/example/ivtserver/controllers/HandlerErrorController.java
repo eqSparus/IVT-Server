@@ -14,10 +14,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.example.ivtserver.entities.mapper.auth.MessageErrorDto;
 import ru.example.ivtserver.exceptions.NoIdException;
 
+/**
+ * Контролер для обработки ошибок настройки наполнения сайта.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestControllerAdvice(basePackages = "ru.example.ivtserver.controllers")
 public class HandlerErrorController {
 
+    /**
+     * Обрабатывает исключения типа {@link MethodArgumentNotValidException}, {@link NoIdException}, {@link ConversionFailedException}
+     * и {@link ConstraintViolationException}, которые могут возникнуть при передаче недопустимых данных, и возвращает
+     * объект типа {@link MessageErrorDto} с подробным сообщением об ошибке.
+     * @param request Объект типа {@link HttpServletRequest}, представляющий запрос, при выполнении которого возникло исключение.
+     * @return Объект типа {@link MessageErrorDto}, содержащий подробное сообщение об ошибке, адрес запроса и идентификатор ошибки.
+     */
     @ExceptionHandler({MethodArgumentNotValidException.class, NoIdException.class,
             ConversionFailedException.class, ConstraintViolationException.class})
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
@@ -28,16 +38,4 @@ public class HandlerErrorController {
                 .status(HttpStatus.BAD_REQUEST.value())
                 .build();
     }
-
-    @ExceptionHandler({Exception.class})
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public MessageErrorDto handlerValidDataException(HttpServletRequest request, Exception e) {
-        e.printStackTrace();
-        return MessageErrorDto.builder()
-                .message("Неверные данные")
-                .path(request.getRequestURI())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .build();
-    }
-
 }

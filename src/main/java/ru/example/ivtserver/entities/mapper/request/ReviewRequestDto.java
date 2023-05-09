@@ -9,6 +9,9 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.UUID;
 
+/**
+ * Класс, который представляет DTO запроса для "Отзыв" {@link ru.example.ivtserver.entities.Review}.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
 public class ReviewRequestDto {

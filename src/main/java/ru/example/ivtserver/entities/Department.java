@@ -20,6 +20,9 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+/**
+ * Класс, который представляет документ "Кафедра" для БД Couchbase.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Data
 @AllArgsConstructor

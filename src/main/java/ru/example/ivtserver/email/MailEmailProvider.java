@@ -16,6 +16,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 
+/**
+ * Этот класс реализует интерфейс {@link EmailProvider} и предоставляет методы для отправки электронной почты
+ * с использованием {@link JavaMailSender} и шаблонизатора {@link ITemplateEngine}.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
 public class MailEmailProvider implements EmailProvider {
@@ -36,11 +40,27 @@ public class MailEmailProvider implements EmailProvider {
         this.templateEngine = templateEngine;
     }
 
+    /**
+     * Отправляет электронное письмо на указанный адрес с указанной темой и сообщением.
+     *
+     * @param toAddress адрес на который нужно отправить электронное письмо
+     * @param title     тема электронного письма
+     * @param message   сообщение, которое нужно отправить
+     */
     @Override
     public void sendEmail(String toAddress, String title, String message) {
         sendEmail(toAddress, title, message, Map.of());
     }
 
+    /**
+     * Отправляет электронное письмо на указанный адрес с указанной темой и сообщением, а также с встроенными
+     * ресурсами, если они указаны.
+     *
+     * @param toAddress адрес на который нужно отправить электронное письмо
+     * @param title     тема электронного письма
+     * @param message   сообщение, которое нужно отправить
+     * @param resources встроенные ресурсы (например, изображения) в соответствии с переменой HTML разметки
+     */
     @Override
     public void sendEmail(String toAddress, String title,
                           String message, Map<String, Resource> resources) {
@@ -60,11 +80,25 @@ public class MailEmailProvider implements EmailProvider {
         });
     }
 
+    /**
+     * Обрабатывает HTML-шаблон с указанным именем, используя движок шаблонов
+     * после заполнения {@link Context}.
+     *
+     * @param name     имя HTML-шаблона для обработки
+     * @param variable функция для заполнения {@link Context}.
+     * @return обработанный HTML-шаблон в виде строки
+     */
     @Override
     public String getMailHtml(String name, UnaryOperator<Context> variable) {
         return templateEngine.process(name, variable.apply(new Context()));
     }
 
+    /**
+     * Обрабатывает HTML-шаблон с указанным именем, используя движок шаблонов.
+     *
+     * @param name имя HTML-шаблона для обработки
+     * @return обработанный HTML-шаблон в виде строки
+     */
     @Override
     public String getMailHtml(String name) {
         return getMailHtml(name, context -> context);

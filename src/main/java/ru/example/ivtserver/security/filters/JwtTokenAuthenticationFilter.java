@@ -20,6 +20,9 @@ import ru.example.ivtserver.security.token.JwtAuthenticationTokenProvider;
 import java.io.IOException;
 
 
+/**
+ * Фильтр для защищенных конечных точек Spring Security, который осуществляет аутентификацию пользователя на основе JWT-токена.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Log4j2
 @Component
@@ -55,12 +58,6 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
                     user.getUsername(), user.getPassword(), user.getAuthorities()));
         }
-//        chain.doFilter(request, response);
-        //TODO удалить
-        try {
-            chain.doFilter(request,response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        chain.doFilter(request, response);
     }
 }

@@ -10,6 +10,9 @@ import ru.example.ivtserver.entities.Department;
 import ru.example.ivtserver.entities.mapper.request.DepartmentRequestDto;
 import ru.example.ivtserver.services.DepartmentService;
 
+/**
+ * Контролер для обновления общей информации о кафедре.
+ */
 @CrossOrigin(origins = "http://localhost:8081", methods = RequestMethod.PUT)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
@@ -23,6 +26,11 @@ public class DepartmentController {
         this.departmentService = departmentService;
     }
 
+    /**
+     * Конечная точка для обновляет информацию о кафедре и возврата обновленного объекта {@link Department}.
+     * @param dto Объект {@link DepartmentRequestDto}, содержащий информацию о департаменте для обновления.
+     * @return Объект {@link Department}, представляющий обновленную информацию о департаменте.
+     */
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Department updateDepartment(

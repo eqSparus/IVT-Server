@@ -9,6 +9,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.repositories.UserRepository;
 
+/**
+ * Сервис, предназначенный для загрузки пользователей из базы данных Couchbase.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
 public class CouchUserDetailsService implements UserDetailsService {

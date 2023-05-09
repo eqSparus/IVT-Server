@@ -8,19 +8,27 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Objects;
 
+/**
+ * Проверка для типов файла.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ImgTypeValidator implements ConstraintValidator<ImgType, MultipartFile> {
+public class FileTypeValidator implements ConstraintValidator<FileType, MultipartFile> {
 
-    ImgTypes imgType;
+    FileTypes[] imgTypes;
 
     @Override
-    public void initialize(ImgType constraintAnnotation) {
-        this.imgType = constraintAnnotation.type();
+    public void initialize(FileType constraintAnnotation) {
+        this.imgTypes = constraintAnnotation.type().clone();
     }
 
     @Override
     public boolean isValid(MultipartFile file, ConstraintValidatorContext context) {
         var contentType = file.getContentType();
-        return !Objects.isNull(contentType) && contentType.equals(imgType.getType());
+        for (var fileType : imgTypes) {
+           if (Objects.nonNull(contentType) && contentType.equals(fileType.getType())){
+               return true;
+           }
+        }
+        return false;
     }
 }

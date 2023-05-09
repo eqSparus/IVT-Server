@@ -11,6 +11,9 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.UUID;
 
+/**
+ * Класс, который представляет DTO запроса для "Направление" {@link ru.example.ivtserver.entities.Direction}.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
 public class DirectionRequestDto {

@@ -14,6 +14,9 @@ import ru.example.ivtserver.services.SiteLinkService;
 
 import java.util.UUID;
 
+/**
+ * Контролер для создания, обновления, удаления ссылок на сайты.
+ */
 @CrossOrigin(origins = "http://localhost:8081", methods = {
         RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PUT
 })
@@ -29,6 +32,11 @@ public class SiteLinkController {
         this.siteLinkService = siteLinkService;
     }
 
+    /**
+     * Конечная точка для создания объекта типа {@link SiteLink} на основе переданных данных.
+     * @param dto Объект типа {@link SiteLinkRequestDto} с данными для создания {@link SiteLink}.
+     * @return Объект  {@link SiteLink} представляющий созданную ссылку.
+     */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(code = HttpStatus.CREATED)
@@ -38,6 +46,11 @@ public class SiteLinkController {
         return siteLinkService.createLink(dto);
     }
 
+    /**
+     * Конечная точка для обновления объекта {@link SiteLink} на основе переданных данных.
+     * @param dto Объект типа {@link SiteLinkRequestDto} с данными для обновления объекта типа {@link SiteLink}.
+     * @return Объект типа {@link SiteLink}, обновленный на основе переданных данных.
+     */
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public SiteLink getAllLink(
@@ -46,6 +59,11 @@ public class SiteLinkController {
         return siteLinkService.updateLink(dto);
     }
 
+    /**
+     * Конечная точка для удаления объект {@link SiteLink} на основе переданного идентификатора.
+     * @param id Идентификатор объекта типа UUID.
+     * @return Объект типа {@link ResponseEntity} с сообщением об успешном удалении.
+     */
     @DeleteMapping(params = {"id"})
     public ResponseEntity<String> getAllLink(
             @RequestParam(name = "id") UUID id
@@ -53,6 +71,4 @@ public class SiteLinkController {
         siteLinkService.deleteLink(id);
         return ResponseEntity.ok("Удаление ссылки");
     }
-
-
 }

@@ -10,6 +10,9 @@ import ru.example.ivtserver.entities.User;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * Класс, представляющий собой реализацию {@link UserDetails} для Couchbase.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CouchUserDetails implements UserDetails {
     User user;

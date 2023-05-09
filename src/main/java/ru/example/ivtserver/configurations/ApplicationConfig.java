@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -17,11 +16,20 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Общая конфигурация к приложению
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Configuration
 @EnableAsync
-public class ApplicationConfig implements WebMvcConfigurer {
+public class ApplicationConfig {
 
+    /**
+     * Создание объекта ObjectMapper, который может сериализовать и десериализовать объекты Java в JSON и обратно.
+     * В данном случае, метод создает {@link ObjectMapper}, который зарегистрировали модуль
+     * {@link JavaTimeModule} для корректной обработки дат и времени в формате ISO 8601.
+     * @return экземпляр {@link ObjectMapper} с зарегистрированным модулем {@link JavaTimeModule}.
+     */
     @Bean
     @Primary
     public ObjectMapper objectMapper() {
@@ -30,6 +38,10 @@ public class ApplicationConfig implements WebMvcConfigurer {
                 .registerModule(timeModule);
     }
 
+    /**
+     * Этот метод создает экземпляр {@link ITemplateEngine} для конфигурирования Thymeleaf шаблонов.
+     * @return экземпляр {@link ITemplateEngine} для конфигурирования Thymeleaf шаблонов.
+     */
     @Bean
     public ITemplateEngine templateEngine() {
         var templateEngine = new SpringTemplateEngine();
@@ -37,6 +49,10 @@ public class ApplicationConfig implements WebMvcConfigurer {
         return templateEngine;
     }
 
+    /**
+     * Создание объекта {@link ITemplateResolver} для настройки разрешения шаблонов Thymeleaf.
+     * @return {@link ITemplateResolver} объект-реализацию, настроенный для разрешения шаблонов Thymeleaf
+     */
     @Bean
     public ITemplateResolver templateResolver() {
         var resolver = new ClassLoaderTemplateResolver();

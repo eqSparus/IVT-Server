@@ -7,6 +7,9 @@ import lombok.AccessLevel;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 
+/**
+ * Класс, который представляет DTO запроса для "Кафедра" {@link ru.example.ivtserver.entities.Department}.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
 public class DepartmentRequestDto {

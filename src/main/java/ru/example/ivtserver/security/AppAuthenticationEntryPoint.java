@@ -16,6 +16,10 @@ import ru.example.ivtserver.entities.mapper.auth.MessageErrorDto;
 
 import java.io.IOException;
 
+/**
+ * Реализация {@link AuthenticationEntryPoint}, которая возвращает сообщение об ошибке при отсутствии
+ * аутентификации пользователя.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Component
 @Log4j2

@@ -19,6 +19,9 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+/**
+ * Класс, который представляет документ "Ссылка на сайт" для БД Couchbase.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 @Data

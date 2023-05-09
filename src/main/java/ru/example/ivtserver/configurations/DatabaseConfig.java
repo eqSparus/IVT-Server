@@ -20,6 +20,9 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * Конфигурации базы данных Couchbase
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Configuration
 @EnableCouchbaseAuditing
@@ -70,6 +73,9 @@ public class DatabaseConfig extends AbstractCouchbaseConfiguration {
         return new ZoneDateTimeAuditorAware();
     }
 
+    /**
+     * Реализация интерфейса {@link AuditorAware} для установки даты и времени.
+     */
     private static class ZoneDateTimeAuditorAware implements AuditorAware<ZonedDateTime> {
 
         @Override
@@ -78,12 +84,19 @@ public class DatabaseConfig extends AbstractCouchbaseConfiguration {
         }
     }
 
+    /**
+     * Подключения дополнительных преобразователей.
+     * @return пользовательские преобразователи
+     */
     @Override
     public CouchbaseCustomConversions customConversions() {
         return new CouchbaseCustomConversions(Arrays.asList(PathToStringConverter.INSTANCE,
                 StringToPathConverter.INSTANCE));
     }
 
+    /**
+     * Реализация интерфейса {@link Converter} для преобразования {@link String} в {@link Path} для записи в БД.
+     */
     @WritingConverter
     public enum PathToStringConverter implements Converter<Path, String> {
         INSTANCE;
@@ -94,6 +107,9 @@ public class DatabaseConfig extends AbstractCouchbaseConfiguration {
         }
     }
 
+    /**
+     * Реализация интерфейса {@link Converter} для преобразования  {@link Path} в {@link String} для чтения из БД.
+     */
     @ReadingConverter
     public enum StringToPathConverter implements Converter<String, Path> {
         INSTANCE;

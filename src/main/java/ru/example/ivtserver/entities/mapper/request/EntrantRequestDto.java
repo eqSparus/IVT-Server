@@ -10,6 +10,9 @@ import lombok.experimental.FieldDefaults;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Класс, который представляет DTO запроса для "Информации абитуриенту" {@link ru.example.ivtserver.entities.Entrant}.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
 public class EntrantRequestDto {

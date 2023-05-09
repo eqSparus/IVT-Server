@@ -10,6 +10,9 @@ import ru.example.ivtserver.entities.*;
 
 import java.util.List;
 
+/**
+ * Класс, который представляет DTO с содержимым сайта.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
 @Builder
@@ -43,5 +46,4 @@ public class SiteContentDto {
         List<SiteLink> links;
 
     }
-
 }

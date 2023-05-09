@@ -3,14 +3,17 @@ package ru.example.ivtserver.utils.image;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
+/**
+ * Расширение файлов
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public enum ImgTypes {
+public enum FileTypes {
     JPEG("image/jpeg"),
     PNG("image/png");
 
    String type;
 
-    ImgTypes(String type) {
+    FileTypes(String type) {
         this.type = type;
     }
 
