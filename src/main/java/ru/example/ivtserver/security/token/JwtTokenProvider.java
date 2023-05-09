@@ -70,7 +70,7 @@ public class JwtTokenProvider implements TokenProvider {
 
     /**
      * Генерирует токен JWT на основе заданных claims с временем жизни, указанным в миллисекундах.
-     * @param claims, которое будет использовано для генерации токена
+     * @param claims, которое будет использовано для генерации токена в формате {@link Claims}
      * @param time время жизни токена в миллисекундах
      * @return сгенерированный токен JWT
      */
@@ -91,7 +91,7 @@ public class JwtTokenProvider implements TokenProvider {
     /**
      * Проверяет, является ли заданный токен JWT действительным.
      * @param token токен JWT для проверки
-     * @return true, если токен действительный, false в противном случае
+     * @return {@code true}, если токен действительный, {@code false} в противном случае
      */
     @Override
     public boolean isValidToken(String token) {
@@ -110,7 +110,7 @@ public class JwtTokenProvider implements TokenProvider {
     /**
      * Получает тело токена JWT на основе заданного токена.
      * @param token токен JWT для разбора
-     * @return {@link Optional}, содержащий payload токена, если токен валидный, и {@link Optional#empty()}, если токен невалидный
+     * @return {@link Optional}, содержащий тело токена, если токен валидный, и {@link Optional#empty()}, если токен невалидный
      */
     @Override
     public Optional<Claims> getBody(String token) {

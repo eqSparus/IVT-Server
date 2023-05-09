@@ -47,7 +47,7 @@ public class AuthenticationController {
     /**
      * Конечная точка для авторизации пользователя в приложении и установка токена обновления в печенье refresh.
      * @param userDto данные о пользователе, которые отправляются в запросе в формате JSON
-     * @param response объект ответа HttpServletResponse для установки cookies
+     * @param response объект ответа {@link HttpServletResponse} для установки cookies
      * @return accessToken для доступа к ресурсам приложения, устанавливает refreshCookie в response
      */
     @PostMapping(path = "/login", produces = MediaType.APPLICATION_JSON_VALUE,
@@ -73,7 +73,7 @@ public class AuthenticationController {
      * Конечная точка для обновления accessToken и печеньки refreshToken
      * при помощи значения refreshToken из печеньки
      * @param refresh печенька в которой находится токен обновления
-     * @param response объект ответа HttpServletResponse для установки cookies
+     * @param response объект ответа {@link HttpServletResponse} для установки cookies
      * @return accessToken для доступа к ресурсам приложения, устанавливает refreshCookie в response
      */
     @PostMapping(path = "/refresh", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -100,8 +100,8 @@ public class AuthenticationController {
      * Конечная точка для выхода пользователя из аккаунта путем удаления печеньки refresh
      * и удаления JWT токена обновления из базы данных
      * @param refresh печенька в которой находится токен обновления
-     * @param response Объект ответа HttpServletResponse для удаления cookies
-     * @return ResponseEntity с сообщением о выходе
+     * @param response Объект ответа {@link HttpServletResponse} для удаления cookies
+     * @return {@link ResponseEntity} с сообщением о выходе
      */
     @PostMapping(path = "/exit")
     public ResponseEntity<String> logout(

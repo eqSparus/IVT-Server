@@ -27,14 +27,14 @@ public interface TokenProvider {
 
     /**
      * Генерирует JWT-токен на основе заданных данных.
-     * @param claims данные, которые будут добавлены в токен.
+     * @param claims данные, которые будут добавлены в токен в формате {@link Claims}.
      * @return строковое представление JWT токена.
      */
     String generateToken(Claims claims);
 
     /**
      * Генерирует JWT-токен на основе заданных данных с заданным временем жизни.
-     * @param claims данные, которые будут добавлены в токен.
+     * @param claims данные, которые будут добавлены в токен в формате {@link Claims}.
      * @param time   время жизни токена, в миллисекундах.
      * @return строковое представление JWT токена.
      */
@@ -43,14 +43,14 @@ public interface TokenProvider {
     /**
      * Проверяет, является ли переданный токен допустимым.
      * @param token токен для проверки
-     * @return true, если токен допустимый, false в противном случае
+     * @return {@code true}, если токен допустимый, {@code false} в противном случае
      */
     boolean isValidToken(String token);
 
     /**
      * Возвращает тело JWT, расшифрованное из переданного токена.
      * @param token токен для расшифровки
-     * @return опциональный объект Claims с расшифрованными данными из токена
+     * @return опциональный объект {@link Claims} с расшифрованными данными из токена
      * @throws JwtException если произошла ошибка при работе с JWT
      */
     Optional<Claims> getBody(String token) throws JwtException;

@@ -24,10 +24,9 @@ import ru.example.ivtserver.exceptions.auth.RefreshTokenException;
 public class HandlerErrorAuthenticationController {
 
     /**
-     * Обрабатывает исключения, связанные с некорректными учетными данными,
-     * и возвращает сообщение об ошибке и код ответа 400.
+     * Обрабатывает исключения, связанные с некорректными учетными данными
      * @param request Объект {@link HttpServletRequest}, представляющий входящий запрос.
-     * @return Объект {@link MessageErrorDto}, содержащий сообщение об ошибке, код ответа 400 и путь запроса.
+     * @return Объект {@link MessageErrorDto}, содержащий сообщение об ошибке.
      */
     @ExceptionHandler({IncorrectCredentialsException.class, NoUserException.class,
             MethodArgumentNotValidException.class, InvalidDisposableToken.class})
@@ -41,10 +40,9 @@ public class HandlerErrorAuthenticationController {
     }
 
     /**
-     * Обрабатывает исключения, связанные с недействительным токеном
-     * обновления, и возвращает сообщение об ошибке и код ответа 401 Unauthorized.
+     * Обрабатывает исключения, связанные с недействительным токеном.
      * @param request Объект {@link HttpServletRequest}, представляющий входящий запрос.
-     * @return Объект {@link MessageErrorDto}, содержащий сообщение об ошибке, код ответа 401 и путь запроса.
+     * @return Объект {@link MessageErrorDto}, содержащий сообщение об ошибке.
      */
     @ExceptionHandler({RefreshTokenException.class, MissingRequestCookieException.class})
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)

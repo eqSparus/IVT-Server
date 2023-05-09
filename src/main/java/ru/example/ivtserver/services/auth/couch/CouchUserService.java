@@ -12,15 +12,15 @@ import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.RefreshToken;
 import ru.example.ivtserver.entities.mapper.auth.AuthenticationToken;
 import ru.example.ivtserver.entities.mapper.auth.request.UserRequestDto;
-import ru.example.ivtserver.exceptions.auth.IncorrectCredentialsException;
-import ru.example.ivtserver.exceptions.auth.InvalidRefreshTokenException;
-import ru.example.ivtserver.exceptions.auth.NoUserWithRefreshTokenException;
-import ru.example.ivtserver.exceptions.auth.NotExistsRefreshTokenException;
+import ru.example.ivtserver.exceptions.auth.*;
 import ru.example.ivtserver.repositories.RefreshTokenRepository;
 import ru.example.ivtserver.repositories.UserRepository;
 import ru.example.ivtserver.security.token.JwtAuthenticationTokenProvider;
 import ru.example.ivtserver.services.auth.UserService;
 
+/**
+ * Класс реализующий интерфейс {@link UserService} для работы с учетными данными пользователя.
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
 @Log4j2
@@ -46,9 +46,16 @@ public class CouchUserService implements UserService {
         this.authenticationManager = authenticationManager;
     }
 
+    /**
+     * Выполняет процедуру аутентификации пользователя с использованием переданных учетных данных.
+     * @param userDao Объект {@link UserRequestDto}, содержащий данные пользователя, который пытается пройти аутентификацию.
+     * @return Токены аутентификации представленные {@link AuthenticationToken}.
+     * @throws IncorrectCredentialsException Если переданные учетные данные неверны или не найдены.
+     * @throws NoUserException бросается если пользователь не был найден.
+     */
     @Override
     public AuthenticationToken login(UserRequestDto userDao)
-            throws IncorrectCredentialsException {
+            throws IncorrectCredentialsException, NoUserException {
 
         log.info("Входящий пользователь {}", userDao);
         try {
@@ -56,7 +63,7 @@ public class CouchUserService implements UserService {
             authenticationManager.authenticate(authentication);
 
             var user = userRepository.findByEmail(userDao.getEmail())
-                    .orElseThrow(IllegalArgumentException::new);
+                    .orElseThrow(() -> new NoUserException("Пользователь не найден"));
 
             var refreshToken = tokenRefreshProvider.generateToken(user.getEmail());
             var accessToken = tokenAccessProvider.generateToken(user.getEmail());
@@ -81,6 +88,14 @@ public class CouchUserService implements UserService {
         }
     }
 
+    /**
+     * Обновляет токен доступа и обновления, используя переданный токен обновления.
+     * @param refreshToken Токен обновления, который будет использоваться для обновления токенов.
+     * @return Новые токены аутентификации, представленные объектом {@link AuthenticationToken}.
+     * @throws InvalidRefreshTokenException Если переданный токен обновления недействителен.
+     * @throws NotExistsRefreshTokenException Если токен обновления не найден в базе данных.
+     * @throws NoUserWithRefreshTokenException Если пользователь с заданным токеном обновления не найден в базе данных.
+     */
     @Override
     public AuthenticationToken refreshToken(String refreshToken)
             throws InvalidRefreshTokenException, NotExistsRefreshTokenException, NoUserWithRefreshTokenException {
@@ -101,15 +116,6 @@ public class CouchUserService implements UserService {
             log.debug("Новый токен доступа {}", newAccessToken);
             log.debug("Новый токен обновления {}", newRefreshToken);
 
-            // TODO Удалить при ненадобности
-//            refreshTokenRepository.deleteByToken(refreshDto.getToken());
-
-            refreshTokenDb.setToken(newRefreshToken);
-
-//            var refreshTokenDb = RefreshToken.builder()
-//                    .userId(user.getId())
-//                    .token(newRefreshToken)
-//                    .build();
             refreshTokenRepository.save(refreshTokenDb);
 
             return AuthenticationToken.builder()
@@ -120,25 +126,18 @@ public class CouchUserService implements UserService {
         throw new InvalidRefreshTokenException("Неверный токен обновления");
     }
 
+    /**
+     * Осуществляет процедуру выхода из системы для пользователя с указанным токеном обновления.
+     * @param refreshToken Токен обновления, который пытается выйти из системы.
+     * @throws InvalidRefreshTokenException Если переданный токен обновления недействителен.
+     */
     @Override
     public void logout(String refreshToken) throws InvalidRefreshTokenException {
         if (tokenRefreshProvider.isValidToken(refreshToken)) {
             log.info("Удаление токена обновления {}", refreshToken);
-
-//            try {
-//                TimeUnit.MILLISECONDS.sleep(200);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-            var token = refreshTokenRepository.findByToken(refreshToken);
-
-            log.info("{}", token);
-
             refreshTokenRepository.deleteByToken(refreshToken);
         } else {
             throw new InvalidRefreshTokenException("Неверный токен обновления");
         }
     }
-
-
 }
