@@ -14,6 +14,9 @@ import ru.example.ivtserver.services.EntrantService;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Реализация интерфейса {@link EntrantService} для работы с информацией абитуриенту используя базу данных Couchbase
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
 @Log4j2
@@ -26,6 +29,12 @@ public class CouchEntrantService implements EntrantService {
         this.entrantRepository = entrantRepository;
     }
 
+    /**
+     * Создает новою информацию абитуриенту по заданному DTO {@link EntrantRequestDto}
+     *
+     * @param dto DTO-объект, содержащий данные для создания абитуриента
+     * @return Созданная информация абитуриенту {@link Entrant}
+     */
     @Override
     public Entrant create(EntrantRequestDto dto) {
         var items = dto.getItems().stream()
@@ -48,6 +57,13 @@ public class CouchEntrantService implements EntrantService {
         return entrantRepository.save(newEntrant);
     }
 
+    /**
+     * Обновляет информацию абитуриенту по заданному DTO {@link EntrantRequestDto}
+     *
+     * @param dto DTO-объект, содержащий данные для обновления
+     * @return Обновленная информация {@link Entrant}
+     * @throws NoIdException Исключение, которое выбрасывается, если не найден объект по заданному ID
+     */
     @Override
     public Entrant update(EntrantRequestDto dto) throws NoIdException{
         var entrantDb = entrantRepository.findById(dto.getId())
@@ -72,11 +88,21 @@ public class CouchEntrantService implements EntrantService {
         return entrantRepository.save(entrantDb);
     }
 
+    /**
+     * Удаляет информацию абитуриенту по заданному {@code id}
+     *
+     * @param id информации, которую нужно удалить
+     */
     @Override
     public void delete(UUID id) {
         entrantRepository.deleteById(id);
     }
 
+    /**
+     * Получает список всей информации абитуриенту
+     *
+     * @return Список {@link List} абитуриентов {@link Entrant}
+     */
     @Override
     public List<Entrant> getAll() {
         return entrantRepository.findAll();

@@ -10,6 +10,9 @@ import ru.example.ivtserver.entities.mapper.request.DepartmentRequestDto;
 import ru.example.ivtserver.repositories.DepartmentRepository;
 import ru.example.ivtserver.services.DepartmentService;
 
+/**
+ * Реализация интерфейса {@link DepartmentService} для работы с описанием кафедры используя базу данных Couchbase
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
 @Log4j2
@@ -22,7 +25,12 @@ public class CouchDepartmentService implements DepartmentService {
         this.departmentRepository = departmentRepository;
     }
 
-
+    /**
+     * Обновляет описание кафедры по заданному DTO {@link DepartmentRequestDto}
+     *
+     * @param dto DTO-объект, содержащий данные для обновления
+     * @return Обновленный объект {@link Department}
+     */
     @Override
     public Department updateDepartment(DepartmentRequestDto dto) {
         var department = departmentRepository.findAll().get(0);
@@ -40,7 +48,11 @@ public class CouchDepartmentService implements DepartmentService {
         return departmentRepository.save(department);
     }
 
-
+    /**
+     * Возвращает описание кафедры {@link Department}
+     *
+     * @return Объект {@link Department}
+     */
     @Override
     public Department getDepartment() {
         return departmentRepository.findAll().get(0);

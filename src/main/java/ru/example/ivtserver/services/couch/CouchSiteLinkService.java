@@ -14,6 +14,9 @@ import ru.example.ivtserver.services.SiteLinkService;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Реализация интерфейса {@link SiteLinkService} для работы со ссылками на сайт кафедры используя базу данных Couchbase
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Log4j2
 @Service
@@ -26,7 +29,12 @@ public class CouchSiteLinkService implements SiteLinkService {
         this.siteLinkRepository = siteLinkRepository;
     }
 
-
+    /**
+     * Создает новую сайтовую ссылку на основе данных из объекта {@link SiteLinkRequestDto}.
+     *
+     * @param dto объект с данными для создания сайтовой ссылки
+     * @return созданный объект {@link SiteLink}
+     */
     @Override
     public SiteLink createLink(SiteLinkRequestDto dto) {
 
@@ -40,7 +48,13 @@ public class CouchSiteLinkService implements SiteLinkService {
         return siteLinkRepository.save(siteLink);
     }
 
-
+    /**
+     * Обновляет существующую сайтовую ссылку на основе данных из объекта {@link SiteLinkRequestDto}.
+     *
+     * @param dto объект с данными для обновления сайтовой ссылки
+     * @return обновленный объект {@link SiteLink}
+     * @throws NoIdException если ссылка с указанным id не найдена
+     */
     @Override
     public SiteLink updateLink(SiteLinkRequestDto dto) throws NoIdException{
 
@@ -58,13 +72,21 @@ public class CouchSiteLinkService implements SiteLinkService {
         return siteLinkRepository.save(link);
     }
 
-
+    /**
+     * Возвращает список всех сайтовых ссылок.
+     *
+     * @return список {@link List} объектов {@link SiteLink}
+     */
     @Override
     public List<SiteLink> getAllLink() {
         return siteLinkRepository.findAll();
     }
 
-
+    /**
+     * Удаляет сайтовую ссылку с указанным {@code id}.
+     *
+     * @param id сайтовой ссылки, которую нужно удалить
+     */
     @Override
     public void deleteLink(UUID id) {
         log.info("Удаление ссылки {}", id);

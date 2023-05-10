@@ -13,6 +13,9 @@ import ru.example.ivtserver.services.AboutDepartmentService;
 
 import java.util.List;
 
+/**
+ * Реализация интерфейса {@link AboutDepartmentService} для работы с информацией "о кафедре" используя базу данных Couchbase
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Log4j2
 @Service
@@ -26,6 +29,12 @@ public class CouchAboutDepartmentService implements AboutDepartmentService {
     }
 
 
+    /**
+     * Обновляет описание кафедры по заданному DTO {@link AboutDepartmentRequestDto}
+     * @param dto DTO-объект, содержащий данные для обновления
+     * @return Обновленный объект {@link AboutDepartment}
+     * @throws NoIdException Исключение, которое выбрасывается, если не найден объект.
+     */
     @Override
     public AboutDepartment updateAbout(AboutDepartmentRequestDto dto) throws NoIdException {
         var aboutInfo = aboutDepartmentRepository.findById(dto.getId())
@@ -42,6 +51,10 @@ public class CouchAboutDepartmentService implements AboutDepartmentService {
         return aboutDepartmentRepository.save(aboutInfo);
     }
 
+    /**
+     * Получает список всех объектов {@link AboutDepartment}
+     * @return Список объектов {@link AboutDepartment}
+     */
     @Override
     public List<AboutDepartment> getAll() {
         return aboutDepartmentRepository.findAll();

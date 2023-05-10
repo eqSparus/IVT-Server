@@ -14,6 +14,9 @@ import ru.example.ivtserver.services.DirectionService;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Реализация интерфейса {@link DirectionService} для работы с направлениями кафедры используя базу данных Couchbase
+ */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Log4j2
 @Service
@@ -26,7 +29,12 @@ public class CouchDirectionService implements DirectionService {
         this.directionRepository = directionRepository;
     }
 
-
+    /**
+     * Создает новое направление на кафедре по заданному DTO {@link DirectionRequestDto}.
+     *
+     * @param dto DTO-объект, содержащий данные для создания направления
+     * @return Созданное направление {@link Direction}
+     */
     @Override
     public Direction create(DirectionRequestDto dto) {
 
@@ -47,12 +55,23 @@ public class CouchDirectionService implements DirectionService {
         return directionRepository.save(direction);
     }
 
+    /**
+     * Получает список всех направлений
+     *
+     * @return Список {@link List} направлений {@link Direction}
+     */
     @Override
     public List<Direction> getAll() {
         return directionRepository.findAll();
     }
 
-
+    /**
+     * Обновляет направление по заданному DTO {@link DirectionRequestDto}
+     *
+     * @param dto DTO-объект, содержащий данные для обновления
+     * @return Обновленное направление {@link Direction}
+     * @throws NoIdException Исключение, которое выбрасывается, если не найден объект по заданному {@code ID}
+     */
     @Override
     public Direction update(DirectionRequestDto dto) throws NoIdException {
 
@@ -72,12 +91,25 @@ public class CouchDirectionService implements DirectionService {
         return directionRepository.save(direction);
     }
 
+    /**
+     * Удаляет направление по заданному {@code id}
+     *
+     * @param id направления, которое нужно удалить
+     */
     @Override
     public void delete(UUID id) {
         log.info("Удаление направления {}", id);
         directionRepository.deleteById(id);
     }
 
+    /**
+     * Меняет позицию двух направлений местами
+     *
+     * @param firstId id первого направления
+     * @param lastId  id второго направления
+     * @return Список {@link List} направлений {@link Direction}
+     * @throws NoIdException Исключение, которое выбрасывается, если не найден объект по заданному id
+     */
     @Override
     public List<Direction> swapPosition(UUID firstId, UUID lastId) throws NoIdException {
         var directionFirst = directionRepository.findById(firstId)
