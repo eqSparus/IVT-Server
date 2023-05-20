@@ -60,8 +60,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/refresh", "/partner",
                                 "/recover/pass", "/recover/pass/valid", "/change/email", "/images/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/data", "/teacher/image/*",
-                                "/partner/image/*", "/review/image/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/teacher").permitAll()
+                                "/partner/image/*", "/review/image/*", "/teacher").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement()

@@ -43,21 +43,21 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain chain) throws IOException, ServletException {
         var token = tokenProvider.getToken(request);
 
+        token.ifPresent(t -> {
+            if (tokenProvider.isValidToken(t)) {
+                log.debug("Токен доступа {}", t);
 
-        if (token.isPresent() && tokenProvider.isValidToken(token.get())) {
+                var claim = tokenProvider.getBody(t)
+                        .orElseThrow(() -> new JwtException("Неверное тело токена доступа"));
 
-            log.debug("Токен доступа {}", token.get());
+                var user = userDetailsService.loadUserByUsername(claim.getSubject());
 
-            var claim = tokenProvider.getBody(token.get())
-                    .orElseThrow(() -> new JwtException("Неверное тело токена доступа"));
+                log.info("Пользователь {} подтвержден", user.getUsername());
 
-            var user = userDetailsService.loadUserByUsername(claim.getSubject());
-
-            log.info("Пользователь {} подтвержден", user.getUsername());
-
-            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
-                    user.getUsername(), user.getPassword(), user.getAuthorities()));
-        }
+                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
+                        user.getUsername(), user.getPassword(), user.getAuthorities()));
+            }
+        });
         chain.doFilter(request, response);
     }
 }

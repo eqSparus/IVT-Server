@@ -116,6 +116,7 @@ public class CouchUserService implements UserService {
             log.debug("Новый токен доступа {}", newAccessToken);
             log.debug("Новый токен обновления {}", newRefreshToken);
 
+            refreshTokenDb.setToken(newRefreshToken);
             refreshTokenRepository.save(refreshTokenDb);
 
             return AuthenticationToken.builder()

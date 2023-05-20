@@ -1,6 +1,6 @@
 spring:
   mail:
-    username: 
+    username:
     password:
     port: 587
     host: smtp.mail.ru
