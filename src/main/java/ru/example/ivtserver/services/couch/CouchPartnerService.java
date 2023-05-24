@@ -42,6 +42,7 @@ public class CouchPartnerService implements PartnerService {
 
     /**
      * Добавляет нового партнера кафедры по заданному DTO {@link PartnerRequestDto}
+     *
      * @param dto DTO-объект, содержащий данные для добавления нового партнера
      * @param img Файл с изображением партнера
      * @return Добавленный партнер {@link Partner}
@@ -52,7 +53,7 @@ public class CouchPartnerService implements PartnerService {
         FileUtil.isExistDir(basePath);
         var fileName = UUID.randomUUID() + "." + FileUtil.getExtension(img.getOriginalFilename());
         var path = basePath.resolve(fileName);
-        FileUtil.saveFile(img, path);
+        FileUtil.saveFile(() -> FileUtil.resizeImg(img, 300, 100), path);
 
         var url = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/partner/image/")
@@ -72,6 +73,7 @@ public class CouchPartnerService implements PartnerService {
 
     /**
      * Обновляет партнера по заданному DTO {@link PartnerRequestDto}
+     *
      * @param dto DTO-объект, содержащий данные для обновления партнера
      * @return Обновленный партнер {@link Partner}
      * @throws NoIdException Исключение, которое выбрасывается, если не найден объект по заданному id
@@ -86,22 +88,24 @@ public class CouchPartnerService implements PartnerService {
 
     /**
      * Обновляет изображение для партнера с указанным {@code id}
+     *
      * @param img Файл с новым изображением
-     * @param id партнера, для которого нужно обновить изображение
+     * @param id  партнера, для которого нужно обновить изображение
      * @return Строка с url путем изображения
-     * @throws IOException Исключение, которое выбрасывается, если произошла ошибка при загрузке изображения
+     * @throws IOException   Исключение, которое выбрасывается, если произошла ошибка при загрузке изображения
      * @throws NoIdException Исключение, которое выбрасывается, если не найден объект по заданному id
      */
     @Override
     public String updateImg(MultipartFile img, UUID id) throws IOException, NoIdException {
         var partner = partnerRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
-        FileUtil.replace(img, partner.getPathImg());
+        FileUtil.replace(() -> FileUtil.resizeImg(img, 300, 100), partner.getPathImg());
         return partner.getUrlImg();
     }
 
     /**
      * Удаляет партнера с указанным {@code id}
+     *
      * @param id партнера, который нужно удалить
      * @throws IOException Исключение, которое выбрасывается, если произошла ошибка при удалении файла с изображением партнера
      */
@@ -115,6 +119,7 @@ public class CouchPartnerService implements PartnerService {
 
     /**
      * Получает список всех партнеров
+     *
      * @return Список {@link List} всех партнеров {@link Partner}
      */
     @Override
@@ -124,6 +129,7 @@ public class CouchPartnerService implements PartnerService {
 
     /**
      * Возвращает ресурс с изображением партнера с указанным именем файла {@code filename}.
+     *
      * @param filename Имя файла с изображением партнера
      * @return Ресурс с изображением партнера {@link Resource}
      * @throws IOException если произошла ошибка с чтением файла
