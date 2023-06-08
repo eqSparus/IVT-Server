@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.example.ivtserver.entities.mapper.auth.MessageErrorDto;
+import ru.example.ivtserver.exceptions.DirectionQuantityLimitException;
 import ru.example.ivtserver.exceptions.NoIdException;
 
 /**
@@ -29,7 +30,7 @@ public class HandlerErrorController {
      * @return Объект типа {@link MessageErrorDto}, содержащий подробное сообщение об ошибке, адрес запроса и идентификатор ошибки.
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, NoIdException.class,
-            ConversionFailedException.class, ConstraintViolationException.class})
+            ConversionFailedException.class, ConstraintViolationException.class, DirectionQuantityLimitException.class})
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public MessageErrorDto handlerValidDataException(HttpServletRequest request) {
         return MessageErrorDto.builder()

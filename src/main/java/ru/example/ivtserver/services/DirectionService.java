@@ -2,6 +2,7 @@ package ru.example.ivtserver.services;
 
 import ru.example.ivtserver.entities.Direction;
 import ru.example.ivtserver.entities.mapper.request.DirectionRequestDto;
+import ru.example.ivtserver.exceptions.DirectionQuantityLimitException;
 import ru.example.ivtserver.exceptions.NoIdException;
 
 import java.util.List;
@@ -17,8 +18,9 @@ public interface DirectionService {
      *
      * @param dto DTO-объект, содержащий данные для создания направления
      * @return Созданное направление {@link Direction}
+     * @throws DirectionQuantityLimitException выбрасывается если количество направлений превышает лимит
      */
-    Direction create(DirectionRequestDto dto);
+    Direction create(DirectionRequestDto dto) throws DirectionQuantityLimitException;
 
     /**
      * Получает список всех направлений

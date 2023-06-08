@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.Direction;
 import ru.example.ivtserver.entities.mapper.request.DirectionRequestDto;
+import ru.example.ivtserver.exceptions.DirectionQuantityLimitException;
 import ru.example.ivtserver.exceptions.NoIdException;
 import ru.example.ivtserver.repositories.DirectionRepository;
 import ru.example.ivtserver.services.DirectionService;
@@ -29,30 +30,32 @@ public class CouchDirectionService implements DirectionService {
         this.directionRepository = directionRepository;
     }
 
+
     /**
      * Создает новое направление на кафедре по заданному DTO {@link DirectionRequestDto}.
      *
      * @param dto DTO-объект, содержащий данные для создания направления
      * @return Созданное направление {@link Direction}
+     * @throws DirectionQuantityLimitException выбрасывается если количество направлений превышает 4
      */
     @Override
-    public Direction create(DirectionRequestDto dto) {
+    public Direction create(DirectionRequestDto dto) throws DirectionQuantityLimitException {
+        if (directionRepository.count() < 4) {
+            var directionDb = directionRepository.findDirectionLastPosition()
+                    .orElseGet(() -> Direction.builder().position(-1).build());
 
-        var directionDb = directionRepository.findDirectionLastPosition()
-                .orElseGet(() -> Direction.builder().position(-1).build());
+            var direction = Direction.builder()
+                    .title(dto.getTitle())
+                    .degree(dto.getDegree())
+                    .form(dto.getForm())
+                    .duration(dto.getDuration())
+                    .position(directionDb.getPosition() + 1)
+                    .build();
 
-        var direction = Direction.builder()
-                .title(dto.getTitle())
-                .degree(dto.getDegree())
-                .form(dto.getForm())
-                .duration(dto.getDuration())
-                .position(directionDb.getPosition() + 1)
-                .build();
-
-        log.info("Новое направление {}", direction);
-
-
-        return directionRepository.save(direction);
+            log.info("Новое направление {}", direction);
+            return directionRepository.save(direction);
+        }
+        throw new DirectionQuantityLimitException("Количество направлений не может превышать 4");
     }
 
     /**
