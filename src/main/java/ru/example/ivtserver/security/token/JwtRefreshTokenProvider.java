@@ -1,5 +1,6 @@
 package ru.example.ivtserver.security.token;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -16,8 +18,8 @@ import java.util.Optional;
 @Service
 public class JwtRefreshTokenProvider extends JwtAuthenticationTokenProvider {
 
-    @Value("${security.token.jwt.header-refresh-token}")
-    String tokenHeader;
+    @Value("${security.token.jwt.cookie-refresh-token}")
+    String tokenCookieName;
 
     public JwtRefreshTokenProvider(Environment env) {
         super(env.getRequiredProperty("security.token.jwt.refresh"),
@@ -25,14 +27,18 @@ public class JwtRefreshTokenProvider extends JwtAuthenticationTokenProvider {
     }
 
     /**
-     * Извлекает токен JWT из заданного {@link HttpServletRequest} запроса.
+     * Извлекает токен JWT из {@link Cookie} заданного {@link HttpServletRequest} запроса.
+     *
      * @param request {@link HttpServletRequest} запрос, из которого будет извлекаться токен
      * @return {@link Optional}, содержащий токен JWT, если он присутствует в запросе,
      * и {@link Optional#empty()}, если токен отсутствует или не актуальный
      */
     @Override
     public Optional<String> getToken(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(tokenHeader));
+        return Arrays.stream(request.getCookies())
+                .filter(c -> c.getName().equals(tokenCookieName))
+                .map(Cookie::getValue)
+                .findAny();
     }
 
 }

@@ -19,7 +19,7 @@ import ru.example.ivtserver.exceptions.auth.RefreshTokenException;
 /**
  * Контролер для обработки ошибок взаимодействия с пользователем
  */
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @RestControllerAdvice(basePackages = "ru.example.ivtserver.controllers.auth")
 public class HandlerErrorAuthenticationController {
 
@@ -40,7 +40,7 @@ public class HandlerErrorAuthenticationController {
     }
 
     /**
-     * Обрабатывает исключения, связанные с недействительным токеном.
+     * Обрабатывает исключения, связанные с недействительным токеном обновления.
      * @param request Объект {@link HttpServletRequest}, представляющий входящий запрос.
      * @return Объект {@link MessageErrorDto}, содержащий сообщение об ошибке.
      */
