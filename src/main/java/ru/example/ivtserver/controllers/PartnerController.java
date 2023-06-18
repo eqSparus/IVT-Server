@@ -1,5 +1,6 @@
 package ru.example.ivtserver.controllers;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -11,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.example.ivtserver.entities.Partner;
+import ru.example.ivtserver.entities.mapper.DataView;
 import ru.example.ivtserver.entities.mapper.request.PartnerRequestDto;
 import ru.example.ivtserver.services.PartnerService;
 import ru.example.ivtserver.utils.image.FileType;
@@ -49,6 +51,7 @@ public class PartnerController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(code = HttpStatus.CREATED)
+    @JsonView(DataView.Create.class)
     public Partner createTeacher(
             @RequestPart(name = "data") @Valid PartnerRequestDto dto,
             @RequestPart(name = "img") @Valid @FileType(type = FileTypes.PNG) MultipartFile img
@@ -64,6 +67,7 @@ public class PartnerController {
      */
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
+    @JsonView(DataView.Update.class)
     public Partner updateTeacher(
             @RequestBody @Valid PartnerRequestDto dto
     ) {

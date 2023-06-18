@@ -1,5 +1,6 @@
 package ru.example.ivtserver.controllers;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -12,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.example.ivtserver.entities.Teacher;
+import ru.example.ivtserver.entities.mapper.DataView;
 import ru.example.ivtserver.entities.mapper.request.TeacherRequestDto;
 import ru.example.ivtserver.services.TeacherService;
 import ru.example.ivtserver.utils.image.FileType;
@@ -45,6 +47,7 @@ public class TeacherController {
      * Конечная точка для создания объект {@link Teacher} на основе переданных данных.
      * Принимает объект типа {@link TeacherRequestDto} и объект типа {@link MultipartFile} с изображением в теле запроса.
      * Возвращает объект типа {@link Teacher}.
+     *
      * @param dto Объект типа {@link TeacherRequestDto} для создания {@link Teacher}.
      * @param img Объект типа {@link MultipartFile}, содержащий изображение преподавателя.
      * @return Объект типа {@link Teacher}, созданный на основе переданных данных.
@@ -52,6 +55,7 @@ public class TeacherController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(code = HttpStatus.CREATED)
+    @JsonView(DataView.Create.class)
     public Teacher createTeacher(
             @RequestPart(name = "data") @Valid TeacherRequestDto dto,
             @RequestPart(name = "img") @Valid @FileType MultipartFile img
@@ -63,11 +67,13 @@ public class TeacherController {
      * Конечная точка для обновления объекта типа {@link Teacher} на основе переданного запроса.
      * Принимает объект типа {@link TeacherRequestDto} в формате JSON в теле запроса.
      * Возвращает объект типа {@link Teacher}.
+     *
      * @param dto Объект типа {@link TeacherRequestDto}, содержащий данные для обновления {@link Teacher}.
      * @return Обновленный объект типа {@link Teacher}.
      */
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
+    @JsonView(DataView.Update.class)
     public Teacher updateTeacher(
             @RequestBody @Valid TeacherRequestDto dto
     ) {
@@ -78,8 +84,9 @@ public class TeacherController {
      * Конечная точка для обновления изображения преподавателя на основе переданного идентификатора.
      * Принимает объект типа {@link MultipartFile} с изображением в теле запроса и параметр {@code id}.
      * Возвращает объект типа {@link Map}.
+     *
      * @param file Объект типа {@link MultipartFile}, содержащий новое изображение преподавателя.
-     * @param id Параметр типа {@link UUID}, содержащий идентификатор преподавателя.
+     * @param id   Параметр типа {@link UUID}, содержащий идентификатор преподавателя.
      * @return Объект типа {@link Map} с единственной парой ключ/значение "url"/url обновленного изображения.
      */
     @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -96,7 +103,8 @@ public class TeacherController {
      * Конечная точка для обновления позиции преподавателя на основе переданного идентификатора и позиции.
      * Принимает параметры {@code id} и {@code position} в виде целого числа.
      * Возвращает объект типа {@link Map} с единственной парой ключ/значение "position"/новой позицией преподавателя.
-     * @param id Параметр типа {@link UUID}, содержащий идентификатор преподавателя.
+     *
+     * @param id       Параметр типа {@link UUID}, содержащий идентификатор преподавателя.
      * @param position Параметр типа int, содержащий новую позицию преподавателя.
      * @return Объект типа {@link Map} с единственной парой ключ/значение "position"/новой позицией преподавателя.
      */
@@ -112,6 +120,7 @@ public class TeacherController {
 
     /**
      * Удаляет преподавателя с указанным {@code id}.
+     *
      * @param id идентификатор удаляемого преподавателя
      * @return {@link ResponseEntity} с сообщением.
      */
@@ -125,6 +134,7 @@ public class TeacherController {
 
     /**
      * Возвращает файл изображения для указанного преподавателя по имени файла {@code filename}.
+     *
      * @param filename имя файла изображения преподавателя
      * @return массив байтов, содержащий данные изображения в формате JPG
      */
@@ -138,6 +148,7 @@ public class TeacherController {
     /**
      * Возвращает список преподавателей с возможностью пропустить некоторое количество
      * преподавателей и ограничить размер ответа.
+     *
      * @param skip количество пропущенных преподавателей в начале списка
      * @param size максимальное количество возвращаемых преподавателей; -1, чтобы вернуть все результаты (по умолчанию)
      * @return список преподавателей, в количестве не превышающем размер, если он указан

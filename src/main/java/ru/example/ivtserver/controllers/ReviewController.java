@@ -1,5 +1,6 @@
 package ru.example.ivtserver.controllers;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -11,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.example.ivtserver.entities.Review;
+import ru.example.ivtserver.entities.mapper.DataView;
 import ru.example.ivtserver.entities.mapper.request.ReviewRequestDto;
 import ru.example.ivtserver.services.ReviewService;
 import ru.example.ivtserver.utils.image.FileType;
@@ -48,6 +50,7 @@ public class ReviewController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(code = HttpStatus.CREATED)
+    @JsonView(DataView.Create.class)
     public Review createReview(
             @RequestPart(name = "data") @Valid ReviewRequestDto dto,
             @RequestPart(name = "img") @Valid @FileType MultipartFile img
@@ -64,6 +67,7 @@ public class ReviewController {
      */
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
+    @JsonView(DataView.Update.class)
     public Review updateReview(
             @RequestBody @Valid ReviewRequestDto dto
     ) {
