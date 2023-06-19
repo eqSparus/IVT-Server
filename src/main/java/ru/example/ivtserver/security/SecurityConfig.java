@@ -58,9 +58,9 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers("/login", "/refresh", "/partner",
-                                "/recover/pass", "/recover/pass/valid", "/change/email", "/images/**").permitAll()
+                                "/recover/pass", "/recover/pass/valid", "/change/email").permitAll()
                         .requestMatchers(HttpMethod.GET, "/data", "/teacher/image/*",
-                                "/partner/image/*", "/review/image/*", "/teacher").permitAll()
+                                "/partner/image/*", "/review/image/*", "/teacher", "/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement()
