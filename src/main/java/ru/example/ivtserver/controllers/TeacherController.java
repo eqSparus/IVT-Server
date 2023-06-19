@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,7 +32,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping(path = "/teacher")
 @Validated
-@Log4j2
 public class TeacherController {
 
     TeacherService teacherService;

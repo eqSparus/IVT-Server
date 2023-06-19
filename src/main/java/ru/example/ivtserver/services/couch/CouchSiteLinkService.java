@@ -2,7 +2,6 @@ package ru.example.ivtserver.services.couch;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.SiteLink;
@@ -18,7 +17,6 @@ import java.util.UUID;
  * Реализация интерфейса {@link SiteLinkService} для работы со ссылками на сайт кафедры используя базу данных Couchbase
  */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Log4j2
 @Service
 public class CouchSiteLinkService implements SiteLinkService {
 
@@ -43,8 +41,6 @@ public class CouchSiteLinkService implements SiteLinkService {
                 .icon(dto.getIcon())
                 .build();
 
-        log.info("Новая ссылка {}", siteLink);
-
         return siteLinkRepository.save(siteLink);
     }
 
@@ -61,13 +57,8 @@ public class CouchSiteLinkService implements SiteLinkService {
         var link = siteLinkRepository.findById(dto.getId())
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
 
-        log.debug("Идентификатор направления {}", dto.getId());
-        log.debug("Новая информация о ссылке {}", link);
-
         link.setHref(dto.getHref());
         link.setIcon(dto.getIcon());
-
-        log.debug("Старая информация о ссылке {}", link);
 
         return siteLinkRepository.save(link);
     }
@@ -89,7 +80,6 @@ public class CouchSiteLinkService implements SiteLinkService {
      */
     @Override
     public void deleteLink(UUID id) {
-        log.info("Удаление ссылки {}", id);
         siteLinkRepository.deleteById(id);
     }
 }

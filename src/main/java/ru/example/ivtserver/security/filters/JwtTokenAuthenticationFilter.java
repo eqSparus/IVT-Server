@@ -52,8 +52,6 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
                 var user = userDetailsService.loadUserByUsername(claim.getSubject());
 
-                log.info("Пользователь {} подтвержден", user.getUsername());
-
                 SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
                         user.getUsername(), user.getPassword(), user.getAuthorities()));
             }

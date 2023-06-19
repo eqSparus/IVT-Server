@@ -2,7 +2,6 @@ package ru.example.ivtserver.services.couch;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -27,7 +26,6 @@ import java.util.UUID;
  */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
-@Log4j2
 public class CouchPartnerService implements PartnerService {
 
     @Value("${upload.path.partners}")
@@ -50,7 +48,6 @@ public class CouchPartnerService implements PartnerService {
      */
     @Override
     public Partner addPartner(PartnerRequestDto dto, MultipartFile img) throws IOException {
-        FileUtil.isExistDir(basePath);
         var fileName = UUID.randomUUID() + "." + FileUtil.getExtension(img.getOriginalFilename());
         var path = basePath.resolve(fileName);
         FileUtil.saveFile(() -> FileUtil.resizeImg(img, 300, 100), path);
@@ -63,10 +60,7 @@ public class CouchPartnerService implements PartnerService {
         var partner = Partner.builder()
                 .href(dto.getHref())
                 .urlImg(url)
-                .pathImg(path)
                 .build();
-
-        log.info("{}", partner);
 
         return partnerRepository.save(partner);
     }
@@ -99,7 +93,8 @@ public class CouchPartnerService implements PartnerService {
     public String updateImg(MultipartFile img, UUID id) throws IOException, NoIdException {
         var partner = partnerRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
-        FileUtil.replace(() -> FileUtil.resizeImg(img, 300, 100), partner.getPathImg());
+        FileUtil.replace(() -> FileUtil.resizeImg(img, 300, 100),
+                basePath.resolve(FileUtil.getExtension(partner.getUrlImg(), "/")));
         return partner.getUrlImg();
     }
 
@@ -113,7 +108,7 @@ public class CouchPartnerService implements PartnerService {
     public void removePartner(UUID id) throws IOException {
         var partner = partnerRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
-        FileUtil.deleteFile(partner.getPathImg());
+        FileUtil.deleteFile(basePath.resolve(FileUtil.getExtension(partner.getUrlImg(), "/")));
         partnerRepository.delete(partner);
     }
 
@@ -135,7 +130,7 @@ public class CouchPartnerService implements PartnerService {
      * @throws IOException если произошла ошибка с чтением файла
      */
     @Override
-    public Resource getLogoPartner(String filename) throws IOException {
+    public Resource getLogoPartner(String filename) {
         return new FileSystemResource(basePath.resolve(filename));
     }
 }

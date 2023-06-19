@@ -1,12 +1,10 @@
 package ru.example.ivtserver.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
@@ -22,7 +20,6 @@ import java.io.IOException;
  */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Component
-@Log4j2
 public class AppAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     ObjectMapper objectMapper;
@@ -34,7 +31,7 @@ public class AppAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
-                         AuthenticationException authException) throws IOException, ServletException {
+                         AuthenticationException authException) throws IOException {
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(401);

@@ -2,7 +2,6 @@ package ru.example.ivtserver.services.couch;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.AboutDepartment;
@@ -17,7 +16,6 @@ import java.util.List;
  * Реализация интерфейса {@link AboutDepartmentService} для работы с информацией "о кафедре" используя базу данных Couchbase
  */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Log4j2
 @Service
 public class CouchAboutDepartmentService implements AboutDepartmentService {
 
@@ -40,13 +38,8 @@ public class CouchAboutDepartmentService implements AboutDepartmentService {
         var aboutInfo = aboutDepartmentRepository.findById(dto.getId())
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
 
-        log.debug("Идентификатор элемента информации {}", dto.getId());
-        log.debug("Старая информации о кафедре {}", aboutInfo);
-
         aboutInfo.setTitle(dto.getTitle());
         aboutInfo.setDescription(dto.getDescription());
-
-        log.debug("Новая информации о кафедре {}", aboutInfo);
 
         return aboutDepartmentRepository.save(aboutInfo);
     }

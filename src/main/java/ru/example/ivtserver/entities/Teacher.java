@@ -19,7 +19,6 @@ import org.springframework.data.couchbase.repository.Collection;
 import ru.example.ivtserver.entities.mapper.DataView;
 
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -42,10 +41,6 @@ public class Teacher implements Serializable {
     @Field(name = "urlImg")
     @JsonView(DataView.Create.class)
     String urlImg;
-
-    @JsonIgnore
-    @Field(name = "pathImg")
-    Path pathImg;
 
     @Field(name = "firstName")
     @JsonView(DataView.Update.class)

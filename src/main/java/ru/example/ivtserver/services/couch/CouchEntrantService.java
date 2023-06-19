@@ -2,7 +2,6 @@ package ru.example.ivtserver.services.couch;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.Entrant;
@@ -19,7 +18,6 @@ import java.util.UUID;
  */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
-@Log4j2
 public class CouchEntrantService implements EntrantService {
 
     EntrantRepository entrantRepository;
@@ -69,7 +67,6 @@ public class CouchEntrantService implements EntrantService {
         var entrantDb = entrantRepository.findById(dto.getId())
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
 
-        log.info("{}", dto);
         var items = dto.getItems().stream()
                 .map(d -> {
                     var points = d.getPoints().stream()

@@ -20,23 +20,26 @@ import java.util.function.Supplier;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FileUtil {
 
+
     private FileUtil() {
     }
 
     /**
      * Записывает файл в указанный путь.
-     * @param img Файл для записи.
+     *
+     * @param img  Файл для записи.
      * @param path Путь для записи файла.
      * @throws IOException Если произошла ошибка ввода-вывода.
      */
     public static void saveFile(MultipartFile img, Path path) throws IOException {
-        Files.write(path, img.getBytes());
+        Files.write(Path.of("").resolve(path), img.getBytes());
     }
 
     /**
      * Записывает данные, возвращаемые поставщиком, в указанный путь.
+     *
      * @param bytes Поставщик байтов для записи.
-     * @param path Путь для записи файла.
+     * @param path  Путь для записи файла.
      * @throws IOException Если произошла ошибка ввода-вывода.
      */
     public static void saveFile(Supplier<byte[]> bytes, Path path) throws IOException {
@@ -45,6 +48,7 @@ public class FileUtil {
 
     /**
      * Удаляет файл по указанному пути.
+     *
      * @param path Путь к файлу.
      * @throws IOException Если произошла ошибка ввода-вывода.
      */
@@ -54,7 +58,8 @@ public class FileUtil {
 
     /**
      * Заменяет файл в указанном пути заданным файлом.
-     * @param img Заменяющий файл.
+     *
+     * @param img  Заменяющий файл.
      * @param path Путь к файлу, который нужно заменить.
      * @throws IOException Если произошла ошибка ввода-вывода.
      */
@@ -65,8 +70,9 @@ public class FileUtil {
 
     /**
      * Заменяет файл в указанном пути данными, возвращаемыми поставщиком.
+     *
      * @param bytes Поставщик байтов для замены содержимого файла.
-     * @param path Путь к заменяемому файлу.
+     * @param path  Путь к заменяемому файлу.
      * @throws IOException Если произойдет ошибка ввода-вывода.
      */
     public static void replace(Supplier<byte[]> bytes, Path path) throws IOException {
@@ -75,23 +81,17 @@ public class FileUtil {
     }
 
     /**
-     * Создает указанную директорию, если её не существует.
-     * @param dir Путь к создаваемой директории.
-     * @throws IOException Если произойдет ошибка ввода-вывода.
-     */
-    public static void isExistDir(Path dir) throws IOException {
-        if (Files.notExists(dir)) {
-            Files.createDirectory(dir);
-        }
-    }
-
-    /**
      * Возвращает расширение файла из указанного пути.
+     *
      * @param path Путь к файлу.
      * @return Расширение файла или если не удалось найти расширение то пустую строку.
      */
     public static String getExtension(String path) {
-        var index = path.lastIndexOf(".");
+        return getExtension(path, ".");
+    }
+
+    public static String getExtension(String path, String delimiter) {
+        var index = path.lastIndexOf(delimiter);
         if (index == -1) {
             return "";
         }
@@ -100,8 +100,9 @@ public class FileUtil {
 
     /**
      * Изменяет размер изображения в соответствии с указанными шириной и высотой.
-     * @param img Исходное изображение в формате {@link MultipartFile}.
-     * @param width Новая ширина изображения.
+     *
+     * @param img    Исходное изображение в формате {@link MultipartFile}.
+     * @param width  Новая ширина изображения.
      * @param height Новая высота изображения.
      * @return Байтовый массив измененного изображения.
      * @throws RuntimeException Если произойдет ошибка с файлом.

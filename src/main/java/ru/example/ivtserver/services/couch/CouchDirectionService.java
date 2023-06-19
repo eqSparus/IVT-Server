@@ -2,7 +2,6 @@ package ru.example.ivtserver.services.couch;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.Direction;
@@ -19,7 +18,6 @@ import java.util.UUID;
  * Реализация интерфейса {@link DirectionService} для работы с направлениями кафедры используя базу данных Couchbase
  */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Log4j2
 @Service
 public class CouchDirectionService implements DirectionService {
 
@@ -52,7 +50,6 @@ public class CouchDirectionService implements DirectionService {
                     .position(directionDb.getPosition() + 1)
                     .build();
 
-            log.info("Новое направление {}", direction);
             return directionRepository.save(direction);
         }
         throw new DirectionQuantityLimitException("Количество направлений не может превышать 4");
@@ -81,15 +78,10 @@ public class CouchDirectionService implements DirectionService {
         var direction = directionRepository.findById(dto.getId())
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
 
-        log.debug("Идентификатор направления {}", dto.getId());
-        log.debug("Старая информация о направлении {}", direction);
-
         direction.setTitle(dto.getTitle());
         direction.setDegree(dto.getDegree());
         direction.setForm(dto.getForm());
         direction.setDuration(dto.getDuration());
-
-        log.debug("Новая информация о направлении {}", direction);
 
         return directionRepository.save(direction);
     }
@@ -101,7 +93,6 @@ public class CouchDirectionService implements DirectionService {
      */
     @Override
     public void delete(UUID id) {
-        log.info("Удаление направления {}", id);
         directionRepository.deleteById(id);
     }
 

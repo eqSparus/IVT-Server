@@ -2,7 +2,6 @@ package ru.example.ivtserver.services.couch;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -27,7 +26,6 @@ import java.util.UUID;
  */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
-@Log4j2
 public class CouchTeacherService implements TeacherService {
 
     @Value("${upload.path.teachers}")
@@ -50,7 +48,6 @@ public class CouchTeacherService implements TeacherService {
      */
     @Override
     public Teacher addTeacher(TeacherRequestDto dto, MultipartFile img) throws IOException {
-        FileUtil.isExistDir(basePath);
         var fileName = UUID.randomUUID() + "." + FileUtil.getExtension(img.getOriginalFilename());
         var path = basePath.resolve(fileName);
         FileUtil.saveFile(() -> FileUtil.resizeImg(img, 500, 500), path);
@@ -68,9 +65,8 @@ public class CouchTeacherService implements TeacherService {
                 .middleName(dto.getMiddleName())
                 .postDepartment(dto.getPostDepartment())
                 .postTeacher(dto.getPostTeacher())
-                .postAdditional(dto.getPostAdditional())
                 .urlImg(url)
-                .pathImg(path)
+                .postAdditional(dto.getPostAdditional())
                 .position(teacherDb.getPosition() + 1)
                 .build();
         return teacherRepository.save(teacher);
@@ -105,14 +101,15 @@ public class CouchTeacherService implements TeacherService {
      * @param id  идентификатор преподавателя
      * @return строка со статусом обновления изображения
      * @throws NoIdException если преподаватель с указанным id не найден
-     * @throws IOException если произошла ошибка при загрузке изображения
+     * @throws IOException   если произошла ошибка при загрузке изображения
      */
     @Override
     public String updateImg(MultipartFile img, UUID id) throws IOException, NoIdException {
         var teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
 
-        FileUtil.replace(() -> FileUtil.resizeImg(img, 500, 500), teacher.getPathImg());
+        FileUtil.replace(() -> FileUtil.resizeImg(img, 500, 500),
+                basePath.resolve(FileUtil.getExtension(teacher.getUrlImg(), "/")));
         return teacher.getUrlImg();
     }
 
@@ -127,7 +124,7 @@ public class CouchTeacherService implements TeacherService {
     public void removeTeacher(UUID id) throws IOException, NoIdException {
         var teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
-        FileUtil.deleteFile(teacher.getPathImg());
+        FileUtil.deleteFile(basePath.resolve(FileUtil.getExtension(teacher.getUrlImg(), "/")));
         teacherRepository.delete(teacher);
     }
 
@@ -159,7 +156,7 @@ public class CouchTeacherService implements TeacherService {
      * Обновляет позицию преподавателя с указанным {@code id}.
      *
      * @param position новая позиция преподавателя
-     * @param id идентификатор преподавателя
+     * @param id       идентификатор преподавателя
      * @return новая позиция преподавателя
      * @throws NoIdException если преподаватель с указанным идентификатором не найден
      */

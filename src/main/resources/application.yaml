@@ -1,11 +1,13 @@
 spring:
+  output:
+    ansi:
+      enabled: always
   servlet:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
   main:
     allow-bean-definition-overriding: true
-    lazy-initialization: false
     banner-mode: console
   config:
     import: security.yaml,database.yaml,setting-email.yaml
@@ -20,17 +22,6 @@ server:
   shutdown: graceful
   servlet:
     context-path: /api/v1
-  tomcat:
-    accesslog:
-      enabled: false
-
-logging:
-  level:
-    org:
-      springframework:
-        security: DEBUG
-
-debug: false
 
 upload:
   path:

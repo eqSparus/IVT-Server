@@ -48,10 +48,6 @@ public class Partner implements Serializable {
     String urlImg;
 
     @JsonIgnore
-    @Field(name = "pathImg")
-    Path pathImg;
-
-    @JsonIgnore
     @Version
     private long version;
 

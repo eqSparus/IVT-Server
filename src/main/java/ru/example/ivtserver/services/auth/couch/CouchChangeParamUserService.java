@@ -3,7 +3,6 @@ package ru.example.ivtserver.services.auth.couch;
 import io.jsonwebtoken.Jwts;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -24,7 +23,6 @@ import java.util.Map;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
-@Log4j2
 public class CouchChangeParamUserService implements ChangeParamUserService {
 
     final UserRepository userRepository;
@@ -70,10 +68,6 @@ public class CouchChangeParamUserService implements ChangeParamUserService {
             context.setVariable("token", token);
             return context;
         });
-
-        log.info("Пользователь {}", user.getEmail());
-        log.info("Токен для восстановления пароля {}", token);
-
         emailProvider.sendEmail(email, "Восстановление пароля",
                 message, Map.of("logo.png", fileLogoIvt));
     }
@@ -89,8 +83,6 @@ public class CouchChangeParamUserService implements ChangeParamUserService {
     public void recoverPassword(String token, String newPassword)
             throws NoUserException, InvalidDisposableToken {
 
-        log.debug("Токен для изменения пароля {}", token);
-
         if (disposableTokenProvider.isValidToken(token)) {
             var claims = disposableTokenProvider.getBody(token)
                     .orElseThrow(() -> new InvalidDisposableToken("Неверное тело токена"));
@@ -100,8 +92,6 @@ public class CouchChangeParamUserService implements ChangeParamUserService {
 
             if (claims.get("pass").equals(user.getPassword())) {
                 user.setPassword(passwordEncoder.encode(newPassword));
-
-                log.debug("Изменения пароля пользователя {}", user.getEmail());
 
                 refreshTokenRepository.deleteAllByUserId(user.getId().toString());
                 userRepository.save(user);
@@ -128,9 +118,6 @@ public class CouchChangeParamUserService implements ChangeParamUserService {
 
         var claims = Jwts.claims(Map.of("new", dto.getEmail())).setSubject(user.getEmail());
         var token = disposableTokenProvider.generateToken(claims);
-
-        log.debug("Пользователь запросивший смену почты {}", email);
-        log.debug("Токен для смены почты {}", token);
 
         var message = emailProvider.getMailHtml("change-email.html", context -> {
             context.setVariable("token", token);
@@ -162,9 +149,6 @@ public class CouchChangeParamUserService implements ChangeParamUserService {
 
                 var newEmail = claims.get("new").toString();
 
-                log.debug("Старая почта пользователя {}", claims.getSubject());
-                log.debug("Новая почта пользователя {}", newEmail);
-
                 user.setEmail(newEmail);
                 userRepository.save(user);
             } else {
@@ -186,7 +170,6 @@ public class CouchChangeParamUserService implements ChangeParamUserService {
             throws NoUserException {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NoUserException("Пользователя с такой почтой не существует"));
-        log.info("Пользователь {} меняет пароль", email);
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         userRepository.save(user);
     }

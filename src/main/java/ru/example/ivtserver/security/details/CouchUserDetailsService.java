@@ -27,7 +27,6 @@ public class CouchUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Такого пользователя не существует"));
-
         return CouchUserDetails.of(user);
     }
 }

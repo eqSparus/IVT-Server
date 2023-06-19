@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -25,7 +24,6 @@ import java.util.Map;
         methods = RequestMethod.POST)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RestController
-@Log4j2
 public class AuthenticationController {
 
     /**

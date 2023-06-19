@@ -88,5 +88,5 @@ public interface TeacherService {
      * @param filename имя файла изображения преподавателя
      * @return объект {@link Resource}, представляющий изображение профиля преподавателя
      */
-    Resource getImageTeacher(String filename);
+    Resource getImageTeacher(String filename) throws IOException;
 }

@@ -58,7 +58,6 @@ public class CouchReviewService implements ReviewService {
      */
     @Override
     public Review addReview(ReviewRequestDto reviewRequest, MultipartFile img) throws IOException {
-        FileUtil.isExistDir(basePath);
         var fileName = UUID.randomUUID() + "." + FileUtil.getExtension(img.getOriginalFilename());
         var path = basePath.resolve(fileName);
         FileUtil.saveFile(() -> FileUtil.resizeImg(img, 300, 300), path);
@@ -72,7 +71,6 @@ public class CouchReviewService implements ReviewService {
                 .jobTitle(reviewRequest.getJobTitle())
                 .comment(reviewRequest.getComment())
                 .urlImg(url)
-                .pathImg(path)
                 .build();
         return reviewRepository.save(review);
     }
@@ -107,7 +105,7 @@ public class CouchReviewService implements ReviewService {
     public void removeReview(UUID id) throws IOException, NoIdException {
         var review = reviewRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
-        FileUtil.deleteFile(review.getPathImg());
+        FileUtil.deleteFile(basePath.resolve(FileUtil.getExtension(review.getUrlImg(), "/")));
         reviewRepository.delete(review);
     }
 
@@ -136,7 +134,8 @@ public class CouchReviewService implements ReviewService {
         var review = reviewRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
 
-        FileUtil.replace(() -> FileUtil.resizeImg(img, 300, 300), review.getPathImg());
+        FileUtil.replace(() -> FileUtil.resizeImg(img, 300, 300),
+                basePath.resolve(FileUtil.getExtension(review.getUrlImg(), "/")));
         return review.getUrlImg();
     }
 }

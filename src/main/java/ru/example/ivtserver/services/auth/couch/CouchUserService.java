@@ -2,7 +2,6 @@ package ru.example.ivtserver.services.auth.couch;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,7 +22,6 @@ import ru.example.ivtserver.services.auth.UserService;
  */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
-@Log4j2
 public class CouchUserService implements UserService {
 
     UserRepository userRepository;
@@ -57,7 +55,6 @@ public class CouchUserService implements UserService {
     public AuthenticationToken login(UserRequestDto userDao)
             throws IncorrectCredentialsException, NoUserException {
 
-        log.info("Входящий пользователь {}", userDao);
         try {
             var authentication = new UsernamePasswordAuthenticationToken(userDao.getEmail(), userDao.getPassword());
             authenticationManager.authenticate(authentication);
@@ -67,9 +64,6 @@ public class CouchUserService implements UserService {
 
             var refreshToken = tokenRefreshProvider.generateToken(user.getEmail());
             var accessToken = tokenAccessProvider.generateToken(user.getEmail());
-
-            log.debug("Токен доступа {}", accessToken);
-            log.debug("Токен обновления {}", refreshToken);
 
             var refreshTokenDb = RefreshToken.builder()
                     .userId(user.getId())
@@ -83,7 +77,6 @@ public class CouchUserService implements UserService {
                     .refreshToken(refreshToken)
                     .build();
         } catch (BadCredentialsException e) {
-            log.debug("Введены неверные учетные данные {}", userDao);
             throw new IncorrectCredentialsException("Введены неверные учетные данные", e);
         }
     }
@@ -99,8 +92,6 @@ public class CouchUserService implements UserService {
     @Override
     public AuthenticationToken refreshToken(String refreshToken)
             throws InvalidRefreshTokenException, NotExistsRefreshTokenException, NoUserWithRefreshTokenException {
-
-        log.debug("Токен обновления {}", refreshToken);
         if (tokenRefreshProvider.isValidToken(refreshToken)) {
 
 
@@ -112,9 +103,6 @@ public class CouchUserService implements UserService {
 
             var newAccessToken = tokenAccessProvider.generateToken(user.getEmail());
             var newRefreshToken = tokenRefreshProvider.generateToken(user.getEmail());
-
-            log.debug("Новый токен доступа {}", newAccessToken);
-            log.debug("Новый токен обновления {}", newRefreshToken);
 
             refreshTokenDb.setToken(newRefreshToken);
             refreshTokenRepository.save(refreshTokenDb);
@@ -135,7 +123,6 @@ public class CouchUserService implements UserService {
     @Override
     public void logout(String refreshToken) throws InvalidRefreshTokenException {
         if (tokenRefreshProvider.isValidToken(refreshToken)) {
-            log.info("Удаление токена обновления {}", refreshToken);
             refreshTokenRepository.deleteByToken(refreshToken);
         } else {
             throw new InvalidRefreshTokenException("Неверный токен обновления");

@@ -71,12 +71,6 @@
         <appender-ref ref="console-out-info"/>
     </logger>
 
-<!--    <logger name="org.springframework.data.couchbase" level="debug" additivity="false">-->
-<!--        <appender-ref ref="console-out-error"/>-->
-<!--        <appender-ref ref="console-out-debug"/>-->
-<!--        <appender-ref ref="console-out-info"/>-->
-<!--    </logger>-->
-
     <root level="ERROR">
         <appender-ref ref="console-out-info"/>
     </root>
