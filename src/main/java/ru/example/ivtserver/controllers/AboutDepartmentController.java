@@ -29,6 +29,7 @@ public class AboutDepartmentController {
 
     /**
      * Контрольная точка для обновления информации о кафедре и возврата обновленного объекта {@link AboutDepartment}.
+     *
      * @param dto Объект {@link AboutDepartmentRequestDto}, содержащий информацию о кафедре для обновления.
      * @return Объект {@link AboutDepartment}, представляющий обновленную информацию о кафедре.
      */

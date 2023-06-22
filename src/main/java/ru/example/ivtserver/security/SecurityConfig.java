@@ -45,6 +45,7 @@ public class SecurityConfig {
 
     /**
      * Создает экземпляр {@link SecurityFilterChain} для настройки безопасности приложения.
+     *
      * @param http {@link HttpSecurity} для настройки защиты ресурсов приложения.
      * @return SecurityFilterChain для применения настроек безопасности.
      */
@@ -67,12 +68,14 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().cors();
 
+
         http.csrf().disable().httpBasic().disable();
         return http.build();
     }
 
     /**
      * Создает экземпляр {@link AuthenticationManager} для аутентификации пользователей.
+     *
      * @return AuthenticationManager для аутентификации пользователей.
      */
     @Bean
@@ -82,6 +85,7 @@ public class SecurityConfig {
 
     /**
      * Создает экземпляр {@link AuthenticationProvider} для аутентификации пользователей.
+     *
      * @return AuthenticationProvider для аутентификации пользователей.
      */
     @Bean
@@ -94,6 +98,7 @@ public class SecurityConfig {
 
     /**
      * Создает экземпляр {@link PasswordEncoder} с использованием {@link BCryptPasswordEncoder}.
+     *
      * @return PasswordEncoder для хэширования паролей.
      */
     @Bean

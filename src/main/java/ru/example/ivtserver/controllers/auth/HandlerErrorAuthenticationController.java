@@ -25,6 +25,7 @@ public class HandlerErrorAuthenticationController {
 
     /**
      * Обрабатывает исключения, связанные с некорректными учетными данными
+     *
      * @param request Объект {@link HttpServletRequest}, представляющий входящий запрос.
      * @return Объект {@link MessageErrorDto}, содержащий сообщение об ошибке.
      */
@@ -41,6 +42,7 @@ public class HandlerErrorAuthenticationController {
 
     /**
      * Обрабатывает исключения, связанные с недействительным токеном обновления.
+     *
      * @param request Объект {@link HttpServletRequest}, представляющий входящий запрос.
      * @return Объект {@link MessageErrorDto}, содержащий сообщение об ошибке.
      */

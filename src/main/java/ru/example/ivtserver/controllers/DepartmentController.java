@@ -28,6 +28,7 @@ public class DepartmentController {
 
     /**
      * Конечная точка для обновляет информацию о кафедре и возврата обновленного объекта {@link Department}.
+     *
      * @param dto Объект {@link DepartmentRequestDto}, содержащий информацию о департаменте для обновления.
      * @return Объект {@link Department}, представляющий обновленную информацию о департаменте.
      */

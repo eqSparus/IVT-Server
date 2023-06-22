@@ -26,6 +26,7 @@ public class HandlerErrorController {
      * Обрабатывает исключения типа {@link MethodArgumentNotValidException}, {@link NoIdException}, {@link ConversionFailedException}
      * и {@link ConstraintViolationException}, которые могут возникнуть при передаче недопустимых данных, и возвращает
      * объект типа {@link MessageErrorDto} с подробным сообщением об ошибке.
+     *
      * @param request Объект типа {@link HttpServletRequest}, представляющий запрос, при выполнении которого возникло исключение.
      * @return Объект типа {@link MessageErrorDto}, содержащий подробное сообщение об ошибке, адрес запроса и идентификатор ошибки.
      */

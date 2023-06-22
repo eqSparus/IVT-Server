@@ -48,6 +48,7 @@ public class DataController {
      * Контрольная точка для возвращает контент сайта в виде объекта {@link SiteContentDto},
      * включающего информацию о кафедре, ссылках на сайте, описании кафедры,
      * направлениях, информации абитуриенту, партнерах и отзывах.
+     *
      * @return Объект {@link SiteContentDto}, содержащий контент сайта.
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
