@@ -23,7 +23,6 @@ public class SiteLinkRequestDto {
     @NotBlank
     String href;
 
-    @URL
     @NotBlank
     String icon;
 
