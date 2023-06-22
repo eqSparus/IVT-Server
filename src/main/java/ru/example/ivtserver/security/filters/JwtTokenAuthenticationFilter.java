@@ -45,7 +45,6 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
         token.ifPresent(t -> {
             if (tokenProvider.isValidToken(t)) {
-                log.debug("Токен доступа {}", t);
 
                 var claim = tokenProvider.getBody(t)
                         .orElseThrow(() -> new JwtException("Неверное тело токена доступа"));
