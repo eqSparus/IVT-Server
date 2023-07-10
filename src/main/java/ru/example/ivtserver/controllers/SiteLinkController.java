@@ -34,6 +34,7 @@ public class SiteLinkController {
 
     /**
      * Конечная точка для создания объекта типа {@link SiteLink} на основе переданных данных.
+     *
      * @param dto Объект типа {@link SiteLinkRequestDto} с данными для создания {@link SiteLink}.
      * @return Объект  {@link SiteLink} представляющий созданную ссылку.
      */
@@ -48,6 +49,7 @@ public class SiteLinkController {
 
     /**
      * Конечная точка для обновления объекта {@link SiteLink} на основе переданных данных.
+     *
      * @param dto Объект типа {@link SiteLinkRequestDto} с данными для обновления объекта типа {@link SiteLink}.
      * @return Объект типа {@link SiteLink}, обновленный на основе переданных данных.
      */
@@ -61,6 +63,7 @@ public class SiteLinkController {
 
     /**
      * Конечная точка для удаления объект {@link SiteLink} на основе переданного {@code id}.
+     *
      * @param id Идентификатор объекта типа UUID.
      * @return Объект типа {@link ResponseEntity} с сообщением об успешном удалении.
      */

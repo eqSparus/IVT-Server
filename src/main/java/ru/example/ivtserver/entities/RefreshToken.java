@@ -37,6 +37,9 @@ public class RefreshToken implements Serializable {
     @Field(name = "token")
     String token;
 
+    @Field(name = "expiration")
+    Long expiration;
+
     @Field(name = "userId")
     UUID userId;
 

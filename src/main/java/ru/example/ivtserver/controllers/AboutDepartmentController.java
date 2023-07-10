@@ -11,9 +11,6 @@ import ru.example.ivtserver.entities.AboutDepartment;
 import ru.example.ivtserver.entities.mapper.request.AboutDepartmentRequestDto;
 import ru.example.ivtserver.services.AboutDepartmentService;
 
-/**
- * Контролер для обновления информации "о кафедре".
- */
 @CrossOrigin(origins = "http://localhost:8081", methods = RequestMethod.PUT)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController

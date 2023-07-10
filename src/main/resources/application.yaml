@@ -10,21 +10,23 @@ spring:
     allow-bean-definition-overriding: true
     banner-mode: console
   config:
-    import: security.yaml,database.yaml,setting-email.yaml
-  web:
+    import: config/security.yaml,config/database.yaml,config/setting-email.yaml
     resources:
       cache:
         cachecontrol:
           max-age: 180d
 
 server:
-  port: 8080
   shutdown: graceful
   servlet:
     context-path: /api/v1
 
+
 upload:
   path:
+    default-dir: images
     partners: images/partners
     teachers: images/teachers
     reviews: images/reviews
+
+debug: false

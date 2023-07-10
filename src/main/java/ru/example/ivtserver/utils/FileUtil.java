@@ -90,12 +90,30 @@ public class FileUtil {
         return getExtension(path, ".");
     }
 
+    /**
+     * Возвращает расширение файла
+     *
+     * @param path      название файла
+     * @param delimiter разделитель
+     * @return расширение файла
+     */
     public static String getExtension(String path, String delimiter) {
         var index = path.lastIndexOf(delimiter);
         if (index == -1) {
             return "";
         }
         return path.substring(index + 1);
+    }
+
+    /**
+     * Проверяет существует ли директория и если нет создает её
+     *
+     * @param path путь к директории
+     */
+    public static void existDir(Path path) throws IOException {
+        if (Files.notExists(path)) {
+            Files.createDirectory(path);
+        }
     }
 
     /**

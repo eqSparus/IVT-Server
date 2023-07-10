@@ -22,18 +22,18 @@ public interface UserService {
      * Обновляет токен доступа и обновления, используя переданный токен обновления.
      * @param refreshToken Токен обновления, который будет использоваться для обновления токенов.
      * @return Новые токены аутентификации, представленные объектом {@link AuthenticationToken}.
-     * @throws InvalidRefreshTokenException Если переданный токен обновления недействителен.
      * @throws NotExistsRefreshTokenException Если токен обновления не найден в базе данных.
      * @throws NoUserWithRefreshTokenException Если пользователь с заданным токеном обновления не найден в базе данных.
+     * @throws ExpiredExpirationRefreshTokenException Если срок жизни токена обновления истек.
      */
     AuthenticationToken refreshToken(String refreshToken)
-            throws InvalidRefreshTokenException, NotExistsRefreshTokenException, NoUserWithRefreshTokenException;
+            throws NotExistsRefreshTokenException, NoUserWithRefreshTokenException, ExpiredExpirationRefreshTokenException;
 
     /**
      * Осуществляет процедуру выхода из системы для пользователя с указанным токеном обновления.
      * @param refreshToken Токен обновления, который пытается выйти из системы.
-     * @throws InvalidRefreshTokenException Если переданный токен обновления недействителен.
+     * @throws NotExistsRefreshTokenException Если переданный токен обновления не существует.
      */
-    void logout(String refreshToken) throws InvalidRefreshTokenException;
+    void logout(String refreshToken) throws NotExistsRefreshTokenException;
 
 }

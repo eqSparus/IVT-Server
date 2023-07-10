@@ -11,8 +11,7 @@ import lombok.extern.log4j.Log4j2;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 
@@ -77,9 +76,8 @@ public class JwtTokenProvider implements TokenProvider {
     @Override
     public String generateToken(Claims claims, Long time) {
 
-        var now = LocalDateTime.now();
-        var timeStop = now.plusSeconds(time)
-                .atZone(ZoneId.systemDefault()).toInstant();
+        var now = Instant.now();
+        var timeStop = now.plusSeconds(time);
 
         return Jwts.builder()
                 .setClaims(claims)

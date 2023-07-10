@@ -2,7 +2,6 @@ security:
   token:
     jwt:
       access:
-      refresh:
       disposable:
       valid-time-access-second: 1800
       valid-time-refresh-second: 604800

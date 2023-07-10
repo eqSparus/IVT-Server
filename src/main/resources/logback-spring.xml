@@ -71,7 +71,7 @@
         <appender-ref ref="console-out-info"/>
     </logger>
 
-    <root level="ERROR">
+    <root level="INFO">
         <appender-ref ref="console-out-info"/>
     </root>
 </configuration>
