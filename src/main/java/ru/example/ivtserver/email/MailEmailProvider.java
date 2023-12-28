@@ -2,8 +2,9 @@ package ru.example.ivtserver.email;
 
 import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,7 +22,9 @@ import java.util.function.UnaryOperator;
  * с использованием {@link JavaMailSender} и шаблонизатора {@link ITemplateEngine}.
  */
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Log4j2
 @Service
+@RequiredArgsConstructor
 public class MailEmailProvider implements EmailProvider {
 
     @Value("${mail.username}")
@@ -32,13 +35,6 @@ public class MailEmailProvider implements EmailProvider {
 
     final JavaMailSender mailSender;
     final ITemplateEngine templateEngine;
-
-    @Autowired
-    public MailEmailProvider(JavaMailSender mailSender,
-                             ITemplateEngine templateEngine) {
-        this.mailSender = mailSender;
-        this.templateEngine = templateEngine;
-    }
 
     /**
      * Отправляет электронное письмо на указанный адрес с указанной темой и сообщением.
@@ -74,7 +70,7 @@ public class MailEmailProvider implements EmailProvider {
                 try {
                     helper.addInline(s, resource);
                 } catch (MessagingException e) {
-                    e.printStackTrace();
+                    log.error("Не удалось добавить ресурс", e);
                 }
             });
         });

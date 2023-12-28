@@ -1,4 +1,4 @@
-package ru.example.ivtserver.entities.mapper.request;
+package ru.example.ivtserver.entities.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,29 +8,24 @@ import lombok.Value;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Класс, который представляет DTO запроса для "Информации абитуриенту" {@link ru.example.ivtserver.entities.Entrant}.
  */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
-public class EntrantRequestDto {
-
-    UUID id;
+public class EntrantRequest {
 
     @NotBlank
     String title;
 
-    List<ItemDto> items;
+    List<ItemRequest> items;
 
     @JsonCreator
-    public EntrantRequestDto(
-            @JsonProperty(value = "id") UUID id,
+    public EntrantRequest(
             @JsonProperty(value = "title", required = true) String title,
-            @JsonProperty(value = "items") List<ItemDto> items
+            @JsonProperty(value = "items") List<ItemRequest> items
     ) {
-        this.id = id;
         this.title = title;
         this.items = items;
     }
@@ -38,16 +33,16 @@ public class EntrantRequestDto {
 
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
     @Value
-    public static class ItemDto {
+    public static class ItemRequest {
 
         @NotBlank(message = "Поле не должно быть пустым и состоять из пробелов")
         String name;
 
-        List<ItemPointDto> points;
+        List<ItemPointRequest> points;
 
         @JsonCreator
-        public ItemDto(@JsonProperty(value = "name", required = true) String name,
-                       @JsonProperty(value = "points", required = false) List<ItemPointDto> points) {
+        public ItemRequest(@JsonProperty(value = "name", required = true) String name,
+                           @JsonProperty(value = "points") List<ItemPointRequest> points) {
             this.name = name;
             this.points = points;
         }
@@ -55,14 +50,14 @@ public class EntrantRequestDto {
 
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
     @Value
-    public static class ItemPointDto {
+    public static class ItemPointRequest {
 
 
         @NotBlank(message = "Поле не должно быть пустым и состоять из пробелов")
         String point;
 
         @JsonCreator
-        public ItemPointDto(@JsonProperty(value = "point", required = false) String point) {
+        public ItemPointRequest(@JsonProperty(value = "point") String point) {
             this.point = point;
         }
     }

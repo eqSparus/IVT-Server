@@ -31,6 +31,7 @@ public class ApplicationConfig implements AsyncConfigurer {
      * Создание объекта ObjectMapper, который может сериализовать и десериализовать объекты Java в JSON и обратно.
      * В данном случае, метод создает {@link ObjectMapper}, который зарегистрировали модуль
      * {@link JavaTimeModule} для корректной обработки дат и времени в формате ISO 8601.
+     *
      * @return экземпляр {@link ObjectMapper} с зарегистрированным модулем {@link JavaTimeModule}.
      */
     @Bean
@@ -43,6 +44,7 @@ public class ApplicationConfig implements AsyncConfigurer {
 
     /**
      * Этот метод создает экземпляр {@link ITemplateEngine} для конфигурирования Thymeleaf шаблонов.
+     *
      * @return экземпляр {@link ITemplateEngine} для конфигурирования Thymeleaf шаблонов.
      */
     @Bean
@@ -54,6 +56,7 @@ public class ApplicationConfig implements AsyncConfigurer {
 
     /**
      * Создание объекта {@link ITemplateResolver} для настройки разрешения шаблонов Thymeleaf.
+     *
      * @return {@link ITemplateResolver} объект-реализацию, настроенный для разрешения шаблонов Thymeleaf
      */
     @Bean
@@ -70,6 +73,7 @@ public class ApplicationConfig implements AsyncConfigurer {
 
     /**
      * Настраивает экземпляр {@link Executor}, который использует пул потоков для выполнения асинхронных задач.
+     *
      * @return Executor - настроенный экземпляр {@link ThreadPoolTaskExecutor}
      */
     @Override

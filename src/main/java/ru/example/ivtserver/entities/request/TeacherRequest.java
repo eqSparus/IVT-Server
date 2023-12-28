@@ -1,4 +1,4 @@
-package ru.example.ivtserver.entities.mapper.request;
+package ru.example.ivtserver.entities.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,16 +7,12 @@ import lombok.AccessLevel;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 
-import java.util.UUID;
-
 /**
  * Класс, который представляет DTO запроса для "Преподавателя" {@link ru.example.ivtserver.entities.Teacher}.
  */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
-public class TeacherRequestDto {
-
-    UUID id;
+public class TeacherRequest {
 
     @NotBlank
     String firstName;
@@ -34,14 +30,12 @@ public class TeacherRequestDto {
 
 
     @JsonCreator
-    public TeacherRequestDto(@JsonProperty(value = "id") UUID id,
-                             @JsonProperty(value = "firstName", required = true) String firstName,
-                             @JsonProperty(value = "lastName", required = true) String lastName,
-                             @JsonProperty(value = "middleName", required = true) String middleName,
-                             @JsonProperty(value = "postDepartment", required = true) String postDepartment,
-                             @JsonProperty(value = "postTeacher", required = true) String postTeacher,
-                             @JsonProperty(value = "postAdditional", required = true)  String postAdditional) {
-        this.id = id;
+    public TeacherRequest(@JsonProperty(value = "firstName", required = true) String firstName,
+                          @JsonProperty(value = "lastName", required = true) String lastName,
+                          @JsonProperty(value = "middleName", required = true) String middleName,
+                          @JsonProperty(value = "postDepartment", required = true) String postDepartment,
+                          @JsonProperty(value = "postTeacher", required = true) String postTeacher,
+                          @JsonProperty(value = "postAdditional", required = true)  String postAdditional) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleName = middleName;

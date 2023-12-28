@@ -1,8 +1,8 @@
 package ru.example.ivtserver.services;
 
 
-import ru.example.ivtserver.entities.SiteLink;
-import ru.example.ivtserver.entities.mapper.request.SiteLinkRequestDto;
+import ru.example.ivtserver.entities.dto.SiteLinkDto;
+import ru.example.ivtserver.entities.request.SiteLinkRequest;
 import ru.example.ivtserver.exceptions.NoIdException;
 
 import java.util.List;
@@ -15,28 +15,29 @@ public interface SiteLinkService {
 
 
     /**
-     * Создает новую сайтовую ссылку на основе данных из объекта {@link SiteLinkRequestDto}.
+     * Создает новую сайтовую ссылку на основе данных из объекта {@link SiteLinkRequest}.
      *
-     * @param dto объект с данными для создания сайтовой ссылки
-     * @return созданный объект {@link SiteLink}
+     * @param request объект с данными для создания сайтовой ссылки
+     * @return созданный объект {@link SiteLinkDto}
      */
-    SiteLink createLink(SiteLinkRequestDto dto);
+    SiteLinkDto createLink(SiteLinkRequest request);
 
     /**
-     * Обновляет существующую сайтовую ссылку на основе данных из объекта {@link SiteLinkRequestDto}.
+     * Обновляет существующую сайтовую ссылку на основе данных из объекта {@link SiteLinkRequest}.
      *
-     * @param dto объект с данными для обновления сайтовой ссылки
-     * @return обновленный объект {@link SiteLink}
+     * @param request объект с данными для обновления сайтовой ссылки
+     * @param id идентификатор ссылки
+     * @return обновленный объект {@link SiteLinkDto}
      * @throws NoIdException если ссылка с указанным id не найдена
      */
-    SiteLink updateLink(SiteLinkRequestDto dto) throws NoIdException;
+    SiteLinkDto updateLink(SiteLinkRequest request, UUID id) throws NoIdException;
 
     /**
      * Возвращает список всех сайтовых ссылок.
      *
-     * @return список {@link List} объектов {@link SiteLink}
+     * @return список {@link List} объектов {@link SiteLinkDto}
      */
-    List<SiteLink> getAllLink();
+    List<SiteLinkDto> getAllLink();
 
     /**
      * Удаляет сайтовую ссылку с указанным {@code id}.

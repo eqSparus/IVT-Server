@@ -1,11 +1,12 @@
 package ru.example.ivtserver.services.couch;
 
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.Department;
-import ru.example.ivtserver.entities.mapper.request.DepartmentRequestDto;
+import ru.example.ivtserver.entities.dto.DepartmentDto;
+import ru.example.ivtserver.entities.request.DepartmentRequest;
 import ru.example.ivtserver.repositories.DepartmentRepository;
 import ru.example.ivtserver.services.DepartmentService;
 
@@ -14,42 +15,42 @@ import ru.example.ivtserver.services.DepartmentService;
  */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
+@RequiredArgsConstructor
 public class CouchDepartmentService implements DepartmentService {
 
     DepartmentRepository departmentRepository;
 
-    @Autowired
-    public CouchDepartmentService(DepartmentRepository departmentRepository) {
-        this.departmentRepository = departmentRepository;
-    }
-
     /**
-     * Обновляет описание кафедры по заданному DTO {@link DepartmentRequestDto}
+     * Обновляет описание кафедры по заданному DTO {@link DepartmentRequest}
      *
-     * @param dto DTO-объект, содержащий данные для обновления
-     * @return Обновленный объект {@link Department}
+     * @param request DTO-объект, содержащий данные для обновления
+     * @return Обновленный объект {@link DepartmentDto}
      */
     @Override
-    public Department updateDepartment(DepartmentRequestDto dto) {
-        var department = departmentRepository.findAll().get(0);
-
-        department.setTitle(dto.getTitle());
-        department.setSlogan(dto.getSlogan());
-        department.setPhone(dto.getPhone());
-        department.setEmail(dto.getEmail());
-        department.setAddress(dto.getAddress());
-
-        return departmentRepository.save(department);
+    public DepartmentDto updateDepartment(DepartmentRequest request) {
+        return departmentRepository.findFirstBy()
+                .map(d -> {
+                    d.setTitle(request.getTitle());
+                    d.setSlogan(request.getSlogan());
+                    d.setPhone(request.getPhone());
+                    d.setEmail(request.getEmail());
+                    d.setAddress(request.getAddress());
+                    return d;
+                })
+                .map(departmentRepository::save)
+                .map(DepartmentDto::of).orElseThrow();
     }
 
     /**
      * Возвращает описание кафедры {@link Department}
      *
-     * @return Объект {@link Department}
+     * @return Объект {@link DepartmentDto}
      */
     @Override
-    public Department getDepartment() {
-        return departmentRepository.findAll().get(0);
+    public DepartmentDto getDepartment() {
+        return departmentRepository.findFirstBy()
+                .map(DepartmentDto::of)
+                .orElseThrow();
     }
 
 }

@@ -1,7 +1,7 @@
 package ru.example.ivtserver.services;
 
-import ru.example.ivtserver.entities.Department;
-import ru.example.ivtserver.entities.mapper.request.DepartmentRequestDto;
+import ru.example.ivtserver.entities.dto.DepartmentDto;
+import ru.example.ivtserver.entities.request.DepartmentRequest;
 
 /**
  * Интерфейс для сервиса для работы с описанием кафедры
@@ -9,18 +9,18 @@ import ru.example.ivtserver.entities.mapper.request.DepartmentRequestDto;
 public interface DepartmentService {
 
     /**
-     * Обновляет описание кафедры по заданному DTO {@link DepartmentRequestDto}
+     * Обновляет описание кафедры по заданному DTO {@link DepartmentRequest}
      *
-     * @param dto DTO-объект, содержащий данные для обновления
-     * @return Обновленный объект {@link Department}
+     * @param request DTO-объект, содержащий данные для обновления
+     * @return Обновленный объект {@link DepartmentDto}
      */
-    Department updateDepartment(DepartmentRequestDto dto);
+    DepartmentDto updateDepartment(DepartmentRequest request);
 
     /**
-     * Возвращает описание кафедры {@link Department}
+     * Возвращает описание кафедры {@link DepartmentDto}
      *
-     * @return Объект {@link Department}
+     * @return Объект {@link DepartmentDto}
      */
-    Department getDepartment();
+    DepartmentDto getDepartment();
 
 }

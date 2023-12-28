@@ -1,8 +1,8 @@
 package ru.example.ivtserver.security.details;
 
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,14 +14,10 @@ import ru.example.ivtserver.repositories.UserRepository;
  */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
+@RequiredArgsConstructor
 public class CouchUserDetailsService implements UserDetailsService {
 
     UserRepository userRepository;
-
-    @Autowired
-    public CouchUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

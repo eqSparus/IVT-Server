@@ -12,6 +12,7 @@ import lombok.extern.log4j.Log4j2;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public class JwtTokenProvider implements TokenProvider {
 
     protected JwtTokenProvider(String secretValue, Long lifeTime) {
         this.key = Keys.hmacShaKeyFor(secretValue.getBytes(StandardCharsets.UTF_8));
-        this.parser = Jwts.parserBuilder().setSigningKey(key).build();
+        this.parser = Jwts.parser().verifyWith(key).build();
         this.lifeTime = lifeTime;
     }
 
@@ -41,7 +42,8 @@ public class JwtTokenProvider implements TokenProvider {
      */
     @Override
     public String generateToken(String subject) {
-        return generateToken(Jwts.claims().setSubject(subject), lifeTime);
+        return generateToken(Jwts.claims().subject(subject).build(),
+                Instant.now().plus(lifeTime, ChronoUnit.SECONDS).toEpochMilli());
     }
 
 
@@ -53,7 +55,7 @@ public class JwtTokenProvider implements TokenProvider {
      */
     @Override
     public String generateToken(String subject, Long time) {
-        return generateToken(Jwts.claims().setSubject(subject), time);
+        return generateToken(Jwts.claims().subject(subject).build(), time);
     }
 
 
@@ -64,7 +66,7 @@ public class JwtTokenProvider implements TokenProvider {
      */
     @Override
     public String generateToken(Claims claims) {
-        return generateToken(claims, lifeTime);
+        return generateToken(claims, Instant.now().plus(lifeTime, ChronoUnit.SECONDS).toEpochMilli());
     }
 
     /**
@@ -75,13 +77,9 @@ public class JwtTokenProvider implements TokenProvider {
      */
     @Override
     public String generateToken(Claims claims, Long time) {
-
-        var now = Instant.now();
-        var timeStop = now.plusSeconds(time);
-
         return Jwts.builder()
-                .setClaims(claims)
-                .setExpiration(Date.from(timeStop))
+                .claims(claims)
+                .expiration(Date.from(Instant.ofEpochMilli(time)))
                 .signWith(key)
                 .compact();
     }
@@ -95,8 +93,8 @@ public class JwtTokenProvider implements TokenProvider {
     public boolean isValidToken(String token) {
         try {
             return !parser
-                    .parseClaimsJws(token)
-                    .getBody()
+                    .parseSignedClaims(token)
+                    .getPayload()
                     .getExpiration()
                     .before(new Date());
         } catch (JwtException e) {
@@ -113,7 +111,7 @@ public class JwtTokenProvider implements TokenProvider {
     @Override
     public Optional<Claims> getBody(String token) {
         try {
-            return Optional.of(parser.parseClaimsJws(token).getBody());
+            return Optional.of(parser.parseSignedClaims(token).getPayload());
         } catch (JwtException e) {
             log.error("Неверный токен {}", token);
         }

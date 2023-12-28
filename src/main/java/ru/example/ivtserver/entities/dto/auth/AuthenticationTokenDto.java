@@ -1,6 +1,5 @@
-package ru.example.ivtserver.entities.mapper.auth;
+package ru.example.ivtserver.entities.dto.auth;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
@@ -10,12 +9,12 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
 @Builder
-public class AuthenticationToken {
+public class AuthenticationTokenDto {
 
-    @JsonProperty
     String accessToken;
 
-    @JsonProperty
     String refreshToken;
+
+    Long expiration;
 
 }

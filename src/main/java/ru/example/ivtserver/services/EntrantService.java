@@ -1,7 +1,7 @@
 package ru.example.ivtserver.services;
 
-import ru.example.ivtserver.entities.Entrant;
-import ru.example.ivtserver.entities.mapper.request.EntrantRequestDto;
+import ru.example.ivtserver.entities.dto.EntrantDto;
+import ru.example.ivtserver.entities.request.EntrantRequest;
 import ru.example.ivtserver.exceptions.NoIdException;
 
 import java.util.List;
@@ -13,21 +13,22 @@ import java.util.UUID;
 public interface EntrantService {
 
     /**
-     * Создает новою информацию абитуриенту по заданному DTO {@link EntrantRequestDto}
+     * Создает новою информацию абитуриенту по заданному DTO {@link EntrantRequest}
      *
-     * @param dto DTO-объект, содержащий данные для создания абитуриента
-     * @return Созданная информация абитуриенту {@link Entrant}
+     * @param request DTO-объект, содержащий данные для создания абитуриента
+     * @return Созданная информация абитуриенту {@link EntrantDto}
      */
-    Entrant create(EntrantRequestDto dto);
+    EntrantDto create(EntrantRequest request);
 
     /**
-     * Обновляет информацию абитуриенту по заданному DTO {@link EntrantRequestDto}
+     * Обновляет информацию абитуриенту по заданному DTO {@link EntrantRequest}
      *
-     * @param dto DTO-объект, содержащий данные для обновления
-     * @return Обновленная информация {@link Entrant}
+     * @param request DTO-объект, содержащий данные для обновления
+     * @param id идентификатор информации
+     * @return Обновленная информация {@link EntrantDto}
      * @throws NoIdException Исключение, которое выбрасывается, если не найден объект по заданному ID
      */
-    Entrant update(EntrantRequestDto dto) throws NoIdException;
+    EntrantDto update(EntrantRequest request, UUID id) throws NoIdException;
 
     /**
      * Удаляет информацию абитуриенту по заданному {@code id}
@@ -39,8 +40,8 @@ public interface EntrantService {
     /**
      * Получает список всей информации абитуриенту
      *
-     * @return Список {@link List} абитуриентов {@link Entrant}
+     * @return Список {@link List} абитуриентов {@link EntrantDto}
      */
-    List<Entrant> getAll();
+    List<EntrantDto> getAll();
 
 }

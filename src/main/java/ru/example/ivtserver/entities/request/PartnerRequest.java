@@ -1,4 +1,4 @@
-package ru.example.ivtserver.entities.mapper.request;
+package ru.example.ivtserver.entities.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,24 +8,19 @@ import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.URL;
 
-import java.util.UUID;
-
 /**
  * Класс, который представляет DTO запроса для "Партнера" {@link ru.example.ivtserver.entities.Partner}.
  */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
-public class PartnerRequestDto {
+public class PartnerRequest {
 
-    UUID id;
     @URL
     @NotBlank
     String href;
 
     @JsonCreator
-    public PartnerRequestDto(@JsonProperty(value = "id") UUID id,
-                             @JsonProperty(value = "href", required = true) String href) {
-        this.id = id;
+    public PartnerRequest(@JsonProperty(value = "href", required = true) String href) {
         this.href = href;
     }
 }

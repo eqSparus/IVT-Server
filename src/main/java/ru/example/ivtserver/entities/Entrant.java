@@ -1,10 +1,7 @@
 package ru.example.ivtserver.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.Id;
@@ -15,18 +12,22 @@ import org.springframework.data.couchbase.core.mapping.Field;
 import org.springframework.data.couchbase.core.mapping.id.GeneratedValue;
 import org.springframework.data.couchbase.core.mapping.id.GenerationStrategy;
 import org.springframework.data.couchbase.repository.Collection;
+import ru.example.ivtserver.entities.request.EntrantRequest;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * Класс, который представляет документ "Информации абитуриенту" для БД Couchbase.
  */
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @Builder
 @Document
@@ -68,6 +69,13 @@ public class Entrant implements Serializable {
         @Builder.Default
         List<ItemPoint> points = new ArrayList<>();
 
+        public static Item of(EntrantRequest.ItemRequest item) {
+            return Item.builder()
+                    .name(item.getName())
+                    .points(item.getPoints().stream()
+                            .map(ItemPoint::of).toList())
+                    .build();
+        }
     }
 
     @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -77,5 +85,32 @@ public class Entrant implements Serializable {
 
         @Field(name = "point")
         String point;
+
+        public static ItemPoint of(EntrantRequest.ItemPointRequest point) {
+            return ItemPoint.builder()
+                    .point(point.getPoint())
+                    .build();
+        }
+    }
+
+    public static Entrant of(EntrantRequest request){
+        return Entrant.builder()
+                .title(request.getTitle())
+                .items(request.getItems().stream()
+                        .map(Entrant.Item::of).toList())
+                .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Entrant entrant = (Entrant) o;
+        return version == entrant.version && Objects.equals(id, entrant.id) && Objects.equals(title, entrant.title) && Objects.equals(items, entrant.items) && Objects.equals(createAt, entrant.createAt) && Objects.equals(updateAt, entrant.updateAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, items, version, createAt, updateAt);
     }
 }

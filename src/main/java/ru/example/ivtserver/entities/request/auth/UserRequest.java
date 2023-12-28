@@ -1,4 +1,4 @@
-package ru.example.ivtserver.entities.mapper.auth.request;
+package ru.example.ivtserver.entities.request.auth;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
  */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
-public class UserRequestDto {
+public class UserRequest {
 
     @NotBlank
     @Email
@@ -25,7 +25,7 @@ public class UserRequestDto {
     String password;
 
     @JsonCreator
-    public UserRequestDto(
+    public UserRequest(
             @JsonProperty(value = "email", required = true) String email,
             @JsonProperty(value = "password", required = true) String password
     ) {

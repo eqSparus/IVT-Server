@@ -1,4 +1,4 @@
-package ru.example.ivtserver.entities.mapper.request;
+package ru.example.ivtserver.entities.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
  */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
-public class DepartmentRequestDto {
+public class DepartmentRequest {
 
     @NotBlank
     String title;
@@ -31,11 +31,11 @@ public class DepartmentRequestDto {
     String address;
 
 
-    public DepartmentRequestDto(@JsonProperty(value = "title", required = true) String title,
-                                @JsonProperty(value = "slogan", required = true) String slogan,
-                                @JsonProperty(value = "phone", required = true) String phone,
-                                @JsonProperty(value = "email", required = true) String email,
-                                @JsonProperty(value = "address", required = true) String address) {
+    public DepartmentRequest(@JsonProperty(value = "title", required = true) String title,
+                             @JsonProperty(value = "slogan", required = true) String slogan,
+                             @JsonProperty(value = "phone", required = true) String phone,
+                             @JsonProperty(value = "email", required = true) String email,
+                             @JsonProperty(value = "address", required = true) String address) {
         this.title = title;
         this.slogan = slogan;
         this.phone = phone;

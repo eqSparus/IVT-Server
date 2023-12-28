@@ -1,4 +1,4 @@
-package ru.example.ivtserver.entities.mapper.auth;
+package ru.example.ivtserver.entities.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;

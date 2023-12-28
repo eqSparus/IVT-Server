@@ -2,37 +2,33 @@ package ru.example.ivtserver.controllers;
 
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ru.example.ivtserver.entities.Department;
-import ru.example.ivtserver.entities.mapper.request.DepartmentRequestDto;
+import ru.example.ivtserver.entities.dto.DepartmentDto;
+import ru.example.ivtserver.entities.request.DepartmentRequest;
 import ru.example.ivtserver.services.DepartmentService;
 
 @CrossOrigin(origins = "http://localhost:8081", methods = RequestMethod.PUT)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
 @RequestMapping(path = "/department")
+@RequiredArgsConstructor
 public class DepartmentController {
 
     DepartmentService departmentService;
 
-    @Autowired
-    public DepartmentController(DepartmentService departmentService) {
-        this.departmentService = departmentService;
-    }
-
     /**
-     * Конечная точка для обновляет информацию о кафедре и возврата обновленного объекта {@link Department}.
+     * Конечная точка для обновляет информацию о кафедре и возврата обновленного объекта {@link DepartmentDto}.
      *
-     * @param dto Объект {@link DepartmentRequestDto}, содержащий информацию о департаменте для обновления.
-     * @return Объект {@link Department}, представляющий обновленную информацию о департаменте.
+     * @param dto Объект {@link DepartmentRequest}, содержащий информацию о департаменте для обновления.
+     * @return Объект {@link DepartmentDto}, представляющий обновленную информацию о департаменте.
      */
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Department updateDepartment(
-            @RequestBody @Valid DepartmentRequestDto dto
+    public DepartmentDto updateDepartment(
+            @RequestBody @Valid DepartmentRequest dto
     ) {
         return departmentService.updateDepartment(dto);
     }

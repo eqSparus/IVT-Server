@@ -1,9 +1,6 @@
 package ru.example.ivtserver.entities;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.Id;
@@ -17,13 +14,16 @@ import org.springframework.data.couchbase.repository.Collection;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * Класс, который представляет документ "Токен обновления" для БД Couchbase.
  */
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @Builder
 @Document(expiryExpression = "${security.token.jwt.valid-time-refresh-second}")
@@ -51,4 +51,17 @@ public class RefreshToken implements Serializable {
 
     @LastModifiedBy
     ZonedDateTime updateAt;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RefreshToken that = (RefreshToken) o;
+        return version == that.version && Objects.equals(id, that.id) && Objects.equals(token, that.token) && Objects.equals(expiration, that.expiration) && Objects.equals(userId, that.userId) && Objects.equals(createAt, that.createAt) && Objects.equals(updateAt, that.updateAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, token, expiration, userId, version, createAt, updateAt);
+    }
 }

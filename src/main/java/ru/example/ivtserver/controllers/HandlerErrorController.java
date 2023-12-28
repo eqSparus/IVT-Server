@@ -11,8 +11,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.example.ivtserver.entities.mapper.auth.MessageErrorDto;
+import ru.example.ivtserver.entities.dto.auth.MessageErrorDto;
 import ru.example.ivtserver.exceptions.DirectionQuantityLimitException;
+import ru.example.ivtserver.exceptions.FailedOperationFileException;
 import ru.example.ivtserver.exceptions.NoIdException;
 
 /**
@@ -38,6 +39,24 @@ public class HandlerErrorController {
                 .message("Неверные данные")
                 .path(request.getRequestURI())
                 .status(HttpStatus.BAD_REQUEST.value())
+                .build();
+    }
+
+    /**
+     * Обрабатывает исключение типа {@link FailedOperationFileException}, которое может возникнуть при
+     * неудачной операции над файлами
+     * объект типа {@link MessageErrorDto} с подробным сообщением об ошибке.
+     *
+     * @param request Объект типа {@link HttpServletRequest}, представляющий запрос, при выполнении которого возникло исключение.
+     * @return Объект типа {@link MessageErrorDto}, содержащий подробное сообщение об ошибке, адрес запроса и идентификатор ошибки.
+     */
+    @ExceptionHandler({FailedOperationFileException.class})
+    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+    public MessageErrorDto handlerFileException(HttpServletRequest request) {
+        return MessageErrorDto.builder()
+                .message("Не удалось произвести операцию с файлом на сервере")
+                .path(request.getRequestURI())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .build();
     }
 }

@@ -10,8 +10,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.entities.RefreshToken;
-import ru.example.ivtserver.entities.mapper.auth.AuthenticationToken;
-import ru.example.ivtserver.entities.mapper.auth.request.UserRequestDto;
+import ru.example.ivtserver.entities.dto.auth.AuthenticationTokenDto;
+import ru.example.ivtserver.entities.request.auth.UserRequest;
 import ru.example.ivtserver.exceptions.auth.*;
 import ru.example.ivtserver.repositories.RefreshTokenRepository;
 import ru.example.ivtserver.repositories.UserRepository;
@@ -37,6 +37,9 @@ public class CouchUserService implements UserService {
     @Value("${security.token.jwt.valid-time-refresh-second}")
     Long expirationRefreshToken;
 
+    @Value("${security.token.jwt.valid-time-access-second}")
+    Long expirationAccessToken;
+
 
     @Autowired
     public CouchUserService(UserRepository userRepository,
@@ -52,13 +55,13 @@ public class CouchUserService implements UserService {
     /**
      * Выполняет процедуру аутентификации пользователя с использованием переданных учетных данных.
      *
-     * @param userDao Объект {@link UserRequestDto}, содержащий данные пользователя, который пытается пройти аутентификацию.
-     * @return Токены аутентификации представленные {@link AuthenticationToken}.
+     * @param userDao Объект {@link UserRequest}, содержащий данные пользователя, который пытается пройти аутентификацию.
+     * @return Токены аутентификации представленные {@link AuthenticationTokenDto}.
      * @throws IncorrectCredentialsException Если переданные учетные данные неверны или не найдены.
      * @throws NoUserException               бросается если пользователь не был найден.
      */
     @Override
-    public AuthenticationToken login(UserRequestDto userDao)
+    public AuthenticationTokenDto login(UserRequest userDao)
             throws IncorrectCredentialsException, NoUserException {
 
         try {
@@ -68,9 +71,10 @@ public class CouchUserService implements UserService {
             var user = userRepository.findByEmail(userDao.getEmail())
                     .orElseThrow(() -> new NoUserException("Пользователь не найден"));
 
-            var refreshToken = UUID.randomUUID().toString();
-            var accessToken = tokenAccessProvider.generateToken(user.getEmail());
+            var validTime = Instant.now().plus(expirationAccessToken, ChronoUnit.SECONDS).toEpochMilli();
+            var accessToken = tokenAccessProvider.generateToken(user.getEmail(), validTime);
 
+            var refreshToken = UUID.randomUUID().toString();
             var refreshTokenDb = RefreshToken.builder()
                     .userId(user.getId())
                     .token(refreshToken)
@@ -79,9 +83,10 @@ public class CouchUserService implements UserService {
 
             refreshTokenRepository.save(refreshTokenDb);
 
-            return AuthenticationToken.builder()
+            return AuthenticationTokenDto.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
+                    .expiration(validTime)
                     .build();
         } catch (BadCredentialsException e) {
             throw new IncorrectCredentialsException("Введены неверные учетные данные", e);
@@ -92,13 +97,13 @@ public class CouchUserService implements UserService {
      * Обновляет токен доступа и обновления, используя переданный токен обновления.
      *
      * @param refreshToken Токен обновления, который будет использоваться для обновления токенов.
-     * @return Новые токены аутентификации, представленные объектом {@link AuthenticationToken}.
+     * @return Новые токены аутентификации, представленные объектом {@link AuthenticationTokenDto}.
      * @throws NotExistsRefreshTokenException  Если токен обновления не найден в базе данных.
      * @throws NoUserWithRefreshTokenException Если пользователь с заданным токеном обновления не найден в базе данных.
      * @throws ExpiredExpirationRefreshTokenException Если срок жизни токена обновления истек.
      */
     @Override
-    public AuthenticationToken refreshToken(String refreshToken)
+    public AuthenticationTokenDto refreshToken(String refreshToken)
             throws NotExistsRefreshTokenException, NoUserWithRefreshTokenException, ExpiredExpirationRefreshTokenException {
         var refreshTokenDb = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new NotExistsRefreshTokenException("Токена обновления не существует!"));
@@ -107,16 +112,18 @@ public class CouchUserService implements UserService {
             var user = userRepository.findById(refreshTokenDb.getUserId())
                     .orElseThrow(() -> new NoUserWithRefreshTokenException("Пользователя с таким токеном не существует"));
 
-            var newAccessToken = tokenAccessProvider.generateToken(user.getEmail());
-            var newRefreshToken = UUID.randomUUID().toString();
+            var validTime = Instant.now().plus(expirationAccessToken, ChronoUnit.SECONDS).toEpochMilli();
+            var newAccessToken = tokenAccessProvider.generateToken(user.getEmail(), validTime);
 
+            var newRefreshToken = UUID.randomUUID().toString();
             refreshTokenDb.setToken(newRefreshToken);
             refreshTokenDb.setExpiration(Instant.now().plus(expirationRefreshToken, ChronoUnit.SECONDS).toEpochMilli());
             refreshTokenRepository.save(refreshTokenDb);
 
-            return AuthenticationToken.builder()
+            return AuthenticationTokenDto.builder()
                     .accessToken(newAccessToken)
                     .refreshToken(newRefreshToken)
+                    .expiration(validTime)
                     .build();
         }
         throw new ExpiredExpirationRefreshTokenException("Срок жизни токена обновления истек");

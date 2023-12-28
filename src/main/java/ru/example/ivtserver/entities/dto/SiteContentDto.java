@@ -1,4 +1,4 @@
-package ru.example.ivtserver.entities.mapper;
+package ru.example.ivtserver.entities.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
-import ru.example.ivtserver.entities.*;
+import ru.example.ivtserver.entities.dto.*;
 
 import java.util.List;
 
@@ -19,31 +19,31 @@ import java.util.List;
 public class SiteContentDto {
 
     @JsonProperty(value = "department")
-    MainDepartment department;
+    MainDepartmentDto department;
 
     @JsonProperty(value = "about")
-    List<AboutDepartment> aboutDepartment;
+    List<AboutDepartmentDto> aboutDepartment;
 
     @JsonProperty(value = "directions")
-    List<Direction> direction;
+    List<DirectionDto> direction;
 
     @JsonProperty(value = "entrants")
-    List<Entrant> entrants;
+    List<EntrantDto> entrants;
 
     @JsonProperty(value = "partners")
-    List<Partner> partners;
+    List<PartnerDto> partners;
 
     @JsonProperty(value = "reviews")
-    List<Review> reviews;
+    List<ReviewDto> reviews;
 
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
     @AllArgsConstructor
     @Value
-    public static class MainDepartment {
+    public static class MainDepartmentDto {
 
-        Department mainInfo;
+        DepartmentDto mainInfo;
 
-        List<SiteLink> links;
+        List<SiteLinkDto> links;
 
     }
 }

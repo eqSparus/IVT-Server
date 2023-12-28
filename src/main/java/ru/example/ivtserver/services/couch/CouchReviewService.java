@@ -1,24 +1,27 @@
 package ru.example.ivtserver.services.couch;
 
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.example.ivtserver.entities.Review;
-import ru.example.ivtserver.entities.mapper.request.ReviewRequestDto;
+import ru.example.ivtserver.entities.dto.ReviewDto;
+import ru.example.ivtserver.entities.request.ReviewRequest;
+import ru.example.ivtserver.exceptions.FailedOperationFileException;
 import ru.example.ivtserver.exceptions.NoIdException;
 import ru.example.ivtserver.repositories.ReviewRepository;
 import ru.example.ivtserver.services.ReviewService;
 import ru.example.ivtserver.utils.FileUtil;
+import ru.example.ivtserver.utils.ImagePathConstant;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -26,6 +29,7 @@ import java.util.UUID;
  */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
+@RequiredArgsConstructor
 public class CouchReviewService implements ReviewService {
 
     @Value("${upload.path.reviews}")
@@ -33,80 +37,81 @@ public class CouchReviewService implements ReviewService {
 
     final ReviewRepository reviewRepository;
 
-    @Autowired
-    public CouchReviewService(ReviewRepository reviewRepository) {
-        this.reviewRepository = reviewRepository;
-    }
-
     /**
      * Получает список всех отзывов
      *
-     * @return Список {@link List} всех отзывов {@link Review}
+     * @return Список {@link List} всех отзывов {@link ReviewDto}
      */
     @Override
-    public List<Review> getAllReviews() {
-        return reviewRepository.findAll();
+    public List<ReviewDto> getAllReviews() {
+        return reviewRepository.findAll().stream()
+                .map(ReviewDto::of)
+                .toList();
     }
 
     /**
-     * Добавляет новый отзыв по заданному DTO {@link ReviewRequestDto}
+     * Добавляет новый отзыв по заданному DTO {@link ReviewRequest}
      *
-     * @param reviewRequest DTO-объект, содержащий данные для добавления нового отзыва
-     * @param img           Файл с изображением для нового отзыва
-     * @return Добавленный отзыв {@link Review}
-     * @throws IOException Исключение, которое выбрасывается, если произошла ошибка при загрузке изображения
+     * @param request DTO-объект, содержащий данные для добавления нового отзыва
+     * @param img     Файл с изображением для нового отзыва
+     * @return Добавленный отзыв {@link ReviewDto}
+     * @throws FailedOperationFileException Исключение, которое выбрасывается, если произошла ошибка при загрузке изображения
      */
     @Override
-    public Review addReview(ReviewRequestDto reviewRequest, MultipartFile img) throws IOException {
+    public ReviewDto addReview(ReviewRequest request, MultipartFile img) throws FailedOperationFileException {
         var fileName = UUID.randomUUID() + "." + FileUtil.getExtension(img.getOriginalFilename());
         var path = basePath.resolve(fileName);
-        FileUtil.saveFile(() -> FileUtil.resizeImg(img, 300, 300), path);
-        var url = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/review/image/")
-                .path(fileName)
-                .toUriString();
+        try {
+            FileUtil.saveFile(() -> FileUtil.resizeImg(img, 300, 300), path);
 
-        var review = Review.builder()
-                .name(reviewRequest.getName())
-                .jobTitle(reviewRequest.getJobTitle())
-                .comment(reviewRequest.getComment())
-                .urlImg(url)
-                .build();
-        return reviewRepository.save(review);
+            return Optional.of(Review.of(request, fileName))
+                    .map(reviewRepository::save)
+                    .map(ReviewDto::of)
+                    .orElseThrow();
+        } catch (IOException e) {
+            throw new FailedOperationFileException("Не удалось сохранить файл");
+        }
     }
 
     /**
-     * Обновляет отзыв по заданному DTO {@link ReviewRequestDto}
+     * Обновляет отзыв по заданному DTO {@link ReviewRequest}
      *
      * @param reviewRequest DTO-объект, содержащий данные для обновления отзыва
-     * @return Обновленный отзыв {@link Review}
+     * @param id идентификатор отзыва
+     * @return Обновленный отзыв {@link ReviewDto}
      * @throws NoIdException Исключение, которое выбрасывается, если не найден объект по заданному id
      */
     @Override
-    public Review updateReview(ReviewRequestDto reviewRequest) throws NoIdException {
-        var review = reviewRepository.findById(reviewRequest.getId())
+    public ReviewDto updateReview(ReviewRequest reviewRequest, UUID id) throws NoIdException {
+        return reviewRepository.findById(id)
+                .map(r -> {
+                    r.setName(reviewRequest.getName());
+                    r.setJobTitle(reviewRequest.getJobTitle());
+                    r.setComment(reviewRequest.getComment());
+                    return r;
+                })
+                .map(reviewRepository::save)
+                .map(ReviewDto::of)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
-
-        review.setName(reviewRequest.getName());
-        review.setJobTitle(reviewRequest.getJobTitle());
-        review.setComment(reviewRequest.getComment());
-
-        return reviewRepository.save(review);
     }
 
     /**
      * Удаляет отзыв по указанному {@code id}.
      *
      * @param id идентификатор отзыва, который нужно удалить
-     * @throws IOException   если произошла ошибка при удалении отзыва
+     * @throws FailedOperationFileException   если произошла ошибка при удалении отзыва
      * @throws NoIdException если отзыв с указанным идентификатором не найден
      */
     @Override
-    public void removeReview(UUID id) throws IOException, NoIdException {
+    public void removeReview(UUID id) throws FailedOperationFileException, NoIdException {
         var review = reviewRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
-        FileUtil.deleteFile(basePath.resolve(FileUtil.getExtension(review.getUrlImg(), "/")));
-        reviewRepository.delete(review);
+        try {
+            FileUtil.deleteFile(basePath.resolve(review.getImgName()));
+            reviewRepository.delete(review);
+        } catch (IOException e) {
+            throw new FailedOperationFileException("Не удалось удалить файл");
+        }
     }
 
     /**
@@ -126,16 +131,23 @@ public class CouchReviewService implements ReviewService {
      * @param img Файл с новым изображением
      * @param id  отзыва, для которого нужно обновить изображение
      * @return url нового изображения
-     * @throws IOException   Исключение, которое выбрасывается, если произошла ошибка при загрузке изображения
+     * @throws FailedOperationFileException   Исключение, которое выбрасывается, если произошла ошибка при загрузке изображения
      * @throws NoIdException Исключение, которое выбрасывается, если не найден объект по заданному id
      */
     @Override
-    public String updateImg(MultipartFile img, UUID id) throws IOException, NoIdException {
+    public String updateImg(MultipartFile img, UUID id) throws FailedOperationFileException, NoIdException {
         var review = reviewRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
+        var newFileName = UUID.randomUUID() + "." + FileUtil.getExtension(img.getOriginalFilename());
 
-        FileUtil.replace(() -> FileUtil.resizeImg(img, 300, 300),
-                basePath.resolve(FileUtil.getExtension(review.getUrlImg(), "/")));
-        return review.getUrlImg();
+        try {
+            FileUtil.deleteFile(basePath.resolve(review.getImgName()));
+            FileUtil.saveFile(() -> FileUtil.resizeImg(img, 300, 300), basePath.resolve(newFileName));
+            review.setImgName(newFileName);
+            reviewRepository.save(review);
+            return ImagePathConstant.BASE_REVIEW_PATH.concat("/").concat(review.getImgName());
+        } catch (IOException e) {
+            throw new FailedOperationFileException("Не удалось сохранить файл");
+        }
     }
 }

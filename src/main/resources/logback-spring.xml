@@ -64,7 +64,6 @@
         </filter>
     </appender>
 
-
     <logger name="ru.example.ivtserver" level="debug" additivity="false">
         <appender-ref ref="console-out-error"/>
         <appender-ref ref="console-out-debug"/>
@@ -72,6 +71,5 @@
     </logger>
 
     <root level="INFO">
-        <appender-ref ref="console-out-info"/>
     </root>
 </configuration>

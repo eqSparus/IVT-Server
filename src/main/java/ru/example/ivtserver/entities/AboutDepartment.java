@@ -1,10 +1,7 @@
 package ru.example.ivtserver.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.Id;
@@ -18,13 +15,16 @@ import org.springframework.data.couchbase.repository.Collection;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * Класс, который представляет документ "О кафедре" для БД Couchbase.
  */
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @Builder
 @Document
@@ -41,9 +41,6 @@ public class AboutDepartment implements Serializable {
     @Field(name = "description")
     String description;
 
-    @Field(name = "icon")
-    String icon;
-
     @JsonIgnore
     @Version
     private long version;
@@ -55,4 +52,17 @@ public class AboutDepartment implements Serializable {
     @JsonIgnore
     @LastModifiedBy
     ZonedDateTime updateAt;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AboutDepartment that = (AboutDepartment) o;
+        return version == that.version && Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(createAt, that.createAt) && Objects.equals(updateAt, that.updateAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, description, version, createAt, updateAt);
+    }
 }

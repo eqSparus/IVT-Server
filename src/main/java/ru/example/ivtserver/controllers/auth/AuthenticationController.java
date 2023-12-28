@@ -4,15 +4,15 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.example.ivtserver.entities.mapper.auth.request.UserRequestDto;
+import ru.example.ivtserver.entities.request.auth.UserRequest;
 import ru.example.ivtserver.services.auth.UserService;
 
 import java.util.Map;
@@ -23,6 +23,7 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:8081", allowCredentials = "true", methods = RequestMethod.POST)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RestController
+@RequiredArgsConstructor
 public class AuthenticationController {
 
     /**
@@ -38,11 +39,6 @@ public class AuthenticationController {
 
     final UserService userService;
 
-    @Autowired
-    public AuthenticationController(UserService userService) {
-        this.userService = userService;
-    }
-
     /**
      * Конечная точка для авторизации пользователя в приложении и установка токена обновления в печенье {@code nameRefreshCookie}.
      *
@@ -52,8 +48,8 @@ public class AuthenticationController {
      */
     @PostMapping(path = "/login", produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, String> login(
-            @RequestBody @Valid UserRequestDto userDto,
+    public Map<String, Object> login(
+            @RequestBody @Valid UserRequest userDto,
             HttpServletResponse response
     ) {
         var authentication = userService.login(userDto);
@@ -65,7 +61,8 @@ public class AuthenticationController {
                 .build();
         response.setHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
         return Map.of(
-                "accessToken", authentication.getAccessToken()
+                "accessToken", authentication.getAccessToken(),
+                "expiration", authentication.getExpiration()
         );
     }
 
@@ -78,7 +75,7 @@ public class AuthenticationController {
      * @return accessToken для доступа к ресурсам приложения, устанавливает refreshCookie в response
      */
     @PostMapping(path = "/refresh", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, String> refreshToken(
+    public Map<String, Object> refreshToken(
             @CookieValue(name = "${security.token.jwt.cookie-refresh-token}") Cookie refresh,
             HttpServletResponse response
     ) {
@@ -93,7 +90,8 @@ public class AuthenticationController {
         response.setHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
         return Map.of(
-                "accessToken", authentication.getAccessToken()
+                "accessToken", authentication.getAccessToken(),
+                "expiration", authentication.getExpiration()
         );
     }
 

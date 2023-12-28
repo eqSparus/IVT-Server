@@ -1,10 +1,7 @@
 package ru.example.ivtserver.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.Id;
@@ -15,16 +12,20 @@ import org.springframework.data.couchbase.core.mapping.Field;
 import org.springframework.data.couchbase.core.mapping.id.GeneratedValue;
 import org.springframework.data.couchbase.core.mapping.id.GenerationStrategy;
 import org.springframework.data.couchbase.repository.Collection;
+import ru.example.ivtserver.entities.request.DirectionRequest;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * Класс, который представляет документ "Направления" для БД Couchbase.
  */
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @Builder
 @Document
@@ -62,4 +63,26 @@ public class Direction implements Serializable {
     @LastModifiedBy
     ZonedDateTime updateAt;
 
+    public static Direction of(DirectionRequest request, int position) {
+        return Direction.builder()
+                .title(request.getTitle())
+                .degree(request.getDegree())
+                .form(request.getForm())
+                .duration(request.getDuration())
+                .position(position)
+                .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Direction direction = (Direction) o;
+        return duration == direction.duration && position == direction.position && version == direction.version && Objects.equals(id, direction.id) && Objects.equals(title, direction.title) && Objects.equals(degree, direction.degree) && Objects.equals(form, direction.form) && Objects.equals(createAt, direction.createAt) && Objects.equals(updateAt, direction.updateAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, degree, form, duration, position, version, createAt, updateAt);
+    }
 }

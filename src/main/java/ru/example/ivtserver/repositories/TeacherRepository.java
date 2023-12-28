@@ -5,9 +5,9 @@ import org.springframework.data.couchbase.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.example.ivtserver.entities.Teacher;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 /**
  * Spring Data репозиторий для документов {@link Teacher} в базе данных Couchbase.
@@ -31,5 +31,5 @@ public interface TeacherRepository extends CouchbaseRepository<Teacher, UUID> {
      * @return список преподавателей, отсортированный по полю "position"
      */
     @Query("#{#n1ql.selectEntity} WHERE #{#n1ql.filter} ORDER BY position offset #{#skip} limit #{#size}")
-    List<Teacher> findAllByOrderByPosition(@Param("skip") int skip, @Param("size") int size);
+    Stream<Teacher> findAllByOrderByPosition(@Param("skip") int skip, @Param("size") int size);
 }

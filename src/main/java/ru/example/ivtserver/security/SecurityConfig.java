@@ -13,6 +13,7 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -57,19 +58,21 @@ public class SecurityConfig {
                 .and()
                 .addFilterBefore(jwtTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider())
-                .authorizeHttpRequests(registry -> registry
+                .authorizeHttpRequests(configRequest -> configRequest
                         .requestMatchers("/login", "/refresh", "/partner",
-                                "/recover/pass", "/recover/pass/valid", "/change/email").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/data", "/teacher/image/*",
-                                "/partner/image/*", "/review/image/*", "/teacher", "/images/**").permitAll()
+                                "/recover/pass", "/recover/pass/valid", "/change/email", "/error").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/data", "/teachers/image/*",
+                                "/partners/image/*", "/reviews/image/*", "/teachers").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().cors();
+                .and()
+                .cors();
 
 
-        http.csrf().disable().httpBasic().disable();
+        http.csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable);
         return http.build();
     }
 

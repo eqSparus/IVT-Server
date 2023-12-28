@@ -10,8 +10,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.example.ivtserver.email.EmailProvider;
-import ru.example.ivtserver.entities.mapper.auth.request.ChangeEmailRequestDto;
-import ru.example.ivtserver.entities.mapper.auth.request.ChangePasswordRequestDto;
+import ru.example.ivtserver.entities.request.auth.ChangeEmailRequest;
+import ru.example.ivtserver.entities.request.auth.ChangePasswordRequest;
 import ru.example.ivtserver.exceptions.auth.InvalidDisposableToken;
 import ru.example.ivtserver.exceptions.auth.NoUserException;
 import ru.example.ivtserver.repositories.RefreshTokenRepository;
@@ -59,8 +59,9 @@ public class CouchChangeParamUserService implements ChangeParamUserService {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NoUserException("Нет такого пользователя"));
 
-        var claims = Jwts.claims(Map.of("pass", user.getPassword()))
-                .setSubject(user.getEmail());
+        var claims = Jwts.claims().add(Map.of("pass", user.getPassword()))
+                .subject(user.getEmail())
+                .build();
 
         var token = disposableTokenProvider.generateToken(claims);
 
@@ -105,18 +106,20 @@ public class CouchChangeParamUserService implements ChangeParamUserService {
 
     /**
      * Отправляет электронное письмо для изменения адреса электронной почты для пользователя с заданным адресом электронной почты.
-     * @param dto Запрос {@link ChangeEmailRequestDto} на изменение адреса электронной почты пользователя.
+     * @param dto Запрос {@link ChangeEmailRequest} на изменение адреса электронной почты пользователя.
      * @param email Адрес электронной почты пользователя, который хочет изменить свой адрес электронной почты.
      * @throws NoUserException бросается если пользователь с указанным адресом электронной почты не найден в базе данных.
      */
     @Async
     @Override
-    public void sendChangeEmail(ChangeEmailRequestDto dto, String email) throws NoUserException {
+    public void sendChangeEmail(ChangeEmailRequest dto, String email) throws NoUserException {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NoUserException("Пользователя с такой почтой не существует"));
 
 
-        var claims = Jwts.claims(Map.of("new", dto.getEmail())).setSubject(user.getEmail());
+        var claims = Jwts.claims().add(Map.of("new", dto.getEmail()))
+                .subject(user.getEmail())
+                .build();
         var token = disposableTokenProvider.generateToken(claims);
 
         var message = emailProvider.getMailHtml("change-email.html", context -> {
@@ -161,12 +164,12 @@ public class CouchChangeParamUserService implements ChangeParamUserService {
 
     /**
      * Изменяет пароль для пользователя с использованием данных из запроса на изменение пароля.
-     * @param dto Запрос на изменение пароля пользователя {@link ChangePasswordRequestDto}.
+     * @param dto Запрос на изменение пароля пользователя {@link ChangePasswordRequest}.
      * @param email Адрес электронной почты пользователя, для которого выполняется операция изменения пароля.
      * @throws NoUserException бросается если пользователь, для которого выполняется операция изменения пароля, не найден в базе данных.
      */
     @Override
-    public void changePassword(ChangePasswordRequestDto dto, String email)
+    public void changePassword(ChangePasswordRequest dto, String email)
             throws NoUserException {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NoUserException("Пользователя с такой почтой не существует"));

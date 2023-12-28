@@ -1,10 +1,10 @@
 package ru.example.ivtserver.controllers;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +12,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.example.ivtserver.entities.Partner;
-import ru.example.ivtserver.entities.mapper.DataView;
-import ru.example.ivtserver.entities.mapper.request.PartnerRequestDto;
+import ru.example.ivtserver.entities.dto.PartnerDto;
+import ru.example.ivtserver.entities.request.PartnerRequest;
 import ru.example.ivtserver.services.PartnerService;
 import ru.example.ivtserver.utils.image.FileType;
 import ru.example.ivtserver.utils.image.FileTypes;
@@ -30,64 +30,63 @@ import java.util.UUID;
 })
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
-@RequestMapping(path = "/partner")
+@RequestMapping(path = "/partners")
 @Validated
+@RequiredArgsConstructor
 public class PartnerController {
 
     PartnerService partnerService;
 
-    @Autowired
-    public PartnerController(PartnerService partnerService) {
-        this.partnerService = partnerService;
-    }
-
     /**
-     * Конечная точка для создания нового объекта типа {@link Partner} на основе переданных данных {@link PartnerRequestDto}
-     * и его изображения {@link MultipartFile}, и возврата созданного объект {@link Partner}.
-     * @param dto Объект типа {@link PartnerRequestDto}, содержащий данные для создания нового {@link Partner}.
+     * Конечная точка для создания нового объекта типа {@link Partner} на основе переданных данных {@link PartnerRequest}
+     * и его изображения {@link MultipartFile}, и возврата созданного объект {@link PartnerDto}.
+     *
+     * @param dto Объект типа {@link PartnerRequest}, содержащий данные для создания нового {@link Partner}.
      * @param img Объект типа {@link MultipartFile}, содержащий логотип для {@link Partner}.
-     * @return Объект созданный {@link Partner}.
+     * @return Объект созданный {@link PartnerDto}.
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(code = HttpStatus.CREATED)
-    @JsonView(DataView.Create.class)
-    public Partner createTeacher(
-            @RequestPart(name = "data") @Valid PartnerRequestDto dto,
+    public PartnerDto createTeacher(
+            @RequestPart(name = "data") @Valid PartnerRequest dto,
             @RequestPart(name = "img") @Valid @FileType(type = FileTypes.PNG) MultipartFile img
-    ) throws IOException {
+    ) {
         return partnerService.addPartner(dto, img);
     }
 
     /**
-     * Конечная точка для обновляет объект типа {@link Partner} на основе переданного объекта данных {@link PartnerRequestDto}
-     * и возврата обновленного объект {@link Partner} в формате JSON.
-     * @param dto Объект типа {@link PartnerRequestDto}, содержащий данные для обновления {@link Partner}.
-     * @return Объект обновленный {@link Partner}.
+     * Конечная точка для обновляет объект типа {@link Partner} на основе переданного объекта данных {@link PartnerRequest}
+     * и возврата обновленного объект {@link PartnerDto} в формате JSON.
+     *
+     * @param request Объект типа {@link PartnerRequest}, содержащий данные для обновления {@link Partner}.
+     * @param id      идентификатор партнера.
+     * @return Объект обновленный {@link PartnerDto}.
      */
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
+    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @JsonView(DataView.Update.class)
-    public Partner updateTeacher(
-            @RequestBody @Valid PartnerRequestDto dto
+    public PartnerDto updateTeacher(
+            @RequestBody @Valid PartnerRequest request,
+            @PathVariable(name = "id") UUID id
     ) {
-        return partnerService.updatePartner(dto);
+        return partnerService.updatePartner(request, id);
     }
 
     /**
      * Конечная точка для обновления изображения объекта типа {@link Partner} на основе переданных
      * данных изображения {@link MultipartFile} и {@code id} объекта. Возвращает URL обновленного изображения
      * в виде объекта типа {@link Map<String, String>} в формате JSON.
+     *
      * @param file Объект типа {@link MultipartFile}, содержащий изображение для обновления существующего объекта {@link Partner}.
      * @param id UUID-идентификатор объекта типа {@link Partner}, к которому необходимо привязать обновленное изображение.
      * @return Объект типа {@link Map<String, String>}, представляющий URL обновленного изображения.
      */
-    @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE, params = {"id"})
+    @PatchMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> updateImgTeacher(
             @RequestPart(name = "img") @Valid @FileType(type = FileTypes.PNG) MultipartFile file,
-            @RequestParam(name = "id") UUID id
-    ) throws IOException {
+            @PathVariable(name = "id") UUID id
+    ) {
         var url = partnerService.updateImg(file, id);
         return Map.of("url", url);
     }
@@ -95,27 +94,31 @@ public class PartnerController {
     /**
      * Конечная точка для удаления объект типа {@link Partner} на основе переданного {@code id}
      * и возвращает объект типа {@link ResponseEntity}.
+     *
      * @param id UUID-идентификатор объекта типа {@link Partner}, который необходимо удалить.
-     * @return Объект типа {@link ResponseEntity<String>} со статусом успешного выполнения операции.
      */
-    @DeleteMapping(params = {"id"})
-    public ResponseEntity<String> deleteTeacher(
-            @RequestParam(name = "id") UUID id
-    ) throws IOException {
+    @DeleteMapping(path = "/{id}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void deleteTeacher(
+            @PathVariable(name = "id") UUID id
+    ) {
         partnerService.removePartner(id);
-        return ResponseEntity.ok("Удаление партнера");
     }
 
     /**
      * Конечная точка для получения логотипа для объекта типа {@link Partner} на основе переданного имени файла {@code filename}.
      * Возвращает массив байтов для изображения в формате PNG.
+     *
      * @param filename Имя файла изображения-логотипа для объекта типа {@link Partner}.
      * @return Массив байтов, представляющий изображение-логотип в формате PNG.
      */
     @GetMapping(path = "/image/{filename}", produces = MediaType.IMAGE_PNG_VALUE)
-    public byte[] getLogoPartner(
+    public ResponseEntity<byte[]> getLogoPartner(
             @PathVariable(name = "filename") String filename
     ) throws IOException {
-        return partnerService.getLogoPartner(filename).getInputStream().readAllBytes();
+        var bytes = partnerService.getLogoPartner(filename).getInputStream().readAllBytes();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CACHE_CONTROL, "max-age=86400,immutable")
+                .body(bytes);
     }
 }

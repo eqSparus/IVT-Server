@@ -1,4 +1,4 @@
-package ru.example.ivtserver.entities.mapper.request;
+package ru.example.ivtserver.entities.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,16 +9,12 @@ import lombok.AccessLevel;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 
-import java.util.UUID;
-
 /**
  * Класс, который представляет DTO запроса для "Направление" {@link ru.example.ivtserver.entities.Direction}.
  */
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Value
-public class DirectionRequestDto {
-
-    UUID id;
+public class DirectionRequest {
 
     @NotBlank
     String title;
@@ -34,12 +30,10 @@ public class DirectionRequestDto {
     int duration;
 
     @JsonCreator
-    public DirectionRequestDto(@JsonProperty(value = "id") UUID id,
-                               @JsonProperty(value = "title", required = true) String title,
-                               @JsonProperty(value = "degree", required = true) String degree,
-                               @JsonProperty(value = "form", required = true) String form,
-                               @JsonProperty(value = "duration", required = true) int duration) {
-        this.id = id;
+    public DirectionRequest(@JsonProperty(value = "title", required = true) String title,
+                            @JsonProperty(value = "degree", required = true) String degree,
+                            @JsonProperty(value = "form", required = true) String form,
+                            @JsonProperty(value = "duration", required = true) int duration) {
         this.title = title;
         this.degree = degree;
         this.form = form;

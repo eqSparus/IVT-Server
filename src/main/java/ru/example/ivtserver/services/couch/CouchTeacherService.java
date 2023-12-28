@@ -1,24 +1,27 @@
 package ru.example.ivtserver.services.couch;
 
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.example.ivtserver.entities.Teacher;
-import ru.example.ivtserver.entities.mapper.request.TeacherRequestDto;
+import ru.example.ivtserver.entities.dto.TeacherDto;
+import ru.example.ivtserver.entities.request.TeacherRequest;
+import ru.example.ivtserver.exceptions.FailedOperationFileException;
 import ru.example.ivtserver.exceptions.NoIdException;
 import ru.example.ivtserver.repositories.TeacherRepository;
 import ru.example.ivtserver.services.TeacherService;
 import ru.example.ivtserver.utils.FileUtil;
+import ru.example.ivtserver.utils.ImagePathConstant;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -26,6 +29,7 @@ import java.util.UUID;
  */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
+@RequiredArgsConstructor
 public class CouchTeacherService implements TeacherService {
 
     @Value("${upload.path.teachers}")
@@ -33,65 +37,57 @@ public class CouchTeacherService implements TeacherService {
 
     final TeacherRepository teacherRepository;
 
-    @Autowired
-    public CouchTeacherService(TeacherRepository teacherRepository) {
-        this.teacherRepository = teacherRepository;
-    }
-
     /**
-     * Создает нового преподавателя на основе данных из объекта {@link TeacherRequestDto} и изображения профиля.
+     * Создает нового преподавателя на основе данных из объекта {@link TeacherRequest} и изображения профиля.
      *
-     * @param dto объект с данными для создания преподавателя
-     * @param img изображение профиля преподавателя
-     * @return созданный объект {@link Teacher}
-     * @throws IOException если произошла ошибка при загрузке изображения
+     * @param request объект с данными для создания преподавателя
+     * @param img     изображение профиля преподавателя
+     * @return созданный объект {@link TeacherDto}
+     * @throws FailedOperationFileException если произошла ошибка при загрузке изображения
      */
     @Override
-    public Teacher addTeacher(TeacherRequestDto dto, MultipartFile img) throws IOException {
+    public TeacherDto addTeacher(TeacherRequest request, MultipartFile img) throws FailedOperationFileException {
         var fileName = UUID.randomUUID() + "." + FileUtil.getExtension(img.getOriginalFilename());
         var path = basePath.resolve(fileName);
-        FileUtil.saveFile(() -> FileUtil.resizeImg(img, 500, 500), path);
-        var url = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/teacher/image/")
-                .path(fileName)
-                .toUriString();
 
-        var teacherDb = teacherRepository.findTeacherLastPosition()
-                .orElseGet(() -> Teacher.builder().position(0).build());
+        try {
+            FileUtil.saveFile(() -> FileUtil.resizeImg(img, 500, 500), path);
 
-        var teacher = Teacher.builder()
-                .firstName(dto.getFirstName())
-                .lastName(dto.getLastName())
-                .middleName(dto.getMiddleName())
-                .postDepartment(dto.getPostDepartment())
-                .postTeacher(dto.getPostTeacher())
-                .urlImg(url)
-                .postAdditional(dto.getPostAdditional())
-                .position(teacherDb.getPosition() + 1)
-                .build();
-        return teacherRepository.save(teacher);
+            var teacherDb = teacherRepository.findTeacherLastPosition()
+                    .orElseGet(() -> Teacher.builder().position(0).build());
+
+            return Optional.of(Teacher.of(request, fileName, teacherDb.getPosition() + 1))
+                    .map(teacherRepository::save)
+                    .map(TeacherDto::of)
+                    .orElseThrow();
+        } catch (IOException e) {
+            throw new FailedOperationFileException("Не удалось сохранить файл");
+        }
     }
 
     /**
-     * Обновляет существующего преподавателя на основе данных из объекта {@link TeacherRequestDto}.
+     * Обновляет существующего преподавателя на основе данных из объекта {@link TeacherRequest}.
      *
-     * @param dto объект с данными для обновления преподавателя
-     * @return обновленный объект {@link Teacher}
+     * @param request объект с данными для обновления преподавателя
+     * @param id      идентификатор преподавателя
+     * @return обновленный объект {@link TeacherDto}
      * @throws NoIdException если преподавателя с указанным идентификатором не найден
      */
     @Override
-    public Teacher updateTeacher(TeacherRequestDto dto) throws NoIdException {
-        var teacher = teacherRepository.findById(dto.getId())
+    public TeacherDto updateTeacher(TeacherRequest request, UUID id) throws NoIdException {
+        return teacherRepository.findById(id)
+                .map(t -> {
+                    t.setFirstName(request.getFirstName());
+                    t.setLastName(request.getLastName());
+                    t.setMiddleName(request.getMiddleName());
+                    t.setPostDepartment(request.getPostDepartment());
+                    t.setPostTeacher(request.getPostTeacher());
+                    t.setPostAdditional(request.getPostAdditional());
+                    return t;
+                })
+                .map(teacherRepository::save)
+                .map(TeacherDto::of)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
-
-        teacher.setFirstName(dto.getFirstName());
-        teacher.setLastName(dto.getLastName());
-        teacher.setMiddleName(dto.getMiddleName());
-        teacher.setPostDepartment(dto.getPostDepartment());
-        teacher.setPostTeacher(dto.getPostTeacher());
-        teacher.setPostAdditional(dto.getPostAdditional());
-
-        return teacherRepository.save(teacher);
     }
 
     /**
@@ -100,32 +96,45 @@ public class CouchTeacherService implements TeacherService {
      * @param img новое изображение профиля
      * @param id  идентификатор преподавателя
      * @return строка со статусом обновления изображения
-     * @throws NoIdException если преподаватель с указанным id не найден
-     * @throws IOException   если произошла ошибка при загрузке изображения
+     * @throws NoIdException                если преподаватель с указанным id не найден
+     * @throws FailedOperationFileException если произошла ошибка при загрузке изображения
      */
     @Override
-    public String updateImg(MultipartFile img, UUID id) throws IOException, NoIdException {
+    public String updateImg(MultipartFile img, UUID id) throws FailedOperationFileException, NoIdException {
         var teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
+        var newFileName = UUID.randomUUID() + "." + FileUtil.getExtension(img.getOriginalFilename());
 
-        FileUtil.replace(() -> FileUtil.resizeImg(img, 500, 500),
-                basePath.resolve(FileUtil.getExtension(teacher.getUrlImg(), "/")));
-        return teacher.getUrlImg();
+        try {
+            FileUtil.deleteFile(basePath.resolve(teacher.getImgName()));
+            FileUtil.saveFile(() -> FileUtil.resizeImg(img, 500, 500), basePath.resolve(newFileName));
+
+            teacher.setImgName(newFileName);
+            teacherRepository.save(teacher);
+            return ImagePathConstant.BASE_TEACHER_PATH.concat("/").concat(teacher.getImgName());
+        } catch (IOException e) {
+            throw new FailedOperationFileException("Не удалось сохранить файл");
+        }
     }
 
     /**
      * Удаляет преподавателя с указанным {@code id} и его изображение профиля.
      *
      * @param id идентификатор преподавателя, которого нужно удалить
-     * @throws IOException   если произошла ошибка при удалении изображения профиля
-     * @throws NoIdException если преподаватель с указанным идентификатором не найден
+     * @throws FailedOperationFileException если произошла ошибка при удалении изображения профиля
+     * @throws NoIdException                если преподаватель с указанным идентификатором не найден
      */
+
     @Override
-    public void removeTeacher(UUID id) throws IOException, NoIdException {
+    public void removeTeacher(UUID id) throws FailedOperationFileException, NoIdException {
         var teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
-        FileUtil.deleteFile(basePath.resolve(FileUtil.getExtension(teacher.getUrlImg(), "/")));
-        teacherRepository.delete(teacher);
+        try {
+            FileUtil.deleteFile(basePath.resolve(teacher.getImgName()));
+            teacherRepository.delete(teacher);
+        } catch (IOException e) {
+            throw new FailedOperationFileException("Не удалось удалить файл");
+        }
     }
 
     /**
@@ -136,8 +145,10 @@ public class CouchTeacherService implements TeacherService {
      * @return список {@link List} преподавателей с указанным смещением и количеством
      */
     @Override
-    public List<Teacher> getTeachers(int skip, int size) {
-        return teacherRepository.findAllByOrderByPosition(skip, size);
+    public List<TeacherDto> getTeachers(int skip, int size) {
+        return teacherRepository.findAllByOrderByPosition(skip, size)
+                .map(TeacherDto::of)
+                .toList();
     }
 
     /**
@@ -147,7 +158,7 @@ public class CouchTeacherService implements TeacherService {
      * @return список {@link List} преподавателей, начиная с указанного смещения
      */
     @Override
-    public List<Teacher> getTeachers(int skip) {
+    public List<TeacherDto> getTeachers(int skip) {
         var size = teacherRepository.count();
         return getTeachers(skip, (int) size);
     }

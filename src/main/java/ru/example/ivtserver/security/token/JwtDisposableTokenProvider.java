@@ -2,7 +2,7 @@ package ru.example.ivtserver.security.token;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtDisposableTokenProvider extends JwtTokenProvider {
 
-    public JwtDisposableTokenProvider(Environment env) {
-        super(env.getRequiredProperty("security.token.jwt.disposable"),
-                env.getRequiredProperty("security.token.jwt.valid-time-disposable-second", Long.class));
+    public JwtDisposableTokenProvider(@Value("${security.token.jwt.disposable}") String disposable,
+                                      @Value("${security.token.jwt.valid-time-disposable-second}") Long validTime) {
+        super(disposable, validTime);
     }
 
 }

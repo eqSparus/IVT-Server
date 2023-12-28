@@ -1,5 +1,8 @@
 package ru.example.ivtserver.exceptions;
 
+/**
+ * Исключение, которое выбрасывается, когда превышено количество направлений.
+ */
 public class DirectionQuantityLimitException extends RuntimeException {
 
     public DirectionQuantityLimitException(String message) {

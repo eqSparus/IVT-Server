@@ -1,24 +1,27 @@
 package ru.example.ivtserver.services.couch;
 
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.example.ivtserver.entities.Partner;
-import ru.example.ivtserver.entities.mapper.request.PartnerRequestDto;
+import ru.example.ivtserver.entities.dto.PartnerDto;
+import ru.example.ivtserver.entities.request.PartnerRequest;
+import ru.example.ivtserver.exceptions.FailedOperationFileException;
 import ru.example.ivtserver.exceptions.NoIdException;
 import ru.example.ivtserver.repositories.PartnerRepository;
 import ru.example.ivtserver.services.PartnerService;
 import ru.example.ivtserver.utils.FileUtil;
+import ru.example.ivtserver.utils.ImagePathConstant;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -26,6 +29,7 @@ import java.util.UUID;
  */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Service
+@RequiredArgsConstructor
 public class CouchPartnerService implements PartnerService {
 
     @Value("${upload.path.partners}")
@@ -33,51 +37,49 @@ public class CouchPartnerService implements PartnerService {
 
     final PartnerRepository partnerRepository;
 
-    @Autowired
-    public CouchPartnerService(PartnerRepository partnerRepository) {
-        this.partnerRepository = partnerRepository;
-    }
-
     /**
-     * Добавляет нового партнера кафедры по заданному DTO {@link PartnerRequestDto}
+     * Добавляет нового партнера кафедры по заданному DTO {@link PartnerRequest}
      *
-     * @param dto DTO-объект, содержащий данные для добавления нового партнера
-     * @param img Файл с изображением партнера
-     * @return Добавленный партнер {@link Partner}
-     * @throws IOException Исключение, которое выбрасывается, если произошла ошибка при загрузке изображения
+     * @param request DTO-объект, содержащий данные для добавления нового партнера
+     * @param img     Файл с изображением партнера
+     * @return Добавленный партнер {@link PartnerDto}
+     * @throws FailedOperationFileException Исключение, которое выбрасывается, если произошла ошибка при загрузке изображения
      */
     @Override
-    public Partner addPartner(PartnerRequestDto dto, MultipartFile img) throws IOException {
+    public PartnerDto addPartner(PartnerRequest request, MultipartFile img) throws FailedOperationFileException {
         var fileName = UUID.randomUUID() + "." + FileUtil.getExtension(img.getOriginalFilename());
         var path = basePath.resolve(fileName);
-        FileUtil.saveFile(() -> FileUtil.resizeImg(img, 300, 100), path);
+        try {
+            FileUtil.saveFile(() -> FileUtil.resizeImg(img, 300, 100), path);
 
-        var url = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/partner/image/")
-                .path(fileName)
-                .toUriString();
+            return Optional.of(Partner.of(request, fileName))
+                    .map(partnerRepository::save)
+                    .map(PartnerDto::of)
+                    .orElseThrow();
 
-        var partner = Partner.builder()
-                .href(dto.getHref())
-                .urlImg(url)
-                .build();
-
-        return partnerRepository.save(partner);
+        } catch (IOException e) {
+            throw new FailedOperationFileException("Не удалось сохранить файл");
+        }
     }
 
     /**
-     * Обновляет партнера по заданному DTO {@link PartnerRequestDto}
+     * Обновляет партнера по заданному DTO {@link PartnerRequest}
      *
-     * @param dto DTO-объект, содержащий данные для обновления партнера
-     * @return Обновленный партнер {@link Partner}
+     * @param request DTO-объект, содержащий данные для обновления партнера
+     * @param id идентификатор партнера
+     * @return Обновленный партнер {@link PartnerDto}
      * @throws NoIdException Исключение, которое выбрасывается, если не найден объект по заданному id
      */
     @Override
-    public Partner updatePartner(PartnerRequestDto dto) throws NoIdException {
-        var partner = partnerRepository.findById(dto.getId())
+    public PartnerDto updatePartner(PartnerRequest request, UUID id) throws NoIdException {
+        return partnerRepository.findById(id)
+                .map(p->{
+                    p.setHref(request.getHref());
+                    return p;
+                })
+                .map(partnerRepository::save)
+                .map(PartnerDto::of)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
-        partner.setHref(dto.getHref());
-        return partnerRepository.save(partner);
     }
 
     /**
@@ -86,40 +88,54 @@ public class CouchPartnerService implements PartnerService {
      * @param img Файл с новым изображением
      * @param id  партнера, для которого нужно обновить изображение
      * @return Строка с url путем изображения
-     * @throws IOException   Исключение, которое выбрасывается, если произошла ошибка при загрузке изображения
+     * @throws FailedOperationFileException   Исключение, которое выбрасывается, если произошла ошибка при загрузке изображения
      * @throws NoIdException Исключение, которое выбрасывается, если не найден объект по заданному id
      */
     @Override
-    public String updateImg(MultipartFile img, UUID id) throws IOException, NoIdException {
+    public String updateImg(MultipartFile img, UUID id) throws FailedOperationFileException, NoIdException {
         var partner = partnerRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
-        FileUtil.replace(() -> FileUtil.resizeImg(img, 300, 100),
-                basePath.resolve(FileUtil.getExtension(partner.getUrlImg(), "/")));
-        return partner.getUrlImg();
+        var newFileName = UUID.randomUUID() + "." + FileUtil.getExtension(img.getOriginalFilename());
+
+        try {
+            FileUtil.deleteFile(basePath.resolve(partner.getImgName()));
+            FileUtil.saveFile(() -> FileUtil.resizeImg(img, 300, 300), basePath.resolve(newFileName));
+            partner.setImgName(newFileName);
+            partnerRepository.save(partner);
+            return ImagePathConstant.BASE_PARTNER_PATH.concat("/").concat(partner.getImgName());
+        } catch (IOException e) {
+            throw new FailedOperationFileException("Не удалось сохранить файл");
+        }
     }
 
     /**
      * Удаляет партнера с указанным {@code id}
      *
      * @param id партнера, который нужно удалить
-     * @throws IOException Исключение, которое выбрасывается, если произошла ошибка при удалении файла с изображением партнера
+     * @throws FailedOperationFileException Исключение, которое выбрасывается, если произошла ошибка при удалении файла с изображением партнера
      */
     @Override
-    public void removePartner(UUID id) throws IOException {
+    public void removePartner(UUID id) throws FailedOperationFileException {
         var partner = partnerRepository.findById(id)
                 .orElseThrow(() -> new NoIdException("Идентификатор не найден"));
-        FileUtil.deleteFile(basePath.resolve(FileUtil.getExtension(partner.getUrlImg(), "/")));
-        partnerRepository.delete(partner);
+        try {
+            FileUtil.deleteFile(basePath.resolve(partner.getImgName()));
+            partnerRepository.delete(partner);
+        } catch (IOException e) {
+            throw new FailedOperationFileException("Не удалось удалить файл");
+        }
     }
 
     /**
      * Получает список всех партнеров
      *
-     * @return Список {@link List} всех партнеров {@link Partner}
+     * @return Список {@link List} всех партнеров {@link PartnerDto}
      */
     @Override
-    public List<Partner> getAllPartners() {
-        return partnerRepository.findAll();
+    public List<PartnerDto> getAllPartners() {
+        return partnerRepository.findAll().stream()
+                .map(PartnerDto::of)
+                .toList();
     }
 
     /**
@@ -127,7 +143,6 @@ public class CouchPartnerService implements PartnerService {
      *
      * @param filename Имя файла с изображением партнера
      * @return Ресурс с изображением партнера {@link Resource}
-     * @throws IOException если произошла ошибка с чтением файла
      */
     @Override
     public Resource getLogoPartner(String filename) {

@@ -2,11 +2,11 @@ package ru.example.ivtserver.services;
 
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
-import ru.example.ivtserver.entities.Teacher;
-import ru.example.ivtserver.entities.mapper.request.TeacherRequestDto;
+import ru.example.ivtserver.entities.dto.TeacherDto;
+import ru.example.ivtserver.entities.request.TeacherRequest;
+import ru.example.ivtserver.exceptions.FailedOperationFileException;
 import ru.example.ivtserver.exceptions.NoIdException;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,23 +16,24 @@ import java.util.UUID;
 public interface TeacherService {
 
     /**
-     * Создает нового преподавателя на основе данных из объекта {@link TeacherRequestDto} и изображения профиля.
+     * Создает нового преподавателя на основе данных из объекта {@link TeacherRequest} и изображения профиля.
      *
-     * @param dto объект с данными для создания преподавателя
-     * @param img изображение профиля преподавателя
-     * @return созданный объект {@link Teacher}
-     * @throws IOException если произошла ошибка при загрузке изображения
+     * @param request объект с данными для создания преподавателя
+     * @param img     изображение профиля преподавателя
+     * @return созданный объект {@link TeacherDto}
+     * @throws FailedOperationFileException если произошла ошибка при загрузке изображения
      */
-    Teacher addTeacher(TeacherRequestDto dto, MultipartFile img) throws IOException;
+    TeacherDto addTeacher(TeacherRequest request, MultipartFile img) throws FailedOperationFileException;
 
     /**
-     * Обновляет существующего преподавателя на основе данных из объекта {@link TeacherRequestDto}.
+     * Обновляет существующего преподавателя на основе данных из объекта {@link TeacherRequest}.
      *
-     * @param dto объект с данными для обновления преподавателя
-     * @return обновленный объект {@link Teacher}
+     * @param request объект с данными для обновления преподавателя
+     * @param  id идентификатор преподавателя
+     * @return обновленный объект {@link TeacherDto}
      * @throws NoIdException если преподавателя с указанным идентификатором не найден
      */
-    Teacher updateTeacher(TeacherRequestDto dto) throws NoIdException;
+    TeacherDto updateTeacher(TeacherRequest request, UUID id) throws NoIdException;
 
     /**
      * Обновляет изображение профиля преподавателя с указанным {@code id}.
@@ -41,18 +42,18 @@ public interface TeacherService {
      * @param id  идентификатор преподавателя
      * @return строка со статусом обновления изображения
      * @throws NoIdException если преподаватель с указанным id не найден
-     * @throws IOException если произошла ошибка при загрузке изображения
+     * @throws FailedOperationFileException   если произошла ошибка при загрузке изображения
      */
-    String updateImg(MultipartFile img, UUID id) throws IOException, NoIdException;
+    String updateImg(MultipartFile img, UUID id) throws FailedOperationFileException, NoIdException;
 
     /**
      * Удаляет преподавателя с указанным {@code id} и его изображение профиля.
      *
      * @param id идентификатор преподавателя, которого нужно удалить
-     * @throws IOException   если произошла ошибка при удалении изображения профиля
+     * @throws FailedOperationFileException   если произошла ошибка при удалении изображения профиля
      * @throws NoIdException если преподаватель с указанным идентификатором не найден
      */
-    void removeTeacher(UUID id) throws IOException, NoIdException;
+    void removeTeacher(UUID id) throws FailedOperationFileException, NoIdException;
 
 
     /**
@@ -62,7 +63,7 @@ public interface TeacherService {
      * @param size максимальное количество преподавателей, которые нужно вернуть
      * @return список {@link List} преподавателей с указанным смещением и количеством
      */
-    List<Teacher> getTeachers(int skip, int size);
+    List<TeacherDto> getTeachers(int skip, int size);
 
     /**
      * Возвращает список преподавателей, которые нужно вернуть, начиная с указанного смещения.
@@ -70,13 +71,13 @@ public interface TeacherService {
      * @param skip количество преподавателей, которые нужно пропустить
      * @return список {@link List} преподавателей, начиная с указанного смещения
      */
-    List<Teacher> getTeachers(int skip);
+    List<TeacherDto> getTeachers(int skip);
 
     /**
      * Обновляет позицию преподавателя с указанным {@code id}.
      *
      * @param position новая позиция преподавателя
-     * @param id идентификатор преподавателя
+     * @param id       идентификатор преподавателя
      * @return новая позиция преподавателя
      * @throws NoIdException если преподаватель с указанным идентификатором не найден
      */
@@ -88,5 +89,5 @@ public interface TeacherService {
      * @param filename имя файла изображения преподавателя
      * @return объект {@link Resource}, представляющий изображение профиля преподавателя
      */
-    Resource getImageTeacher(String filename) throws IOException;
+    Resource getImageTeacher(String filename);
 }

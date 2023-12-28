@@ -2,11 +2,11 @@ package ru.example.ivtserver.controllers;
 
 
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ru.example.ivtserver.entities.mapper.SiteContentDto;
+import ru.example.ivtserver.entities.dto.SiteContentDto;
 import ru.example.ivtserver.services.*;
 
 /**
@@ -16,6 +16,7 @@ import ru.example.ivtserver.services.*;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
 @RequestMapping(path = "/data")
+@RequiredArgsConstructor
 public class DataController {
 
     AboutDepartmentService aboutDepartmentService;
@@ -24,25 +25,8 @@ public class DataController {
     SiteLinkService siteLinkService;
     EntrantService entrantService;
     PartnerService partnerService;
-
     ReviewService reviewService;
 
-    @Autowired
-    public DataController(AboutDepartmentService aboutDepartmentService,
-                          DepartmentService departmentService,
-                          DirectionService directionService,
-                          SiteLinkService siteLinkService,
-                          EntrantService entrantService,
-                          PartnerService partnerService,
-                          ReviewService reviewService) {
-        this.aboutDepartmentService = aboutDepartmentService;
-        this.departmentService = departmentService;
-        this.directionService = directionService;
-        this.siteLinkService = siteLinkService;
-        this.entrantService = entrantService;
-        this.partnerService = partnerService;
-        this.reviewService = reviewService;
-    }
 
     /**
      * Контрольная точка для возвращает контент сайта в виде объекта {@link SiteContentDto},
@@ -63,7 +47,7 @@ public class DataController {
         var reviews = reviewService.getAllReviews();
 
         return SiteContentDto.builder()
-                .department(new SiteContentDto.MainDepartment(department, siteLinks))
+                .department(new SiteContentDto.MainDepartmentDto(department, siteLinks))
                 .aboutDepartment(aboutDepartment)
                 .direction(directions)
                 .entrants(entrants)
