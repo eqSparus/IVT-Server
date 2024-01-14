@@ -13,7 +13,6 @@ import ru.example.ivtserver.services.AboutDepartmentService;
 
 import java.util.UUID;
 
-@CrossOrigin(origins = "http://localhost:8081", methods = RequestMethod.PUT)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
 @RequestMapping(path = "/abouts")

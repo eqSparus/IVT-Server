@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * Контроллер для входа, выхода, и обновления пользователя.
  */
-@CrossOrigin(origins = "http://localhost:8081", allowCredentials = "true", methods = RequestMethod.POST)
+
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RestController
 @RequiredArgsConstructor

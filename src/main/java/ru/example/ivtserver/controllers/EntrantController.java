@@ -17,9 +17,6 @@ import java.util.UUID;
 /**
  * Контролер для создания, обновления и удаления информации абитуриенту
  */
-@CrossOrigin(origins = "http://localhost:8081", methods = {
-        RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PUT
-})
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
 @RequestMapping(path = "/entrants")

@@ -24,9 +24,6 @@ import java.util.UUID;
 /**
  * Контролер для создания, обновления, удаления, обновления изображения и получения фотографии.
  */
-@CrossOrigin(origins = "http://localhost:8081", methods = {
-        RequestMethod.DELETE, RequestMethod.GET, RequestMethod.PATCH, RequestMethod.POST, RequestMethod.PUT
-})
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
 @RequestMapping(path = "/reviews")

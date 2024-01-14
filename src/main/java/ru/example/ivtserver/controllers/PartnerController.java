@@ -22,12 +22,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Контроллер для создания, удаления, обновления и обновления изображения партнеров кафедры и получения логотипа.
- */
-@CrossOrigin(origins = "http://localhost:8081", methods = {
-        RequestMethod.DELETE, RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH, RequestMethod.PUT
-})
+
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
 @RequestMapping(path = "/partners")

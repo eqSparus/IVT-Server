@@ -16,7 +16,6 @@ import java.security.Principal;
 /**
  * Контролер для изменения пароля и почты пользователя, а также восстановления пароля.
  */
-@CrossOrigin(origins = "http://localhost:8081", methods = RequestMethod.POST)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
 @RequiredArgsConstructor

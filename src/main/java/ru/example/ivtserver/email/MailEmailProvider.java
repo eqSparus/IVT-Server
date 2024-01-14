@@ -33,6 +33,9 @@ public class MailEmailProvider implements EmailProvider {
     @Value("${spring.mail.username}")
     String senderEmail;
 
+    @Value("${frontend.hostname}")
+    String hostnameFrontend;
+
     final JavaMailSender mailSender;
     final ITemplateEngine templateEngine;
 
@@ -86,7 +89,9 @@ public class MailEmailProvider implements EmailProvider {
      */
     @Override
     public String getMailHtml(String name, UnaryOperator<Context> variable) {
-        return templateEngine.process(name, variable.apply(new Context()));
+        var context = variable.apply(new Context());
+        context.setVariable("hostname", hostnameFrontend);
+        return templateEngine.process(name, variable.apply(context));
     }
 
     /**

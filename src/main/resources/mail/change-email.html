@@ -46,10 +46,9 @@
                 <tr>
                     <td style="padding: 0 20px">
                         <p>Здравствуйте, уважаемый пользователь!</p>
-                        <!--TODO заменить-->
                         <p>
                             Вы воспользовались процедурой смены адреса электронной почты на сайте кафедры
-                            <a class="link" href="http://localhost:8081/">ИВТ</a>
+                            <a class="link" th:href="@{'http://' + ${hostname} + '/'}">ИВТ</a>
                         </p>
 
                         <p>Для активации новой почты нажмите на кнопку ниже</p>
@@ -57,7 +56,7 @@
                 </tr>
                 <tr>
                     <td align="center" style="padding: 10px 20px">
-                        <a class="btn" th:href="@{http://localhost:8081/activatemail(token=${token})}">
+                        <a class="btn" th:href="@{'http://' + ${hostname} + '/activatemail'(token=${token})}">
                             активировать новую почту
                         </a>
                     </td>

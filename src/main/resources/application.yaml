@@ -10,12 +10,13 @@ spring:
     allow-bean-definition-overriding: true
     banner-mode: off
   config:
-    import: config/security.yaml,config/database.yaml,config/setting-email.yaml
+    import: config/security.yaml,config/database.yaml,config/setting-email.yaml,config/server.yaml
 
 server:
   shutdown: graceful
   servlet:
     context-path: /api/v1
+  port: 8090
 
 upload:
   path:

@@ -25,9 +25,6 @@ import java.util.UUID;
 /**
  * Контролер для создания, обновления, удаления, получения всех преподавателя, обновления фотографии и получения её.
  */
-@CrossOrigin(origins = "http://localhost:8081", methods = {
-        RequestMethod.DELETE, RequestMethod.GET, RequestMethod.PATCH, RequestMethod.POST, RequestMethod.PUT
-})
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
 @RequestMapping(path = "/teachers")

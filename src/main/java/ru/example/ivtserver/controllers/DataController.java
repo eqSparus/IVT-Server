@@ -12,7 +12,6 @@ import ru.example.ivtserver.services.*;
 /**
  * Контролер для получения наполнения сайта.
  */
-@CrossOrigin(origins = "http://localhost:8081", methods = RequestMethod.GET)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
 @RequestMapping(path = "/data")
